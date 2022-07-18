@@ -30,4 +30,4 @@ $ helm install my-release sdf-edge/sep [--version 0.3.83]
 ```
 
 ## Install Packages (stable)
-Note, Stable packages are not availabel yet.
+Note, Stable packages are not available yet.
