@@ -7,12 +7,11 @@ This repository contains the following Helm charts for deploying SDF maintained 
 Documentation
 https://github.com/stellar/java-stellar-anchor-sdk/tree/main/docs
 
-## Install Anchor Platform Packages (stable)
+## Install Anchor Platform Helm Chart
 ```
-$ helm install -f myvalues.yaml anchorplatform ./stable/anchor-platform/sep-service
+$ helm install -f myvalues.yaml sep-service ./charts/anchor-platform/sep-service
 ```
-## Install Anchor Platform Packages (edge/experimental)
+## Uninstall Anchor Platform Helm Chart
 ```
-$ helm install -f myvalues.yaml anchorplatform ./edge/anchor-platform/sep-service
+$ helm uninstall sep-service 
 ```
-

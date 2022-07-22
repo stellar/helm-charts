@@ -1,6 +1,6 @@
 # Anchor Platform SEP Service Helm Chart
 ## Introduction
-This chart installs the Stellar Anchor Platform SEP Serviceon Kubernetes cluster using the Helm package manager.
+This chart installs the Stellar Anchor Platform on Kubernetes cluster using the Helm package manager.
 ## Upgrading your Clusters
 To upgrade the Anchor Platform, you can use the helm upgrade command. example:
 ```
