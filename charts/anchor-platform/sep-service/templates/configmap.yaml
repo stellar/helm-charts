@@ -1,7 +1,19 @@
+{{- if .Values.assets }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Values.fullName }}-assets
+data:
+  assets.json: |
+    {
+      "assets": {{ toPrettyJson .Values.assets | indent 4 }}
+    }
+---
+{{- end }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.fullName }}-configmap-{{ .Values.service.name }}
+  name: {{ .Values.fullName }}
 data:
   # TODO: remove all secrets (ex: move to env vars, k8s secrets, vault, etc...)
   anchor-config.yaml: |
@@ -57,12 +69,22 @@ data:
         authType: JWT_TOKEN
         platformToAnchorSecret: {{ .Values.stellar.app_config.app.platformToAnchorSecret | default "${PLATFORM_TO_ANCHOR_SECRET}" }}
         anchorToPlatformSecret: {{ .Values.stellar.app_config.app.anchorToPlatformSecret | default "${ANCHOR_TO_PLATFORM_SECRET}" }}
-        expirationMilliseconds: {{ .Values.stellar.app_config.app.expirationMilliseconds | default 30000 }}
+        expirationMilliseconds: {{ .Values.stellar.app_config.app.expirationMilliseconds | default 30000 }}      
+      # The anchor callback configuration
+      anchor-callback:
+        # The CallbackAPI endpoint
+      {{- if ((.Values.stellar.app_config).anchor_callback) }}
+        endpoint: {{ .Values.stellar.app_config.anchor_callback.customerIntegrationEndpoint | default .Values.stellar.app_config.app.backendUrl }}   
+      {{- else }}
+        endpoint: {{ .Values.stellar.app_config.app.backendUrl }} 
+      {{- end }}
+      # sep-1
       sep1:
         enabled: true
         stellarFile: file:/config/stellar-wks.toml
-      {{- if ((.Values.stellar.app_config).sep10) }}
+      # sep-10
       sep10:
+      {{- if ((.Values.stellar.app_config).sep10) }}
         enabled: {{ .Values.stellar.app_config.sep10.enabled | default "true" }}
         homeDomain: {{ .Values.stellar.app_config.sep10.homeDomain }}
         clientAttributionRequired: {{ .Values.stellar.app_config.sep10.clientAttributionRequired | default "false" }}
@@ -77,7 +99,6 @@ data:
 {{- $.Values.stellar.app_config.sep10.omnibusAccountList | toYaml | nindent 10 }}
         {{- end }}
       {{- else }}
-      sep10:
         enabled: true
         homeDomain: "your_home_domain.com"
         clientAttributionRequired: "false"
@@ -86,27 +107,24 @@ data:
         authTimeout: 900
         jwtTimeout: 86400
         signingSeed: ${SEP10_SIGNING_SEED}
-
       {{- end }}
       # sep-12
-      {{- if ((.Values.stellar.app_config).sep12) }}
       sep12:
+      {{- if ((.Values.stellar.app_config).sep12) }}
         enabled: {{ .Values.stellar.app_config.sep12.enabled | default "true" | toYaml }}
         customerIntegrationEndpoint: {{ .Values.stellar.app_config.sep12.customerIntegrationEndpoint | default .Values.stellar.app_config.app.backendUrl }}
       {{- else }}
-      sep12:
         enabled:  "true"
         customerIntegrationEndpoint: {{ .Values.stellar.app_config.app.backendUrl }}
       {{- end }}
       # sep-24
-      {{- if ((.Values.stellar.app_config).sep24) }}
       sep24:
+      {{- if ((.Values.stellar.app_config).sep24) }}
         enabled: {{ .Values.stellar.app_config.sep24.enabled | default "true" }}
         interactiveJwtExpiration: {{ .Values.stellar.app_config.sep24.interactiveJwtExpiration | default 3600 }}
         interactiveUrl: {{ .Values.stellar.app_config.sep24.interactiveUrl | default .Values.stellar.app_config.app.backendUrl }}
       {{- else }}
-      sep24:
-        enabled: "false"
+        enabled: false
         interactiveJwtExpiration: 3600
         interactiveUrl: {{ .Values.stellar.app_config.app.backendUrl }}
       {{- end }}
@@ -115,11 +133,13 @@ data:
       {{- if ((.Values.stellar.app_config).sep31) }}
         enabled: {{ .Values.stellar.app_config.sep31.enabled | default "true" }}
         feeIntegrationEndPoint: {{ .Values.stellar.app_config.sep31.feeIntegrationEndPoint | default .Values.stellar.app_config.app.backendUrl }}
+        uniqueAddressIntegrationEndPoint: {{ .Values.stellar.app_config.sep31.uniqueAddressIntegrationEndPoint  | default .Values.stellar.app_config.app.backendUrl}}
         depositInfoGeneratorType: {{ .Values.stellar.app_config.sep31.depositInfoGeneratorType | default "self" }}
         paymentType: {{ .Values.stellar.app_config.sep31.paymentType | default "STRICT_SEND" }}
       {{- else }}
         enabled: "true"
         feeIntegrationEndPoint: {{ .Values.stellar.app_config.app.backendUrl }}
+        uniqueAddressIntegrationEndPoint: {{ .Values.stellar.app_config.app.backendUrl }}
         paymentType: STRICT_SEND
       {{- end }}
       # sep-38
@@ -159,7 +179,7 @@ data:
         trackedWallet: {{ .Values.stellar.app_config.circle_payment_observer.trackedWallet | default "all" }}
       {{- end }}
       {{- if (.Values.stellar.app_config).event }}
-      event:
+      event: 
         # If enabled, publish Events to a queue (publisherType)
         # publisherType - the type of queue to use for event publishing
         enabled: {{ .Values.stellar.app_config.event.enabled | default "true" }}
@@ -171,12 +191,15 @@ data:
         enabled: false
         publisherType: kafka
       {{- end }}
+      metrics-service:
+        optionalMetricsEnabled: false   # optional metrics that periodically query the database
+        runInterval: 30                 # interval to query the database to generate the optional metrics
       {{- if (.Values.stellar.app_config).kafka_publisher }}
       kafka.publisher:
         bootstrapServer: {{ .Values.stellar.app_config.kafka_publisher.bootstrapServer | default "missing_bootstrapServer:port" }}
         useIAM: {{ .Values.stellar.app_config.kafka_publisher.useIAM | default "false" }}
         useSingleQueue: {{ .Values.stellar.app_config.kafka_publisher.useSingleQueue | default "false" }}
-        {{- if (((.Values.stellar.app_config).event).kafka_publisher).eventTypeQueue }}
+        {{- if ((.Values.stellar.app_config).kafka_publisher).eventTypeToQueue }}
         eventTypeToQueue:
           all: {{ .Values.stellar.app_config.kafka_publisher.eventTypeToQueue.all | default "dev_ap_event_single_queue" }}
           quoteCreated: {{ .Values.stellar.app_config.kafka_publisher.eventTypeToQueue.quoteCreated | default "dev_ap_event_quote_created" }}
@@ -208,10 +231,10 @@ data:
       mvc:
         async.request-timeout: 6000
   stellar-wks.toml: |
-    ACCOUNTS = ["GCHLHDBOKG2JWMJQBTLSL5XG6NO7ESXI2TAQKZXCXWXB5WI2X6W233PR"]
-    VERSION = "0.1.0"
-    NETWORK_PASSPHRASE = "Test SDF Network ; September 2015"
-    SIGNING_KEY = "GCHLHDBOKG2JWMJQBTLSL5XG6NO7ESXI2TAQKZXCXWXB5WI2X6W233PR"
+    ACCOUNTS = {{ .Values.stellar.toml.accounts | default "[\"GDZCLP2PHTWYQ3BWZMC5D4ZUJX5NU4S7YZHC5EBFAFKL6UJUQ5RKDGSY\"]" }}
+    VERSION = "{{ .Values.stellar.toml.version | default "0.1.0" }}"
+    NETWORK_PASSPHRASE = "{{ .Values.stellar.app_config.app.stellarNetworkPassphrase | default "Test SDF Network ; September 2015" }}"
+    SIGNING_KEY = "{{ .Values.stellar.toml.signing_key | default "GDZCLP2PHTWYQ3BWZMC5D4ZUJX5NU4S7YZHC5EBFAFKL6UJUQ5RKDGSY" }}"
     TRANSFER_SERVER = "{{ .Values.stellar.app_config.app.hostUrl }}/sep6"
     TRANSFER_SERVER_SEP0024 = "{{ .Values.stellar.app_config.app.hostUrl }}/sep24"
     WEB_AUTH_ENDPOINT = "{{ .Values.stellar.app_config.app.hostUrl }}/auth"
@@ -231,7 +254,7 @@ data:
     {{- end }}
     {{- else }}
     code = "USDC"
-    issuer = "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5"
+    issuer = "GDQOE23CFSUMSVQK4Y5JHPPYK73VYCNHZHA7ENKCV37P6SUEO6XQBKPP"
     status = "test"
     is_asset_anchored = true
     anchor_asset_type = "fiat"
