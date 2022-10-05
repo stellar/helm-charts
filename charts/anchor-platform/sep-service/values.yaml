@@ -33,6 +33,10 @@ deployment:
    envFrom:
    - secretRef:
        name: apsigningseed
+   annotations:
+        prometheus.io/path: /actuator/prometheus
+        prometheus.io/port: "8082"
+        prometheus.io/scrape: "true"
 ingress:
    labels:
      app: appy
