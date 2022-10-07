@@ -23,13 +23,6 @@ deployment:
       configMaps:
          - name: assets
            mountPath: assets
-   hosts:
-     - host: "www.stellaranchordemo.com"
-       path: /
-       pathType: Prefix
-       backend:
-         servicePort: "{{ .Values.service.containerPort }}"
-         serviceName: "{{ .Values.fullName }}-svc-{{ .Values.service.name }}"
    envFrom:
    - secretRef:
        name: apsigningseed
@@ -61,8 +54,39 @@ ingress:
           backend:
             servicePort: "{{ .Values.service.containerPort }}"
             serviceName: "{{ .Values.fullName }}-svc-{{ .Values.service.name }}"
+#
+# If you want to have a dedicated stellar-observer service, you need to
+# uncomment the `stellarObserver` section below.
+#
+# Attention! If you use the stellar observer as a separate service – by setting
+# `stellarObserver.enabled` flag to `true` – you must use a shared database that
+# will be accessible by both deployments (sep-server and stellar-observer).
+# In-memory databases won't work.
+# stellarObserver:
+#    # This will enable the stellar-observer service as a separate deployment:
+#    enabled: true
+#    # The stellarObserver.deployment section is optional, the templates have
+#    # default values.
+#    deployment:
+#       port: 8083
+#       probePath: "/health"
+#       probePeriodSeconds: 15
+#       initialDelaySeconds: 60
+#       startupProbeFailureThreshold: 10
+#       livenessProbeFailureThreshold: 2
+#    ingress:
+#       tls:
+#          host: "observer.your_anchor_domain.com"    # Replace this with a valid host name
+#       rules:
+#          hosts:
+#          - host: "observer.your_anchor_domain.com"  # Replace this with a valid host name
+#            path: /
+#            pathType: Prefix
+#
 stellar:
    toml:
+      #accounts: ['"GCHLHDBOKG2JWMJQBTLSL5XG6NO7ESXI2TAQKZXCXWXB5WI2X6W233PR"'] 
+      signing_key: "GCHLHDBOKG2JWMJQBTLSL5XG6NO7ESXI2TAQKZXCXWXB5WI2X6W233PR"
       documentation:
          ORG_NAME: "your_org"
          ORG_URL: "https:/your_org.org"
@@ -74,7 +98,8 @@ stellar:
          settings: data-spring-jdbc-sqlite
 #         settings: data-spring-jdbc-aws-aurora-postgres
 #   data_spring_jdbc_aws_aurora_postgres:
-#      spring.jpa.generate-ddl: true
+#      spring.jpa.generate-ddl: false
+#      spring.jpa.hibernate.ddl-auto: none
 #      spring.jpa.database: POSTGRESQL
 #      spring.jpa.show-sql: false
 #      spring.datasource.driver-class-name: org.postgresql.Driver
@@ -84,6 +109,11 @@ stellar:
 #      spring.datasource.hikari.max-lifetime: 840000    # 14 minutes because IAM tokens are valid for 15min
 #      spring.mvc.converters.preferred-json-mapper: gson
 #      spring.liquibase.change-log: classpath:/db/changelog/db.changelog-master.yaml
+#      spring.flyway.user: ${FLYWAY_USER}
+#      spring.flyway.password: ${FLYWAY_PASSWORD} # can use a token value if authenticating via IAM
+#      spring.flyway.url: jdbc:postgresql://database-aurora.region.rds.amazonaws.com:port/instance
+#      spring.flyway.locations: classpath:/db/migration
+#      spring.flyway.enabled: false
    data_spring_jdbc_sqlite:
       spring.jpa.database-platform: org.stellar.anchor.platform.sqlite.SQLiteDialect
       spring.jpa.hibernate.ddl-auto: update
@@ -94,6 +124,10 @@ stellar:
       spring.datasource.username: ${SQLITE_USERNAME}
       spring.datasource.password: ${SQLITE_PASSWORD}
       spring.mvc.converters.preferred-json-mapper: gson
+      spring.flyway.user: ${SQLITE_USERNAME}
+      spring.flyway.password: ${SQLITE_USERNAME}
+      spring.flyway.url: jdbc:sqlite:anchor-proxy.db
+      spring.flyway.locations: classpath:/db/migration
       spring.flyway.enabled: false
    app_config:
       app:
@@ -113,13 +147,16 @@ stellar:
         signingSeed: ${SEP10_SIGNING_SEED}
         requireKnownOmnibusAccount: false
         omnibusAccountList:
-          # - GC5KRPVW4TFA6ORIGTOFM3DEG6DSLACRXGDN3LNCAI7IPAGIWMVXUHVS
+#        omnibusAccountList: |
+#          GAB24L6CPBKSMQOBXJ5PRA6I66X4TGZHPAEI2CMPNLC6I2WX646OYCAV,
+#          GAB24L6CPBKSMQOBXJ5PRA6I66X4TGZHPAEI2CMPNLC6I2WX646OYCAA
       sep12:
         enabled: true
         customerIntegrationEndpoint: https://anchor-reference-server-dev.stellar.org
       sep31:
         enabled: true
         feeIntegrationEndPoint: https://anchor-reference-server-dev.stellar.org
+        # uniqueAddressIntegrationEndPoint: https://anchor-reference-server-dev.stellar.org
       sep38:
         enabled: true
         quoteIntegrationEndPoint: https://anchor-reference-server-dev.stellar.org
