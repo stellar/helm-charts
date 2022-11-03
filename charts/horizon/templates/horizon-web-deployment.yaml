@@ -1,0 +1,90 @@
+{{- if (.Values.web).enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "common.fullname" . }}-web
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}-web
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.web.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "common.fullname" . }}-web
+  template:
+    metadata:
+      labels:
+        app: {{ template "common.fullname" . }}-web
+        release: {{ .Release.Name }}
+      {{- if (.Values.web).annotations }}
+      annotations:
+        {{- range $key, $value := .Values.web.annotations }}
+          {{ $key }}: {{ $value | quote }}
+          {{- end }}
+      {{- end }}
+    spec:
+      {{- if (.Values.web).serviceAccountName }}
+      serviceAccountName: {{ .Values.web.serviceAccountName | default "default" }}
+      {{- end }}
+      {{- if (.Values.global).imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.global.imagePullSecrets | indent 8 }}
+      {{- end }}
+      containers:
+      - name: horizon
+        image: image: {{ include "common.horizonImage" . | quote }}
+        {{- if (.Values.web).cliArgs }}
+        args:
+          {{- range $flag := .Values.web.cliArgs }}
+          - {{ $flag | quote }}
+          {{- end }}
+        {{- end }}
+        imagePullPolicy: {{ .Values.global.image.horizon.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.web.horizonConfig.port | default 8000 }}
+          name: horizon
+        - containerPort: {{ .Values.web.horizonConfig.adminPort | default 6000 }}
+          name: metrics
+        envFrom:
+        - secretRef:
+            name: {{ .Values.web.existingSecret }}
+        - configMapRef:
+            name: {{ template "common.fullname" . }}-web-env
+        readinessProbe:
+          httpGet:
+            port: {{ .Values.web.horizonConfig.port | default 8000 }}
+            path: /health
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        {{- if (.Values.web).resources }}
+        resources:
+{{ toYaml .Values.web.resources | indent 10 }}
+        {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "common.fullname" . }}-web
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}-web
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: core
+      port: {{ .Values.web.horizonConfig.port | default 8000 }}
+      targetPort: {{ .Values.web.horizonConfig.port | default 8000 }}
+  selector:
+    app: {{ template "common.fullname" . }}-web
+{{- end }}
