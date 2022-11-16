@@ -1,6 +1,9 @@
 # Stellar Horizon Helm Chart
 
-This chart will deploy stellar-horizon. By default it will be connected to the TESTNET network
+Please note that this chart is not complete yet and should not be used for production deployments.
+
+The chart can deploy ingesting horizon pod and, optionally, dedicated non-ingesting pod(s).
+By default horizon will be connected to the TESTNET network.
 
 ## Usage
 
@@ -12,7 +15,7 @@ Add SDF helm repo to your system:
 ```
 helm repo add stellar https://helm.stellar.org/charts
 ```
-For example to render manifests you can use the followign command:
+For example to render manifests you can use the following command:
 ```
 helm install myhorizon stellar/horizon --set "ingest.existingSecret=horizon-db-secret"
 ```

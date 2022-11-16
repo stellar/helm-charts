@@ -77,6 +77,11 @@ ingest:
   ## Uncomment to use custom service account
   # serviceAccountName: default
 
+  ## List of annotations to add to the StatefulSet
+  # annotations:
+  #   prometheus.io/scrape: "true"
+  #   prometheus.io/port: "6000"
+
   persistence:
     enabled: false
     storageClass: default
@@ -92,7 +97,14 @@ ingest:
   #    memory: 2Gi
 
   coreExporter:
+    ## Common prometheus config examples do not allow it to scrape 2 ports
+    ## If you'd like to scrape both horizon and core metrics example
+    ## workarounds can be found here:
+    ##   https://github.com/prometheus/prometheus/issues/3756#issuecomment-362266296
+    ##   https://github.com/prometheus/prometheus/issues/3756#issuecomment-874043080
+    ## If you'd like to have prometheus
     enabled: true
+
     ## See global.image.coreExporter for image settings
 
     ## Uncomment to set resource limits
@@ -127,6 +139,11 @@ web:
 
   ## Uncomment to use custom service account
   # serviceAccountName: default
+
+  ## List of annotations to add to the StatefulSet
+  # annotations:
+  #   prometheus.io/scrape: "true"
+  #   prometheus.io/port: "6000"
 
   ## Uncomment to set resource limits
   #resources:

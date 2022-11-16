@@ -38,7 +38,7 @@ spec:
       {{- end }}
       containers:
       - name: horizon
-        image: image: {{ include "common.horizonImage" . | quote }}
+        image: {{ include "common.horizonImage" . | quote }}
         {{- if (.Values.web).cliArgs }}
         args:
           {{- range $flag := .Values.web.cliArgs }}
