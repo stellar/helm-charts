@@ -8,9 +8,13 @@ Default parameters should be fine for dev environments in testnet.
 The only setting that needs to be provided is `ingest.existingSecret` which should point to a pre-existing
 secret that contains the `DATABASE_URL` string.
 
+Add SDF helm repo to your system:
+```
+helm repo add stellar https://helm.stellar.org/charts
+```
 For example to render manifests you can use the followign command:
 ```
-helm template --set "ingest.existingSecret=horizon-db-secret" myhorizon
+helm install myhorizon stellar/horizon --set "ingest.existingSecret=horizon-db-secret"
 ```
 
 ## TODO
