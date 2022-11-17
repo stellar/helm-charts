@@ -13,7 +13,7 @@ helm upgrade -f myvalues.yaml -f override.yaml --version 0.1.0 my-release stella
 
 Add the Anchor Platform SEP Service Helm Chart repository:
 ```sh
-$ helm repo add stellar *stellar-helm-chart-repo* (this will be added once available)
+$ helm repo add stellar https://helm.stellar.org/charts
 ```
 To install the chart with the release name my-release:
 ```sh
