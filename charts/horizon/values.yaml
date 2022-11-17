@@ -3,14 +3,15 @@ global:
   ## Useful for those using "helm template" to render templates
   # namespace: mynamespace
 
-  ## Stellar network to use. Supported values are "testnet", "pubnet" and "custom"
-  ## When "custom" is used you have to provide extra settings:
+  ## Stellar network to use. When set to "testnet" or "pubnet" default
+  ## recommended config will be used.
+  ## When set to any other value you have to provide extra settings:
   ##   - global.historyArchiveUrls
   ##   - global.networkPassphrase
   ##   - ingest.coreConfig
   network: testnet
 
-  ## Required when global.network is set to "custom"
+  ## Required when global.network is set to non-standard network
   # historyArchiveUrls: "url1,url2,url3"
   # networkPassphrase: "My Stellar Network; June 2020"
 
@@ -67,7 +68,7 @@ ingest:
   ## pre existing secret that contains the DATABASE_URL key with postgres URL
   existingSecret: ""
 
-  ## Required when global.network is set to "custom"
+  ## Required when global.network is set to non-standard value
   ## Also useful if you want to provide non-standard testnet or pubnet config
   # coreConfig:
 
@@ -77,10 +78,13 @@ ingest:
   ## Uncomment to use custom service account
   # serviceAccountName: default
 
-  ## List of annotations to add to the StatefulSet
+  ## Additional annotations or labels to add the Deployment template
   # annotations:
   #   prometheus.io/scrape: "true"
   #   prometheus.io/port: "6000"
+  # labels:
+  #   environment: "dev"
+  #   mylabel1: "myvalue1"
 
   persistence:
     enabled: false
@@ -140,10 +144,13 @@ web:
   ## Uncomment to use custom service account
   # serviceAccountName: default
 
-  ## List of annotations to add to the StatefulSet
+  ## Additional annotations or labels to add the Deployment template
   # annotations:
   #   prometheus.io/scrape: "true"
   #   prometheus.io/port: "6000"
+  # labels:
+  #   environment: "dev"
+  #   mylabel1: "myvalue1"
 
   ## Uncomment to set resource limits
   #resources:

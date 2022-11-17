@@ -23,6 +23,12 @@ spec:
       labels:
         app: {{ template "common.fullname" . }}-ingest
         release: {{ .Release.Name }}
+        horizon_network: {{ .Values.global.network }}
+      {{- if (.Values.ingest).labels }}
+        {{- range $key, $value := .Values.ingest.labels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
       {{- if (.Values.ingest).annotations }}
       annotations:
         {{- range $key, $value := .Values.ingest.annotations }}
