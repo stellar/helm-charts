@@ -28,7 +28,7 @@
 {{- template "core.testnetConfig" }}
 {{- else if eq .Values.global.network "pubnet" -}}
 {{- template "core.pubnetConfig" }}
-{{- else if eq .Values.global.network "custom" -}}
+{{- else -}}
 {{- .Values.ingest.coreConfig }}
 {{- end -}}
 {{- end -}}
@@ -38,7 +38,7 @@
 https://history.stellar.org/prd/core-testnet/core_testnet_001,https://history.stellar.org/prd/core-testnet/core_testnet_002,https://history.stellar.org/prd/core-testnet/core_testnet_003
 {{- else if eq .Values.global.network "pubnet" -}}
 https://history.stellar.org/prd/core-live/core_live_001,https://history.stellar.org/prd/core-live/core_live_002,https://history.stellar.org/prd/core-live/core_live_003
-{{- else if eq .Values.global.network "custom" -}}
+{{- else  -}}
 {{- .Values.global.historyArchiveUrls }}
 {{- end -}}
 {{- end -}}
@@ -48,7 +48,7 @@ https://history.stellar.org/prd/core-live/core_live_001,https://history.stellar.
 Test SDF Network ; September 2015
 {{- else if eq .Values.global.network "pubnet" -}}
 Public Global Stellar Network ; September 2015
-{{- else if eq .Values.global.network "custom" -}}
+{{- else -}}
 {{- .Values.global.networkPassphrase }}
 {{- end -}}
 {{- end -}}

@@ -22,6 +22,12 @@ spec:
       labels:
         app: {{ template "common.fullname" . }}-web
         release: {{ .Release.Name }}
+        horizon_network: {{ .Values.global.network }}
+      {{- if (.Values.web).labels }}
+        {{- range $key, $value := .Values.web.labels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
       {{- if (.Values.web).annotations }}
       annotations:
         {{- range $key, $value := .Values.web.annotations }}
