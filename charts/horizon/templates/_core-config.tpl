@@ -13,9 +13,6 @@ QUALITY="HIGH"
 HOME_DOMAIN="stellar.blockdaemon.com"
 QUALITY="HIGH"
 [[HOME_DOMAINS]]
-HOME_DOMAIN="wirexapp.com"
-QUALITY="HIGH"
-[[HOME_DOMAINS]]
 HOME_DOMAIN="coinqvest.com"
 QUALITY="HIGH"
 [[HOME_DOMAINS]]
@@ -63,24 +60,6 @@ HOME_DOMAIN="stellar.blockdaemon.com"
 PUBLIC_KEY="GAYXZ4PZ7P6QOX7EBHPIZXNWY4KCOBYWJCA4WKWRKC7XIUS3UJPT6EZ4"
 ADDRESS="stellar-full-validator3.bdnodes.net"
 HISTORY="curl -sf https://stellar-full-history3.bdnodes.net/{0} -o {1}"
-[[VALIDATORS]]
-NAME="wirex_sg"
-HOME_DOMAIN="wirexapp.com"
-PUBLIC_KEY="GAB3GZIE6XAYWXGZUDM4GMFFLJBFMLE2JDPUCWUZXMOMT3NHXDHEWXAS"
-ADDRESS="sg.stellar.wirexapp.com"
-HISTORY="curl -sf http://wxhorizonasiastga1.blob.core.windows.net/history/{0} -o {1}"
-[[VALIDATORS]]
-NAME="wirex_uk"
-HOME_DOMAIN="wirexapp.com"
-PUBLIC_KEY="GBBQQT3EIUSXRJC6TGUCGVA3FVPXVZLGG3OJYACWBEWYBHU46WJLWXEU"
-ADDRESS="uk.stellar.wirexapp.com"
-HISTORY="curl -sf http://wxhorizonukstga1.blob.core.windows.net/history/{0} -o {1}"
-[[VALIDATORS]]
-NAME="wirex_us"
-HOME_DOMAIN="wirexapp.com"
-PUBLIC_KEY="GDXUKFGG76WJC7ACEH3JUPLKM5N5S76QSMNDBONREUXPCZYVPOLFWXUS"
-ADDRESS="us.stellar.wirexapp.com"
-HISTORY="curl -sf http://wxhorizonusstga1.blob.core.windows.net/history/{0} -o {1}"
 [[VALIDATORS]]
 NAME="coinqvest_fi"
 HOME_DOMAIN="coinqvest.com"
