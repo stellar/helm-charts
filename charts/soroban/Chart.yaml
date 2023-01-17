@@ -1,0 +1,10 @@
+apiVersion: v1
+name: soroban-rpc
+version: 0.0.1
+appVersion: "0.0.1"
+description: Stellar Soroban RPC Helm Chart. This chart will deploy Stellar Soroban API server
+maintainers:
+  - name: Stellar Development Foundation
+sources:
+  - https://github.com/stellar/go
+  - https://github.com/stellar/helm-charts
