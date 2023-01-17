@@ -22,33 +22,3 @@
 {{- define "common.sorobanRpcImage" -}}
 {{ .Values.global.image.sorobanRpc.registry }}/{{ .Values.global.image.sorobanRpc.repository }}:{{ default .Chart.AppVersion .Values.global.image.sorobanRpc.tag }}
 {{- end -}}
-
-{{- define "core.config" -}}
-{{- if eq .Values.global.network "testnet" -}}
-{{- template "core.testnetConfig" }}
-{{- else if eq .Values.global.network "pubnet" -}}
-{{- template "core.pubnetConfig" }}
-{{- else -}}
-{{- .Values.ingest.coreConfig }}
-{{- end -}}
-{{- end -}}
-
-{{- define "horizon.historyArchiveUrls" -}}
-{{- if eq .Values.global.network "testnet" -}}
-https://history.stellar.org/prd/core-testnet/core_testnet_001,https://history.stellar.org/prd/core-testnet/core_testnet_002,https://history.stellar.org/prd/core-testnet/core_testnet_003
-{{- else if eq .Values.global.network "pubnet" -}}
-https://history.stellar.org/prd/core-live/core_live_001,https://history.stellar.org/prd/core-live/core_live_002,https://history.stellar.org/prd/core-live/core_live_003
-{{- else  -}}
-{{- .Values.global.historyArchiveUrls }}
-{{- end -}}
-{{- end -}}
-
-{{- define "horizon.networkPassphrase" -}}
-{{- if eq .Values.global.network "testnet" -}}
-Test SDF Network ; September 2015
-{{- else if eq .Values.global.network "pubnet" -}}
-Public Global Stellar Network ; September 2015
-{{- else -}}
-{{- .Values.global.networkPassphrase }}
-{{- end -}}
-{{- end -}}

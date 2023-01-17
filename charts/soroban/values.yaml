@@ -40,15 +40,6 @@ global:
       ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
       ##
       pullPolicy: Always
-      # coreExporter:
-      #   registry: docker.io
-      #   repository: stellar/stellar-core-prometheus-exporter
-      #   tag: latest
-      ## Specify a imagePullPolicy
-      ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
-      ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-      ##
-      pullPolicy: Always
 
 sorobanRpc:
   ## See global.image.horizon for image settings
@@ -60,13 +51,17 @@ sorobanRpc:
   ## List of CLI arguments to provide to the stellar-horizon binary
   # cliArgs: []
 
-  ## This variable allows overrides of default settings
+  ## This variable allows overrides of default settings. It will be used as a container port
+  ## and port where soroban-rpc server will listen.
   sorobanRpcConfig:
     port: 8000
+
+  ## List of CLI arguments to provide to the soroban RPC binary
+  # cliArgs: []
   cliArgs:
   - --horizon-url=http://localhost:8001
   - --stellar-core-url=http://localhost:11626
-  - --log-level
+  - --log-level=info
   - --network-passphrase=__NETWORK__
   - --tx-concurrency=2
   - --tx-queue=10
@@ -81,15 +76,15 @@ sorobanRpc:
   # annotations:
   #   prometheus.io/scrape: "true"
   #   prometheus.io/port: "6000"
-  labels:
-    environment: "dev"
-    mylabel1: "myvalue1"
+  # labels:
+  #   environment: "dev"
+  #   mylabel1: "dev-value"
 
   ## Uncomment to set resource limits
-  resources:
-   limits:
-     cpu: 2
-     memory: 4Gi
-   requests:
-     cpu: 250m
-     memory: 2Gi
+  # resources:
+  #  limits:
+  #    cpu: 2
+  #    memory: 4Gi
+  #  requests:
+  #    cpu: 250m
+  #    memory: 2Gi

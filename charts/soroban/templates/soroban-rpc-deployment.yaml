@@ -45,7 +45,7 @@ spec:
       - name: soroban-rpc
         image: {{ include "common.sorobanRpcImage" . | quote }}
         args:
-          - --endpoint=localhost: {{.Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
+          - "--endpoint=localhost:{{.Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}"
         {{- if (.Values.sorobanRpc).cliArgs }}
           {{- range $flag := .Values.sorobanRpc.cliArgs }}
           - {{ $flag | quote }}
@@ -55,8 +55,10 @@ spec:
         ports:
         - containerPort: {{ .Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
           name: soroban-rpc
+        {{if (.Values.sorobanRpc).resources}}
         resources:
 {{ toYaml .Values.sorobanRpc.resources | indent 10 }}
+        {{- end }}
         {{- end }}
 ---
 apiVersion: v1
