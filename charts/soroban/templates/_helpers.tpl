@@ -19,8 +19,8 @@
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{- define "common.horizonImage" -}}
-{{ .Values.global.image.horizon.registry }}/{{ .Values.global.image.horizon.repository }}:{{ default .Chart.AppVersion .Values.global.image.horizon.tag }}
+{{- define "common.sorobanRpcImage" -}}
+{{ .Values.global.image.sorobanRpc.registry }}/{{ .Values.global.image.sorobanRpc.repository }}:{{ default .Chart.AppVersion .Values.global.image.sorobanRpc.tag }}
 {{- end -}}
 
 {{- define "core.config" -}}

@@ -9,7 +9,7 @@ global:
   ##   - global.historyArchiveUrls
   ##   - global.networkPassphrase
   ##   - ingest.coreConfig
-  network: testnet
+  # network: testnet
 
   ## Required when global.network is set to non-standard network
   # historyArchiveUrls: "url1,url2,url3"
@@ -29,9 +29,9 @@ global:
   # - imagepullsecret2
 
   image:
-    horizon:
+    sorobanRpc:
       registry: docker.io
-      repository: stellar/stellar-horizon
+      repository: stellar/soroban-rpc
       ## Optional tag. Defaults to the appVersion from Chart.yaml
       # tag: 1.2.3
 
@@ -40,103 +40,36 @@ global:
       ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
       ##
       pullPolicy: Always
-    coreExporter:
-      registry: docker.io
-      repository: stellar/stellar-core-prometheus-exporter
-      tag: latest
+      # coreExporter:
+      #   registry: docker.io
+      #   repository: stellar/stellar-core-prometheus-exporter
+      #   tag: latest
       ## Specify a imagePullPolicy
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
       ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
       ##
       pullPolicy: Always
 
-ingest:
-  ## See global.image.horizon for image settings
-
-  ## Whether to deploy ingesting instances
-  enabled: true
-
-  ## List of CLI arguments to provide to the stellar-horizon binary
-  cliArgs:
-  - "--apply-migrations"
-
-  ## This variable allows overrides of default settings
-  horizonConfig:
-    {}
-    # port: 8001
-
-  ## pre existing secret that contains the DATABASE_URL key with postgres URL
-  existingSecret: ""
-
-  ## Required when global.network is set to non-standard value
-  ## Also useful if you want to provide non-standard testnet or pubnet config
-  # coreConfig:
-
-  ## For production use cases we recommend at least 2 replicas
-  replicaCount: 1
-
-  ## Uncomment to use custom service account
-  # serviceAccountName: default
-
-  ## Additional annotations or labels to add the Deployment template
-  # annotations:
-  #   prometheus.io/scrape: "true"
-  #   prometheus.io/port: "6000"
-  # labels:
-  #   environment: "dev"
-  #   mylabel1: "myvalue1"
-
-  persistence:
-    enabled: false
-    storageClass: default
-    size: 100G
-
-  ## Uncomment to set resource limits
-  #resources:
-  #  limits:
-  #    cpu: 2
-  #    memory: 4Gi
-  #  requests:
-  #    cpu: 250m
-  #    memory: 2Gi
-
-  coreExporter:
-    ## Common prometheus config examples do not allow it to scrape 2 ports
-    ## If you'd like to scrape both horizon and core metrics example
-    ## workarounds can be found here:
-    ##   https://github.com/prometheus/prometheus/issues/3756#issuecomment-362266296
-    ##   https://github.com/prometheus/prometheus/issues/3756#issuecomment-874043080
-    ## If you'd like to have prometheus
-    enabled: true
-
-    ## See global.image.coreExporter for image settings
-
-    ## Uncomment to set resource limits
-    #resources:
-    #  limits:
-    #    cpu: 250m
-    #    memory: 512Mi
-    #  requests:
-    #    cpu: 50m
-    #    memory: 128Mi
-
 sorobanRpc:
   ## See global.image.horizon for image settings
 
   ## Whether to deploy non-ingesting instances
   ## Useful with read-only DB replica
-  enabled: false
+  enabled: true
 
   ## List of CLI arguments to provide to the stellar-horizon binary
   # cliArgs: []
 
   ## This variable allows overrides of default settings
-  horizonConfig:
-    {}
-    # port: 8001
-
-  ## pre existing secret that contains the DATABASE_URL key with postgres URL
-  existingSecret: ""
+  sorobanRpcConfig:
+    port: 8000
+  cliArgs:
+  - --horizon-url=http://localhost:8001
+  - --stellar-core-url=http://localhost:11626
+  - --log-level
+  - --network-passphrase=__NETWORK__
+  - --tx-concurrency=2
+  - --tx-queue=10
 
   ## For production use cases we recommend at least 2 replicas
   replicaCount: 1
@@ -148,15 +81,15 @@ sorobanRpc:
   # annotations:
   #   prometheus.io/scrape: "true"
   #   prometheus.io/port: "6000"
-  # labels:
-  #   environment: "dev"
-  #   mylabel1: "myvalue1"
+  labels:
+    environment: "dev"
+    mylabel1: "myvalue1"
 
   ## Uncomment to set resource limits
-  #resources:
-  #  limits:
-  #    cpu: 2
-  #    memory: 4Gi
-  #  requests:
-  #    cpu: 250m
-  #    memory: 2Gi
+  resources:
+   limits:
+     cpu: 2
+     memory: 4Gi
+   requests:
+     cpu: 250m
+     memory: 2Gi

@@ -43,31 +43,18 @@ spec:
       {{- end }}
       containers:
       - name: soroban-rpc
-        image: {{ include "common.horizonImage" . | quote }}
-        {{- if (.Values.sorobanRpc).cliArgs }}
+        image: {{ include "common.sorobanRpcImage" . | quote }}
         args:
+          - --endpoint=localhost: {{.Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
+        {{- if (.Values.sorobanRpc).cliArgs }}
           {{- range $flag := .Values.sorobanRpc.cliArgs }}
           - {{ $flag | quote }}
           {{- end }}
         {{- end }}
-        imagePullPolicy: {{ .Values.global.image.horizon.pullPolicy }}
+        imagePullPolicy: {{ .Values.global.image.sorobanRpc.pullPolicy }}
         ports:
-        - containerPort: {{ .Values.sorobanRpc.horizonConfig.port | default 8000 }}
-          name: horizon
-        - containerPort: {{ .Values.sorobanRpc.horizonConfig.adminPort | default 6000 }}
-          name: metrics
-        envFrom:
-        - secretRef:
-            name: {{ .Values.sorobanRpc.existingSecret }}
-        - configMapRef:
-            name: {{ template "common.fullname" . }}-env
-        readinessProbe:
-          httpGet:
-            port: {{ .Values.sorobanRpc.horizonConfig.port | default 8000 }}
-            path: /health
-          initialDelaySeconds: 5
-          timeoutSeconds: 5
-        {{- if (.Values.sorobanRpc).resources }}
+        - containerPort: {{ .Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
+          name: soroban-rpc
         resources:
 {{ toYaml .Values.sorobanRpc.resources | indent 10 }}
         {{- end }}
@@ -87,9 +74,8 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - name: core
-      port: {{ .Values.sorobanRpc.horizonConfig.port | default 8000 }}
-      targetPort: {{ .Values.sorobanRpc.horizonConfig.port | default 8000 }}
+    - name: soroban-rpc
+      port: {{ .Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
+      targetPort: {{ .Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
   selector:
     app: {{ template "common.fullname" . }}
-{{- end }}
