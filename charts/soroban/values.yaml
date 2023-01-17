@@ -31,9 +31,9 @@ global:
   image:
     sorobanRpc:
       registry: docker.io
-      repository: stellar/soroban-rpc
+      repository: satyamz/soroban-rpc
       ## Optional tag. Defaults to the appVersion from Chart.yaml
-      # tag: 1.2.3
+      tag: latest
 
       ## Specify a imagePullPolicy
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
