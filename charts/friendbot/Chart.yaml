@@ -5,6 +5,6 @@ version: 0.0.1
 appVersion: "6fbbdc47"
 description: Stellar Friendbot Helm Chart
 maintainers: 
-  - name: Stellar Development Foundation Ops team
+  - name: Stellar Development Foundation
 sources:
   - https://github.com/stellar/helm-charts
