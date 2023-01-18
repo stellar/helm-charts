@@ -3,18 +3,6 @@ global:
   ## Useful for those using "helm template" to render templates
   # namespace: mynamespace
 
-  ## Stellar network to use. When set to "testnet" or "pubnet" default
-  ## recommended config will be used.
-  ## When set to any other value you have to provide extra settings:
-  ##   - global.historyArchiveUrls
-  ##   - global.networkPassphrase
-  ##   - ingest.coreConfig
-  # network: testnet
-
-  ## Required when global.network is set to non-standard network
-  # historyArchiveUrls: "url1,url2,url3"
-  # networkPassphrase: "My Stellar Network; June 2020"
-
   ## String to partially override common.fullname template (will maintain the release name)
   ##
   # nameOverride:
@@ -42,14 +30,11 @@ global:
       pullPolicy: Always
 
 sorobanRpc:
-  ## See global.image.horizon for image settings
+  ## See global.image.sorobanRpc for image settings
 
   ## Whether to deploy non-ingesting instances
   ## Useful with read-only DB replica
   enabled: true
-
-  ## List of CLI arguments to provide to the stellar-horizon binary
-  # cliArgs: []
 
   ## This variable allows overrides of default settings. It will be used as a container port
   ## and port where soroban-rpc server will listen.
