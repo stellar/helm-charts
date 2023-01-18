@@ -1,90 +1,54 @@
 global:
-  ## String to use to explicitly set namespace name in manifests.
-  ## Useful for those using "helm template" to render templates
   # namespace: mynamespace
-
-  ## Stellar network to use
   network: futurenet
-
-  ## Required when global.network is set to non-standard network
-  # historyArchiveUrls: "url1,url2,url3"
-  # networkPassphrase: "My Stellar Network; June 2020"
-
-  ## String to partially override common.fullname template (will maintain the release name)
-  ##
+  network_passphrase: "My Stellar Network 2022"
+  horizon_url: "https://horizon-testnet.stellar.org"
   # nameOverride:
-
-  ## String to fully override common.fullname template
-  ##
   # fullnameOverride:
 
-  ## List of pre-existing image Pull Secrets to use
-  # imagePullSecrets:
-  # - imagepullsecret1
-  # - imagepullsecret2
-
   image:
-    soroban-rpc:
+    friendbot:
       registry: docker-registry.services.stellar-ops.com
       repository: dev/
       ## Optional tag. Defaults to the appVersion from Chart.yaml
       # tag: x.x.x
 
-      ## Specify a imagePullPolicy
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
-      ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-      ##
       pullPolicy: IfNotPresent
 
-soroban-rpc:
+friendbot:
 
-  ## List of CLI arguments to provide to friendbot
   cliArgs:
   - "--conf /config/friendbot.conf"
-
-  ## For production use cases we recommend at least 2 replicas
   replicaCount: 1
 
-  ## Uncomment to use custom service account
   # serviceAccountName: default
 
-  ## Additional annotations or labels to add the Deployment template
-  # annotations:
-  #   prometheus.io/scrape: "true"
-  #   prometheus.io/port: "6000"
-  # labels:
-  #   environment: "dev"
-  #   mylabel1: "myvalue1"
+  deployment:
+    # annotations:
+    #   prometheus.io/scrape: "true"
+    #   prometheus.io/port: "6000"
+    # labels:
+    #   environment: "dev"
+    #   mylabel1: "myvalue1"
 
-  persistence:
-    enabled: false
-    storageClass: default
-    size: 100G
+  service:
+    port: 80
+    targetport: 8004
 
-  ## This variable allows overrides of default settings
-  sorobanrpcConfig:
-    {}
-    # port: 8001
+  ingress:
+    # port: 80
+    annotations:
+      kubernetes.io/ingress.class: "private"
+      cert-manager.io/cluster-issuer: "default"
+    host: "friendbot.example.com"
 
-  ## For production use cases we recommend at least 2 replicas
-  replicaCount: 1
+  configmap:
+    port: 8000 
+    friendbot_secret: "XXXXXXX"
+    # starting_balance: 10000
+    # num_minions: 1000
+    # base_fee: 10000
+    # minion_batch_size: 50
+    # submit_tx_retries_allowed: 5
 
-  ## Uncomment to use custom service account
-  # serviceAccountName: default
-
-  ## Additional annotations or labels to add the Deployment template
-  # annotations:
-  #   prometheus.io/scrape: "true"
-  #   prometheus.io/port: "6000"
-  # labels:
-  #   environment: "dev"
-  #   mylabel1: "myvalue1"
-
-  ## Uncomment to set resource limits
-  #resources:
-  #  limits:
-  #    cpu: 2
-  #    memory: 4Gi
-  #  requests:
-  #    cpu: 250m
-  #    memory: 2Gi

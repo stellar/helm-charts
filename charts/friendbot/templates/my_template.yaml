@@ -14,7 +14,7 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  replicas: {{ .Values.soroban-rpc.replicaCount }}
+  replicas: {{ .Values.friendbot.replicaCount }}
   selector:
     matchLabels:
       app: {{ template "common.fullname" . }}
@@ -27,44 +27,40 @@ spec:
       labels:
         app: {{ template "common.fullname" . }}
         release: {{ .Release.Name }}
-      {{- if (.Values.soroban-rpc).labels }}
-        {{- range $key, $value := .Values.soroban-rpc.labels }}
+      {{- if (.Values.friendbot.deployment).labels }}
+        {{- range $key, $value := .Values.friendbot.deployment.labels }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       {{- end }}
-      {{- if (.Values.soroban-rpc).annotations }}
+      {{- if (.Values.friendbot.deployment).annotations }}
       annotations:
-        {{- range $key, $value := .Values.soroban-rpc.annotations }}
+        {{- range $key, $value := .Values.friendbot.deployment.annotations }}
           {{ $key }}: {{ $value | quote }}
-          {{- end }}
+        {{- end }}
       {{- end }}
     spec:
-      {{- if (.Values.soroban-rpc).serviceAccountName }}
-      serviceAccountName: {{ .Values.soroban-rpc.serviceAccountName | default "default" }}
-      {{- end }}
-      {{- if (.Values.global).imagePullSecrets }}
-      imagePullSecrets:
-{{ toYaml .Values.global.imagePullSecrets | indent 8 }}
+      {{- if (.Values.friendbot).serviceAccountName }}
+      serviceAccountName: {{ .Values.friendbot.serviceAccountName | default "default" }}
       {{- end }}
       containers:
       - name: friendbot
         image: {{ include "common.friendbotImage" . | quote }}
-        {{- if (.Values.soroban-rpc).cliArgs }}
+        {{- if (.Values.friendbot).cliArgs }}
         args:
-          {{- range $flag := .Values.soroban-rpc.cliArgs }}
+          {{- range $flag := .Values.friendbot.cliArgs }}
           - {{ $flag | quote }}
           {{- end }}
         {{- end }}
-        imagePullPolicy: {{ .Values.global.image.soroban-rpc.pullPolicy }}
+        imagePullPolicy: {{ .Values.global.image.friendbot.pullPolicy }}
         startupProbe:
-          tcpSocket: {{ .Values.soroban-rpc.sorobanrpcConfig.adminPort | default 6000 }}
+          tcpSocket: {{ .Values.friendbot.friendbotConfig.adminPort | default 6000 }}
           initialDelaySeconds: {{ }}
           failureThreshold: {{ }}
           periodSeconds: {{ }}
           timeoutSeconds: {{ }}
         envFrom:
         - secretRef:
-            name: {{ .Values.soroban-rpc.existingSecret }}
+            name: {{ .Values.friendbot.existingSecret }}
         - configMapRef:
             name: {{ template "common.fullname" . }}-env
 ---
@@ -84,11 +80,39 @@ spec:
   type: ClusterIP
   ports:
   - protocol: TCP
-    port: {{ .Values.soroban-rpc.sorobanrpcConfig.port | default 80 }}
-    targetPort: {{ .Values.soroban-rpc.sorobanrpcConfig.port | default 8004 }}
+    port: {{ .Values.friendbot.service.port | default 80 }}
+    targetPort: {{ .Values.friendbot.service.targetport | default 8004 }}
   selector:
     app: {{ template "common.fullname" . }}
 {{- end }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  annotations:
+    {{- range $key, $value := .Values.friendbot.ingress.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  tls:
+  - secretName: friendbot-futurenet-cert
+    hosts:
+    - {{ .Values.friendbot.ingress.host }}
+  rules:
+  - host: {{ .Values.friendbot.ingress.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ template "common.fullname" . }}
+            port:
+              number: {{ .Values.friendbot.ingress.port | default 80 }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -98,18 +122,18 @@ metadata:
   namespace: {{ .Release.Namespace }}
   {{- end }}
   labels:
-    app: {{ template "common.fullname" . }}-web
+    app: {{ template "common.fullname" . }}
     chart: {{ template "common.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
-  port = 8000 #### needs to be parameterized
-  friendbot_secret = "XXXX"
-  network_passphrase = "Test SDF Network ; September 2015"
-  horizon_url = "https://horizon-testnet.stellar.org"
-  starting_balance = "10000.00"
-  num_minions = 1000
-  base_fee = 100000
-  minion_batch_size = 50
-  submit_tx_retries_allowed = 5
+  port = {{ .Values.friendbot.configmap.port | default 8000 }}
+  friendbot_secret = {{ .Values.friendbot.configmap }}
+  network_passphrase =  {{ .Values.global.network_passphrase }}
+  horizon_url =  {{ .Values.global.horizon_url }}
+  starting_balance =  {{ .Values.friendbot.configmap.starting_balance | default 10000 }}
+  num_minions = {{ .Values.friendbot.configmap.num_minions | default 1000 }}
+  base_fee = {{ .Values.friendbot.configmap.base_fee | default 100000 }}
+  minion_batch_size = {{ .Values.friendbot.configmap.minion_batch_size | default 50 }}
+  submit_tx_retries_allowed = {{ .Values.friendbot.configmap.tx | default 5 }
 
