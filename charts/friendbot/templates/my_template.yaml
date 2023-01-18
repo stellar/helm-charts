@@ -1,0 +1,115 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- else }}
+  namespace: sandbox
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.soroban-rpc.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "common.fullname" . }}
+  strategy:
+    type: RollingUpdate
+    maxUnavailable: 0
+    maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: {{ template "common.fullname" . }}
+        release: {{ .Release.Name }}
+      {{- if (.Values.soroban-rpc).labels }}
+        {{- range $key, $value := .Values.soroban-rpc.labels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
+      {{- if (.Values.soroban-rpc).annotations }}
+      annotations:
+        {{- range $key, $value := .Values.soroban-rpc.annotations }}
+          {{ $key }}: {{ $value | quote }}
+          {{- end }}
+      {{- end }}
+    spec:
+      {{- if (.Values.soroban-rpc).serviceAccountName }}
+      serviceAccountName: {{ .Values.soroban-rpc.serviceAccountName | default "default" }}
+      {{- end }}
+      {{- if (.Values.global).imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.global.imagePullSecrets | indent 8 }}
+      {{- end }}
+      containers:
+      - name: friendbot
+        image: {{ include "common.friendbotImage" . | quote }}
+        {{- if (.Values.soroban-rpc).cliArgs }}
+        args:
+          {{- range $flag := .Values.soroban-rpc.cliArgs }}
+          - {{ $flag | quote }}
+          {{- end }}
+        {{- end }}
+        imagePullPolicy: {{ .Values.global.image.soroban-rpc.pullPolicy }}
+        startupProbe:
+          tcpSocket: {{ .Values.soroban-rpc.sorobanrpcConfig.adminPort | default 6000 }}
+          initialDelaySeconds: {{ }}
+          failureThreshold: {{ }}
+          periodSeconds: {{ }}
+          timeoutSeconds: {{ }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.soroban-rpc.existingSecret }}
+        - configMapRef:
+            name: {{ template "common.fullname" . }}-env
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: {{ .Values.soroban-rpc.sorobanrpcConfig.port | default 80 }}
+    targetPort: {{ .Values.soroban-rpc.sorobanrpcConfig.port | default 8004 }}
+  selector:
+    app: {{ template "common.fullname" . }}
+{{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "common.fullname" . }}-env
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}-web
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  port = 8000 #### needs to be parameterized
+  friendbot_secret = "XXXX"
+  network_passphrase = "Test SDF Network ; September 2015"
+  horizon_url = "https://horizon-testnet.stellar.org"
+  starting_balance = "10000.00"
+  num_minions = 1000
+  base_fee = 100000
+  minion_batch_size = 50
+  submit_tx_retries_allowed = 5
+

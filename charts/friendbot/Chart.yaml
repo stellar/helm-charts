@@ -1,0 +1,10 @@
+apiVersion: v1
+name: friendbot
+description: This chart will deploy friendbot to your private network
+version: 0.0.1
+appVersion: "x.xx.x"
+description: Stellar Friendbot Helm Chart
+maintainers: 
+  - name: Stellar Development Foundation Ops team
+sources:
+  - https://github.com/stellar/helm-charts
