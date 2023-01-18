@@ -1,0 +1,10 @@
+apiVersion: v1
+name: core
+description: This chart will deploy Stellar Core node
+version: 0.0.1
+appVersion: "19.6.1-1158.c0ad35aa1.focal-soroban"
+maintainers:
+  - name: Stellar Development Foundation
+sources:
+  - https://github.com/stellar/stellar-core
+  - https://github.com/stellar/helm-charts

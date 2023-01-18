@@ -1,0 +1,143 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.core.replicaCount }}
+  serviceName: {{ template "common.fullname" . }}
+  selector:
+    matchLabels:
+      app: {{ template "common.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "common.fullname" . }}
+        release: {{ .Release.Name }}
+        horizon_network: {{ .Values.global.network }}
+      {{- if (.Values.core).labels }}
+        {{- range $key, $value := .Values.core.labels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
+      {{- if (.Values.core).annotations }}
+      annotations:
+        {{- range $key, $value := .Values.core.annotations }}
+          {{ $key }}: {{ $value | quote }}
+          {{- end }}
+      {{- end }}
+    spec:
+      {{- if (.Values.core).serviceAccountName }}
+      serviceAccountName: {{ .Values.core.serviceAccountName | default "default" }}
+      {{- end }}
+      {{- if (.Values.global).imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.global.imagePullSecrets | indent 8 }}
+      {{- end }}
+      initContainers:
+      - name: core-new-db
+        image: {{ include "common.coreImage" . | quote }}
+        args:
+          - new-db
+          - --conf
+          - /config/stellar-core.cfg
+          - --console
+        imagePullPolicy: {{ .Values.global.image.core.pullPolicy }}
+        ports:
+        - containerPort: 11626
+          name: core
+        {{- if (.Values.core).resources }}
+        resources:
+{{ toYaml .Values.core.resources | indent 10 }}
+        {{- end }}
+        volumeMounts:
+        - mountPath: /config
+          name: core-config
+        {{- if .Values.core.persistence.enabled }}
+        - mountPath: /var/lib/stellar
+          name: {{ template "common.fullname" . }}-var-lib-stellar
+        {{- end }}
+      containers:
+      - name: core
+        image: {{ include "common.coreImage" . | quote }}
+        args:
+          - run
+          - --conf
+          - /config/stellar-core.cfg
+          - --console
+        {{- if (.Values.core).extraCliArgs }}
+          {{- range $flag := .Values.core.extraCliArgs }}
+          - {{ $flag | quote }}
+          {{- end }}
+        {{- end }}
+        imagePullPolicy: {{ .Values.global.image.core.pullPolicy }}
+        ports:
+        - containerPort: 11626
+          name: core
+        {{- if (.Values.core).resources }}
+        resources:
+{{ toYaml .Values.core.resources | indent 10 }}
+        {{- end }}
+        volumeMounts:
+        - mountPath: /config
+          name: core-config
+        {{- if .Values.core.persistence.enabled }}
+        - mountPath: /var/lib/stellar
+          name: {{ template "common.fullname" . }}-var-lib-stellar
+        {{- end }}
+      {{- if (.Values.core.coreExporter).enabled }}
+      - name: stellar-core-prometheus-exporter
+        image: "{{ .Values.global.image.coreExporter.registry }}/{{ .Values.global.image.coreExporter.repository }}:{{ .Values.global.image.coreExporter.tag }}"
+        imagePullPolicy: {{ .Values.global.image.coreExporter.pullPolicy }}
+        ports:
+        - containerPort: 9473
+          name: metrics
+        {{- if (.Values.core.coreExporter).resources }}
+        resources:
+{{ toYaml .Values.core.coreExporter.resources | indent 10 }}
+        {{- end }}
+      {{- end }}
+      volumes:
+      - name: core-config
+        configMap:
+          name: {{ template "common.fullname" . }}
+  {{- if .Values.core.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ template "common.fullname" . }}-var-lib-stellar
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: {{ .Values.core.persistence.storageClass }}
+      resources:
+        requests:
+          storage: {{ .Values.core.persistence.size | quote }}
+  {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: core
+      port: 11626
+      targetPort: 11626
+  selector:
+    app: {{ template "common.fullname" . }}
