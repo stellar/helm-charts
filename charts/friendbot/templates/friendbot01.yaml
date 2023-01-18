@@ -20,8 +20,6 @@ spec:
       app: {{ template "common.fullname" . }}
   strategy:
     type: RollingUpdate
-    maxUnavailable: 0
-    maxSurge: 1
   template:
     metadata:
       labels:
@@ -45,24 +43,28 @@ spec:
       containers:
       - name: friendbot
         image: {{ include "common.friendbotImage" . | quote }}
-        {{- if (.Values.friendbot).cliArgs }}
+        {{- if (.Values.friendbot.deployment.container).cliArgs }}
         args:
-          {{- range $flag := .Values.friendbot.cliArgs }}
+          {{- range $flag := .Values.friendbot.deployment.container.cliArgs }}
           - {{ $flag | quote }}
           {{- end }}
         {{- end }}
         imagePullPolicy: {{ .Values.global.image.friendbot.pullPolicy }}
         startupProbe:
-          tcpSocket: {{ .Values.friendbot.friendbotConfig.adminPort | default 6000 }}
-          initialDelaySeconds: {{ }}
-          failureThreshold: {{ }}
-          periodSeconds: {{ }}
-          timeoutSeconds: {{ }}
-        envFrom:
-        - secretRef:
-            name: {{ .Values.friendbot.existingSecret }}
-        - configMapRef:
-            name: {{ template "common.fullname" . }}-env
+          tcpSocket:
+            port: {{ .Values.friendbot.deployment.container.startupProbe.tcpSocketPort }}
+          initialDelaySeconds: {{ .Values.friendbot.deployment.container.startupProbe.initialDelaySeconds }}
+          failureThreshold: {{ .Values.friendbot.deployment.container.startupProbe.failureThreshold }}
+          periodSeconds: {{ .Values.friendbot.deployment.container.startupProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.friendbot.deployment.container.startupProbe.timeoutSeconds }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /config
+          readOnly: true
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ template "common.fullname" . }}-vol
 ---
 apiVersion: v1
 kind: Service
@@ -84,7 +86,6 @@ spec:
     targetPort: {{ .Values.friendbot.service.targetport | default 8004 }}
   selector:
     app: {{ template "common.fullname" . }}
-{{- end }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -117,7 +118,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "common.fullname" . }}-env
+  name: {{ template "common.fullname" . }}-vol
   {{- if .Release.Namespace }}
   namespace: {{ .Release.Namespace }}
   {{- end }}
@@ -127,13 +128,14 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
-  port = {{ .Values.friendbot.configmap.port | default 8000 }}
-  friendbot_secret = {{ .Values.friendbot.configmap }}
-  network_passphrase =  {{ .Values.global.network_passphrase }}
-  horizon_url =  {{ .Values.global.horizon_url }}
-  starting_balance =  {{ .Values.friendbot.configmap.starting_balance | default 10000 }}
-  num_minions = {{ .Values.friendbot.configmap.num_minions | default 1000 }}
-  base_fee = {{ .Values.friendbot.configmap.base_fee | default 100000 }}
-  minion_batch_size = {{ .Values.friendbot.configmap.minion_batch_size | default 50 }}
-  submit_tx_retries_allowed = {{ .Values.friendbot.configmap.tx | default 5 }
-
+  friendbot.conf: |
+    port = {{ .Values.friendbot.configmap.port | default 8000 }}
+    friendbot_secret = {{ .Values.friendbot.configmap.friendbot_secret }}
+    network_passphrase =  {{ .Values.global.network_passphrase }}
+    horizon_url =  {{ .Values.global.horizon_url }}
+    starting_balance =  {{ .Values.friendbot.configmap.starting_balance | default 10000 }}
+    num_minions = {{ .Values.friendbot.configmap.num_minions | default 1000 }}
+    base_fee = {{ .Values.friendbot.configmap.base_fee | default 100000 }}
+    minion_batch_size = {{ .Values.friendbot.configmap.minion_batch_size | default 50 }}
+    submit_tx_retries_allowed = {{ .Values.friendbot.configmap.tx | default 5 }}
+  

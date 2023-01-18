@@ -20,7 +20,7 @@
 {{- end -}}
 
 {{- define "common.friendbotImage" -}}
-{{ .Values.global.image.soroban-rpc.registry }}/{{ .Values.global.image.soroban-rpc.repository }}:{{ default .Chart.AppVersion .Values.global.image.soroban-rpc.tag }}
+{{ .Values.global.image.friendbot.registry }}/{{ .Values.global.image.friendbot.repository }}{{ .Values.global.image.friendbot.name }}:{{ .Values.global.image.friendbot.tag | default .Chart.AppVersion }}
 {{- end -}}
 
 {{- define "core.config" -}}
