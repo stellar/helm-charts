@@ -1,8 +1,8 @@
 global:
   # namespace: mynamespace
   network: futurenet
-  network_passphrase: '"My Stellar Network 2022"'
-  horizon_url: '"https://horizon-testnet.stellar.org"'
+  network_passphrase: "My Stellar Network 2022"
+  horizon_url: "https://horizon-testnet.stellar.org"
   # nameOverride:
   # fullnameOverride:
 
@@ -10,7 +10,7 @@ global:
     friendbot:
       name: friendbot
       registry: docker-registry.services.stellar-ops.com
-      repository: dev/
+      repository: dev/friendbot
       # tag: x.x.x
 
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
@@ -45,9 +45,9 @@ friendbot:
 
   ingress:
     # port: 80
-    annotations:
-      kubernetes.io/ingress.class: "private"
-      cert-manager.io/cluster-issuer: "default"
+    #annotations:
+    #  kubernetes.io/ingress.class: "public"
+    #  cert-manager.io/cluster-issuer: "default"
     host: "friendbot.example.com"
 
   configmap:

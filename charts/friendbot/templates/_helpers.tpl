@@ -20,14 +20,5 @@
 {{- end -}}
 
 {{- define "common.friendbotImage" -}}
-{{ .Values.global.image.friendbot.registry }}/{{ .Values.global.image.friendbot.repository }}{{ .Values.global.image.friendbot.name }}:{{ .Values.global.image.friendbot.tag | default .Chart.AppVersion }}
+{{ .Values.global.image.friendbot.registry }}/{{ .Values.global.image.friendbot.repository }}:{{ .Values.global.image.friendbot.tag | default .Chart.AppVersion }}
 {{- end -}}
-
-{{- define "core.config" -}}
-{{- if eq .Values.global.network "testnet" -}}
-{{- template "core.testnetConfig" }}
-{{- else -}}
-{{- .Values.ingest.coreConfig }}
-{{- end -}}
-{{- end -}}
-
