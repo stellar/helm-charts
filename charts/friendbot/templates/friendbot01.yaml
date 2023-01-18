@@ -63,8 +63,8 @@ spec:
           readOnly: true
       volumes:
         - name: config-volume
-          configMap:
-            name: {{ template "common.fullname" . }}-vol
+          secret:
+            secretName: {{ template "common.fullname" . }}-vol
 ---
 apiVersion: v1
 kind: Service
@@ -116,7 +116,7 @@ spec:
               number: {{ .Values.friendbot.ingress.port | default 80 }}
 ---
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
   name: {{ template "common.fullname" . }}-vol
   {{- if .Release.Namespace }}
@@ -127,7 +127,7 @@ metadata:
     chart: {{ template "common.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-data:
+stringData:
   friendbot.conf: |
     port = {{ .Values.friendbot.configmap.port | default 8000 }}
     friendbot_secret = {{ .Values.friendbot.configmap.friendbot_secret }}
