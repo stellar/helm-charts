@@ -1,0 +1,141 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- else }}
+  namespace: default
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.friendbot.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "common.fullname" . }}
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ template "common.fullname" . }}
+        release: {{ .Release.Name }}
+      {{- if (.Values.friendbot.deployment).labels }}
+        {{- range $key, $value := .Values.friendbot.deployment.labels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
+      {{- if (.Values.friendbot.deployment).annotations }}
+      annotations:
+        {{- range $key, $value := .Values.friendbot.deployment.annotations }}
+          {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
+    spec:
+      {{- if (.Values.friendbot).serviceAccountName }}
+      serviceAccountName: {{ .Values.friendbot.serviceAccountName | default "default" }}
+      {{- end }}
+      containers:
+      - name: friendbot
+        image: {{ include "common.friendbotImage" . | quote }}
+        {{- if (.Values.friendbot.deployment.container).cliArgs }}
+        args:
+          {{- range $flag := .Values.friendbot.deployment.container.cliArgs }}
+          - {{ $flag | quote }}
+          {{- end }}
+        {{- end }}
+        imagePullPolicy: {{ .Values.global.image.friendbot.pullPolicy }}
+        startupProbe:
+          tcpSocket:
+            port: {{ .Values.friendbot.deployment.container.startupProbe.tcpSocketPort }}
+          initialDelaySeconds: {{ .Values.friendbot.deployment.container.startupProbe.initialDelaySeconds }}
+          failureThreshold: {{ .Values.friendbot.deployment.container.startupProbe.failureThreshold }}
+          periodSeconds: {{ .Values.friendbot.deployment.container.startupProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.friendbot.deployment.container.startupProbe.timeoutSeconds }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /config
+          readOnly: true
+      volumes:
+        - name: config-volume
+          secret:
+            secretName: {{ template "common.fullname" . }}-vol
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: {{ .Values.friendbot.service.port | default 80 }}
+    targetPort: {{ .Values.friendbot.service.targetport | default 8004 }}
+  selector:
+    app: {{ template "common.fullname" . }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  annotations:
+    {{- range $key, $value := .Values.friendbot.ingress.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  tls:
+  - secretName: {{ template "common.fullname" . }}-cert
+    hosts:
+    - {{ .Values.friendbot.ingress.host }}
+  rules:
+  - host: {{ .Values.friendbot.ingress.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ template "common.fullname" . }}
+            port:
+              number: {{ .Values.friendbot.ingress.port | default 80 }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ template "common.fullname" . }}-vol
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+stringData:
+  friendbot.conf: |
+    port = {{ .Values.friendbot.configmap.port | default 8000 }}
+    friendbot_secret = {{ .Values.friendbot.configmap.friendbot_secret }}
+    network_passphrase =  {{ .Values.global.network_passphrase | quote }}
+    horizon_url =  {{ .Values.global.horizon_url | quote }}
+    starting_balance =  {{ .Values.friendbot.configmap.starting_balance | default 10000 }}
+    num_minions = {{ .Values.friendbot.configmap.num_minions | default 1000 }}
+    base_fee = {{ .Values.friendbot.configmap.base_fee | default 100000 }}
+    minion_batch_size = {{ .Values.friendbot.configmap.minion_batch_size | default 50 }}
+    submit_tx_retries_allowed = {{ .Values.friendbot.configmap.tx | default 5 }}
+  

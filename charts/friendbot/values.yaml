@@ -1,0 +1,61 @@
+global:
+  # namespace: mynamespace
+  network: futurenet
+  network_passphrase: "My Stellar Network 2022"
+  horizon_url: "https://horizon-testnet.stellar.org"
+  # nameOverride:
+  # fullnameOverride:
+
+  image:
+    friendbot:
+      name: friendbot
+      registry: docker-registry.services.stellar-ops.com
+      repository: dev/friendbot
+      # tag: x.x.x
+
+      ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+      pullPolicy: IfNotPresent
+
+friendbot:
+
+  # serviceAccountName: default
+
+  deployment:
+    container:
+      cliArgs:
+      - --conf
+      - /config/friendbot.conf
+      replicaCount: 1
+      startupProbe:
+        tcpSocketPort: 8004
+        initialDelaySeconds: 60
+        failureThreshold: 60
+        periodSeconds: 10
+        timeoutSeconds: 5
+    # annotations:
+    #   prometheus.io/scrape: "true"
+    #   prometheus.io/port: "6000"
+    # labels:
+    #   environment: "dev"
+    #   mylabel1: "myvalue1"
+
+  service:
+    port: 80
+    targetport: 8004
+
+  ingress:
+    # port: 80
+    #annotations:
+    #  kubernetes.io/ingress.class: "public"
+    #  cert-manager.io/cluster-issuer: "default"
+    host: "friendbot.example.com"
+
+  configmap:
+    port: 8000 
+    friendbot_secret: "XXXXXXX"
+    # starting_balance: 10000
+    # num_minions: 1000
+    # base_fee: 10000
+    # minion_batch_size: 50
+    # submit_tx_retries_allowed: 5
+
