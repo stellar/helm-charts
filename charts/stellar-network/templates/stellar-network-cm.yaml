@@ -42,10 +42,10 @@ data:
     [net]
     name = default
     network-id = "{{ .Values.global.networkPassphrase }}"
-    {{- if .Values.global.horizonUrl }}
+    {{- if (.Values.global).horizonUrl }}
     horizon = {{ .Values.global.horizonUrl}}
     {{- else }}
-    horizon = {{ .Release.name }}-horizon-ingest
+    horizon = http://{{ .Release.name }}-horizon-ingest
     {{- end }}
   takeovernator.sh: |
     #!/bin/bash
@@ -53,7 +53,7 @@ data:
     set -eu
 
     NETWORK_SHORTNAME=default
-    {{- if .Values.global.horizonUrl }}
+    {{- if (.Values.global).horizonUrl }}
     HORIZON_ENDPOINT={{ .Values.global.horizonUrl }} 
     {{- else }}
     HORIZON_ENDPOINT={{ .Release.name }}-horizon-ingest
