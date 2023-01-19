@@ -17,5 +17,13 @@ For example to render manifests you can use the following command:
 helm install mycore stellar/core
 ```
 
+## Example:
+You can deploy futurenet watcher using `futurenet-values.yaml` config file:
+
+```
+helm install mycore stellar/core --values=futurenet-values.yaml
+
+```
+
 ## TODO
 
