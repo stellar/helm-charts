@@ -79,5 +79,42 @@ sorobanRpc:
   #    cpu: 250m
   #    memory: 2Gi
 
-# core:
-#   enabled: false
+core:
+  enabled: true
+  core:
+    config:
+      bucketDirPath: "/var/lib/stellar/buckets"
+      database: "sqlite3:///var/lib/stellar/stellar.db"
+      httpPort: 11626
+      publicHttpPort: true
+      commands:
+        - "ll?level=info"
+      networkPassphrase: "Test SDF Future Network ; October 2022"
+      peerPort: 11625
+      unsafeQuorum: true
+      catchupComplete: false
+      catchupRecent: 1024
+      automaticMaintenancePeriod: 360
+      automaticMaintenanceCount: 150
+      runStandalone: false
+      invariantChecks:
+        - ".*"
+      homeDomains:
+      - homeDomain: "futurenet.stellar.org"
+        quality: "LOW"
+      validators:
+        - name: "futurenet_1"
+          homeDomain: "futurenet.stellar.org"
+          publicKey: "GBRIF2N52GVN3EXBBICD5F4L5VUFXK6S6VOUCF6T2DWPLOLGWEPPYZTF"
+          address: "horizon-devnet-core-001a.dev.stellar002.external.stellar-ops.com"
+          history: "curl -sf http://history-futurenet.stellar.org/{0} -o {1}"
+        - name: "futurenet_2"
+          homeDomain: "futurenet.stellar.org"
+          publicKey: "GAQM2MF22BYOGIF47RZ2523YK7ZL7Z3CIIX6CCPZBWWLE6KJTXMD4SLO"
+          address: "horizon-devnet-core-002a.dev.stellar002.external.stellar-ops.com"
+          history: "curl -sf http://history-futurenet.stellar.org/{0} -o {1}"
+        - name: "futurenet_3"
+          homeDomain: "futurenet.stellar.org"
+          publicKey: "GC2HLBHG4Z7KV73OPKZD6EWXIXM5QOIZVKN5OS4V2HISDOJC3TUORLY4"
+          address: "horizon-devnet-core-003a.dev.stellar002.external.stellar-ops.com"
+          history: "curl -sf http://history-futurenet.stellar.org/{0} -o {1}"
