@@ -1,0 +1,81 @@
+{{- if (.Values.sorobanRpc).enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.sorobanRpc.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "common.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "common.fullname" . }}
+        release: {{ .Release.Name }}
+      {{- if (.Values.sorobanRpc).labels }}
+        {{- range $key, $value := .Values.sorobanRpc.labels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
+      {{- if (.Values.sorobanRpc).annotations }}
+      annotations:
+        {{- range $key, $value := .Values.sorobanRpc.annotations }}
+          {{ $key }}: {{ $value | quote }}
+          {{- end }}
+      {{- end }}
+    spec:
+      {{- if (.Values.sorobanRpc).serviceAccountName }}
+      serviceAccountName: {{ .Values.sorobanRpc.serviceAccountName | default "default" }}
+      {{- end }}
+      {{- if (.Values.global).imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.global.imagePullSecrets | indent 8 }}
+      {{- end }}
+      containers:
+      - name: soroban-rpc
+        image: {{ include "common.sorobanRpcImage" . | quote }}
+        command:
+        - /bin/bash
+        - -c
+        # sleep command in the following command is temporary arrangement since soroban rpc needs everything in place. 
+        - sleep 10 && /usr/bin/stellar-soroban-rpc --endpoint=localhost:{{.Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }} {{- join " " .Values.sorobanRpc.cliArgs}}
+        imagePullPolicy: {{ .Values.global.image.sorobanRpc.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
+          name: soroban-rpc
+        {{if (.Values.sorobanRpc).resources}}
+        resources:
+{{ toYaml .Values.sorobanRpc.resources | indent 10 }}
+        {{- end }}
+        {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: soroban-rpc
+      port: {{ .Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
+      targetPort: {{ .Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
+  selector:
+    app: {{ template "common.fullname" . }}

@@ -1,0 +1,78 @@
+global:
+  ## String to use to explicitly set namespace name in manifests.
+  ## Useful for those using "helm template" to render templates
+  # namespace: mynamespace
+
+  ## String to partially override common.fullname template (will maintain the release name)
+  ##
+  # nameOverride:
+
+  ## String to fully override common.fullname template
+  ##
+  # fullnameOverride:
+
+  ## List of pre-existing image Pull Secrets to use
+  # imagePullSecrets:
+  # - imagepullsecret1
+  # - imagepullsecret2
+
+  image:
+    sorobanRpc:
+      registry: docker.io
+      repository: satyamz/soroban-rpc
+      ## Optional tag. Defaults to the appVersion from Chart.yaml
+      tag: latest
+
+      ## Specify a imagePullPolicy
+      ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+      ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+      ##
+      pullPolicy: Always
+
+sorobanRpc:
+  ## See global.image.sorobanRpc for image settings
+
+  ## Whether to deploy non-ingesting instances
+  ## Useful with read-only DB replica
+  enabled: true
+
+  ## This variable allows overrides of default settings. It will be used as a container port
+  ## and port where soroban-rpc server will listen.
+  sorobanRpcConfig:
+    port: 8000
+
+  ## List of CLI arguments to provide to the soroban RPC binary
+  # cliArgs: []
+  cliArgs:
+  - --horizon-url=http://localhost:8001
+  - --stellar-core-url=http://localhost:11626
+  - --log-level=info
+  - --network-passphrase=__NETWORK__
+  - --tx-concurrency=2
+  - --tx-queue=10
+
+  ## For production use cases we recommend at least 2 replicas
+  replicaCount: 1
+
+  ## Uncomment to use custom service account
+  # serviceAccountName: default
+
+  ## Additional annotations or labels to add the Deployment template
+  # annotations:
+  #   prometheus.io/scrape: "true"
+  #   prometheus.io/port: "6000"
+  # labels:
+  #   environment: "dev"
+  #   mylabel1: "dev-value"
+
+  ## Uncomment to set resource limits
+  # resources:
+  #  limits:
+  #    cpu: 2
+  #    memory: 4Gi
+  #  requests:
+  #    cpu: 250m
+  #    memory: 2Gi
+
+# core:
+#   enabled: false
