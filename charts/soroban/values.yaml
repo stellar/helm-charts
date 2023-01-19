@@ -73,3 +73,6 @@ sorobanRpc:
   #  requests:
   #    cpu: 250m
   #    memory: 2Gi
+
+# core:
+#   enabled: false

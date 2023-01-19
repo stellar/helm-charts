@@ -44,13 +44,10 @@ spec:
       containers:
       - name: soroban-rpc
         image: {{ include "common.sorobanRpcImage" . | quote }}
-        args:
-          - "--endpoint=localhost:{{.Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}"
-        {{- if (.Values.sorobanRpc).cliArgs }}
-          {{- range $flag := .Values.sorobanRpc.cliArgs }}
-          - {{ $flag | quote }}
-          {{- end }}
-        {{- end }}
+        command:
+        - /bin/bash
+        - -c
+        - sleep 10 && /usr/bin/stellar-soroban-rpc --endpoint=localhost:{{.Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }} {{- join " " .Values.sorobanRpc.cliArgs}}
         imagePullPolicy: {{ .Values.global.image.sorobanRpc.pullPolicy }}
         ports:
         - containerPort: {{ .Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}

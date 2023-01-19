@@ -8,3 +8,8 @@ maintainers:
 sources:
   - https://github.com/stellar/go
   - https://github.com/stellar/helm-charts
+# dependencies:
+#   - name: core
+#     repository: "file://../core"
+#     version: 0.0.1
+#     condition: core.enabled
