@@ -7,3 +7,9 @@ maintainers:
   - name: Stellar Development Foundation
 sources:
   - https://github.com/stellar/helm-charts
+dependencies:
+  - name: friendbot
+    repository: "https://helm.stellar.org/charts"
+    version: 0.0.1
+    condition: friendbot.enabled
+  

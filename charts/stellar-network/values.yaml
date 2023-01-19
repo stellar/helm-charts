@@ -29,3 +29,10 @@ stellarNetwork:
     # labels:
     #   environment: "dev"
     #   mylabel1: "myvalue1"
+
+## Subchart config for friendbot
+friendbot:
+  enabled: true
+  friendbot:
+    configmap:
+      friendbot_secret: "YYYYYYYY"
