@@ -14,7 +14,7 @@ helm repo add stellar https://helm.stellar.org/charts
 ```
 For example to render manifests you can use the following command:
 ```
-helm install myhorizon stellar/soroban-rpc
+helm install my-soroban-rpc stellar/soroban-rpc
 ```
 
 ## TODO
