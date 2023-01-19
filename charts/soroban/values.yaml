@@ -39,7 +39,7 @@ sorobanRpc:
   ## This variable allows overrides of default settings. It will be used as a container port
   ## and port where soroban-rpc server will listen.
   sorobanRpcConfig:
-    port: 9000
+    port: 8000
     ingress:
       host: example.com
       annotations:
