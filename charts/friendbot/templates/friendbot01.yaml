@@ -94,9 +94,11 @@ metadata:
   {{- if .Release.Namespace }}
   namespace: {{ .Release.Namespace }}
   {{- end }}
+  {{- if (.Values.friendbot.ingress).annotations }}
   annotations:
     {{- range $key, $value := .Values.friendbot.ingress.annotations }}
       {{ $key }}: {{ $value | quote }}
+    {{- end }}
     {{- end }}
 spec:
   tls:
