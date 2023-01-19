@@ -42,14 +42,22 @@ data:
     [net]
     name = default
     network-id = "{{ .Values.global.networkPassphrase }}"
+    {{- if .Values.global.horizonUrl }}
     horizon = {{ .Values.global.horizonUrl}}
+    {{- else }}
+    horizon = {{ .Release.name }}-horizon-ingest
+    {{- end }}
   takeovernator.sh: |
     #!/bin/bash
 
     set -eu
 
     NETWORK_SHORTNAME=default
+    {{- if .Values.global.horizonUrl }}
     HORIZON_ENDPOINT={{ .Values.global.horizonUrl }} 
+    {{- else }}
+    HORIZON_ENDPOINT={{ .Release.name }}-horizon-ingest
+    {{- end }}
     NETWORK_ROOT_SEED={{ .Values.stellarNetwork.networkRootSeed }}
     NETWORK_ROOT_PUB=`stc -pub <<<$NETWORK_ROOT_SEED`
     HOLDING_ACCOUNT_SEED={{ .Values.stellarNetwork.holdingAccountSeed }}
