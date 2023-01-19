@@ -47,6 +47,7 @@ spec:
         command:
         - /bin/bash
         - -c
+        # sleep command in the following command is temporary arrangement since soroban rpc needs everything in place. 
         - sleep 10 && /usr/bin/stellar-soroban-rpc --endpoint=localhost:{{.Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }} {{- join " " .Values.sorobanRpc.cliArgs}}
         imagePullPolicy: {{ .Values.global.image.sorobanRpc.pullPolicy }}
         ports:
