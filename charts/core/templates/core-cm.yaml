@@ -1,0 +1,170 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  stellar-core.cfg: |
+    {{ if (.Values.core.config).bucketDirPath -}}
+    BUCKET_DIR_PATH={{ .Values.core.config.bucketDirPath |quote -}}
+    {{ end }}
+    {{ if (.Values.core.config).database -}}
+    DATABASE={{ (.Values.core.config).database | quote }}
+    {{ end -}}
+    {{ if (.Values.core.config).httpPort -}}
+    HTTP_PORT={{ .Values.core.config.httpPort }}
+    {{ end -}}
+    {{ if (.Values.core.config).publicHttpPort -}}
+    PUBLIC_HTTP_PORT={{ .Values.core.config.publicHttpPort }}
+    {{ end -}}
+    {{ if (.Values.core.config).httpMaxClient -}}
+    HTTP_MAX_CLIENT={{ .Values.core.config.httpMaxClient }}
+    {{ end -}}
+    {{ if (.Values.core.config).commands  -}}
+    COMMANDS=["{{- join "\",\"" .Values.core.config.commands }}"]
+    {{ end -}}
+    {{ if (.Values.core.config).nodeNames  -}}
+    NODE_NAMES=["{{- join "\",\"" .Values.core.config.nodeNames }}"]
+    {{ end -}}
+    {{ if (.Values.core.config).networkPassphrase  -}}
+    NETWORK_PASSPHRASE={{ .Values.core.config.networkPassphrase | quote }}
+    {{ end -}}
+    {{ if (.Values.core.config).peerPort -}}
+    PEER_PORT={{ .Values.core.config.peerPort }}
+    {{ end -}}
+    {{ if (.Values.core.config).targetPeerConnections -}}
+    TARGET_PEER_CONNECTIONS={{ .Values.core.config.targetPeerConnections }}
+    {{ end -}}
+    {{ if (.Values.core.config).maxAdditionalPeerConnections -}}
+    MAX_ADDITIONAL_PEER_CONNECTIONS={{ .Values.core.config.maxAdditionalPeerConnections }}
+    {{ end -}}
+    {{ if (.Values.core.config).maxPendingConnections -}}
+    MAX_PENDING_CONNECTIONS={{ .Values.core.config.maxPendingConnections }}
+    {{ end -}}
+    {{ if (.Values.core.config).peerAuthenticationTimeout -}}
+    PEER_AUTHENTICATION_TIMEOUT={{ .Values.core.config.peerAuthenticationTimeout }}
+    {{ end -}}
+    {{ if (.Values.core.config).peerStragglerTimeout -}}
+    PEER_STRAGGLER_TIMEOUT={{ .Values.core.config.peerStragglerTimeout }}
+    {{ end -}}
+    {{ if (.Values.core.config).peerTimeout -}}
+    PEER_TIMEOUT={{ .Values.core.config.peerTimeout }}
+    {{ end -}}
+    {{ if (.Values.core.config).preferredPeers  -}}
+    PREFERRED_PEERS=["{{- join "\",\"" .Values.core.config.preferredPeers }}"]
+    {{ end -}}
+    {{ if (.Values.core.config).preferredPeerKeys  -}}
+    PREFERRED_PEER_KEYS=["{{- join "\",\"" .Values.core.config.preferredPeerKeys}}"]
+    {{ end -}}
+    {{ if (.Values.core.config).preferredPeersOnly -}}
+    PREFERRED_PEERS_ONLY={{ .Values.core.config.preferredPeersOnly | quote }}
+    {{ end -}}
+    {{ if (.Values.core.config).minimumIdlePercent -}}
+    MINIMUM_IDLE_PERCENT={{ .Values.core.config.minimumIdlePercent }}
+    {{ end -}}
+    {{ if (.Values.core.config).knownPeers  -}}
+    KNOWN_PEERS=["{{- join "\",\"" .Values.core.config.knownPeers }}"]
+    {{ end -}}
+    {{ if (.Values.core.config).knownCursors  -}}
+    KNOWN_CURSORS=["{{- join "\",\"" .Values.core.config.knownCursors }}"]
+    {{ end -}}
+    {{ if (.Values.core.config).nodeSeed  -}}
+    NODE_SEED={{ .Values.core.config.nodeSeed | quote }}
+    {{ end -}}
+    {{ if (.Values.core.config).nodeIsValidator -}}
+    NODE_IS_VALIDATOR={{ .Values.core.config.nodeIsValidator | quote }}
+    {{ end -}}
+    {{ if (.Values.core.config).failureSafety -}}
+    FAILURE_SAFETY={{ .Values.core.config.failureSafety | quote }}
+    {{ end -}}
+    {{ if (.Values.core.config).unsafeQuorum -}}
+    UNSAFE_QUORUM={{ .Values.core.config.unsafeQuorum }}
+    {{ end -}}
+    {{ if (.Values.core.config).catchupComplete -}}
+    CATCHUP_COMPLETE={{ .Values.core.config.catchupComplete | quote }}
+    {{ end -}}
+    {{ if (.Values.core.config).catchupRecent -}}
+    CATCHUP_RECENT={{ .Values.core.config.catchupRecent }}
+    {{ end -}}
+    {{ if (.Values.core.config).haltOnInternalTransactionError -}}
+    HALT_ON_INTERNAL_TRANSACTION_ERROR={{ .Values.core.config.haltOnInternalTransactionError | quote }}
+    {{ end -}}
+    {{ if (.Values.core.config).peerReadingCapacity -}}
+    PEER_READING_CAPACITY={{ .Values.core.config.peerReadingCapacity }}
+    {{ end -}}
+    {{ if (.Values.core.config).peerFloodReadingCapacity -}}
+    PEER_FLOOD_READING_CAPACITY={{ .Values.core.config.peerFloodReadingCapacity }}
+    {{ end -}}
+    {{ if (.Values.core.config).flowControlSendMoreBatchSize -}}
+    FLOW_CONTROL_SEND_MORE_BATCH_SIZE={{ .Values.core.config.flowControlSendMoreBatchSize }}
+    {{ end -}}
+    {{ if (.Values.core.config).maxConcurrentSubprocesses -}}
+    MAX_CONCURRENT_SUBPROCESSES={{ .Values.core.config.maxConcurrentSubprocesses }}
+    {{ end -}}
+    {{ if (.Values.core.config).automaticMaintenancePeriod -}}
+    AUTOMATIC_MAINTENANCE_PERIOD={{ .Values.core.config.automaticMaintenancePeriod }}
+    {{ end -}}
+    {{ if (.Values.core.config).automaticMaintenanceCount -}}
+    AUTOMATIC_MAINTENANCE_COUNT={{ .Values.core.config.automaticMaintenanceCount }}
+    {{ end -}}
+    {{ if (.Values.core.config).runStandalone -}}
+    RUN_STANDALONE={{ .Values.core.config.runStandalone | quote }}
+    {{ end -}}
+    {{ if (.Values.core.config).invariantChecks  -}}
+    INVARIANT_CHECKS=["{{- join "\",\"" .Values.core.config.invariantChecks }}"]
+    {{ end -}}
+    {{ if (.Values.core.config).manualClose -}}
+    MANUAL_CLOSE={{ .Values.core.config.manualClose | quote }}
+    {{ end -}}
+    {{ if (.Values.core.config).artificiallyGenerateLoadForTesting -}}
+    ARTIFICIALLY_GENERATE_LOAD_FOR_TESTING={{ .Values.core.config.artificiallyGenerateLoadForTesting | quote }}
+    {{ end -}}
+    {{ if (.Values.core.config).artificiallyAccelerateTimeForTesting -}}
+    ARTIFICIALLY_ACCELERATE_TIME_FOR_TESTING={{ .Values.core.config.artificiallyAccelerateTimeForTesting | quote }}
+    {{ end -}}
+    {{ if (.Values.core.config).artificiallySetCloseTimeForTesting -}}
+    ARTIFICIALLY_SET_CLOSE_TIME_FOR_TESTING={{ .Values.core.config.artificiallySetCloseTimeForTesting | quote }}
+    {{ end -}}
+    {{ if (.Values.core.config).allowLocalhostForTesting -}}
+    ALLOW_LOCALHOST_FOR_TESTING={{ .Values.core.config.allowLocalhostForTesting | quote }}
+    {{ end -}}
+    {{ if (.Values.core.config).nodeHomeDomain -}}
+    NODE_HOME_DOMAIN={{ .Values.core.config.nodeHomeDomain | quote }}
+    {{ end -}}
+    {{ if (.Values.core.config).homeDomains -}}
+    {{- range $homeDomain := .Values.core.config.homeDomains }}
+    [[HOME_DOMAINS]]
+    HOME_DOMAIN={{ get $homeDomain "homeDomain" | quote }}
+    QUALITY={{ get $homeDomain "quality" | quote}}
+    {{- end }}
+    {{ end -}}
+    {{ if (.Values.core.config).validators -}}
+    {{ range $validator := .Values.core.config.validators -}}
+    [[VALIDATORS]]
+    NAME={{ get $validator "name" | quote }}
+    HOME_DOMAIN={{ get $validator "homeDomain" | quote }}
+    PUBLIC_KEY={{ get $validator "publicKey" | quote }}
+    ADDRESS={{ get $validator "address" | quote }}
+    {{ if get $validator "quality" -}}
+    QUALITY={{ get $validator "quality" | quote }}
+    {{ end -}}
+    {{ if get $validator "history" -}}
+    HISTORY={{ get $validator "history" | quote }}
+    {{ end -}}
+    {{ end -}}
+    {{ end -}}
+    {{ if (.Values.core.config).historyArchives -}}
+    {{ range $key, $value := .Values.core.config.historyArchives -}}
+    [{{ $key }}]
+    get={{ get $value "get" | quote }}
+    put={{ get $value "put" | quote }}
+    {{ end -}}
+    {{ end -}}
