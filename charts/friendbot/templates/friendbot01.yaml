@@ -131,8 +131,8 @@ stringData:
   friendbot.conf: |
     port = {{ .Values.friendbot.configmap.port | default 8000 }}
     friendbot_secret = {{ .Values.friendbot.configmap.friendbot_secret }}
-    network_passphrase =  {{ .Values.global.network_passphrase | quote }}
-    horizon_url =  {{ .Values.global.horizon_url | quote }}
+    networkPassphrase =  {{ .Values.global.networkPassphrase | quote }}
+    horizonUrl =  {{ .Values.global.horizonUrl | quote }}
     starting_balance =  {{ .Values.friendbot.configmap.starting_balance | default 10000 }}
     num_minions = {{ .Values.friendbot.configmap.num_minions | default 1000 }}
     base_fee = {{ .Values.friendbot.configmap.base_fee | default 100000 }}

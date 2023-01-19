@@ -1,8 +1,8 @@
 global:
   # namespace: mynamespace
   network: futurenet
-  network_passphrase: "My Stellar Network 2022"
-  horizon_url: "https://horizon-testnet.stellar.org"
+  networkPassphrase: "My Stellar Network 2022"
+  horizonUrl: "https://horizon-testnet.stellar.org"
   # nameOverride:
   # fullnameOverride:
 
