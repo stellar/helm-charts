@@ -9,7 +9,7 @@ metadata:
   {{- end }}
   {{- if (.Values.ingest.ingress).annotations }}
   annotations:
-    {{- range $key, $value := .Values.ingress.ingest.annotations }}
+    {{- range $key, $value := .Values.ingest.ingress.annotations }}
       {{ $key }}: {{ $value | quote }}
     {{- end }}
     {{- end }}
@@ -41,7 +41,7 @@ metadata:
   {{- end }}
   {{- if (.Values.web.ingress).annotations }}
   annotations:
-    {{- range $key, $value := .Values.ingress.web.annotations }}
+    {{- range $key, $value := .Values.web.ingress.annotations }}
       {{ $key }}: {{ $value | quote }}
     {{- end }}
     {{- end }}
