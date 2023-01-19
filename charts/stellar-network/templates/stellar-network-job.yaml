@@ -1,0 +1,60 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- else }}
+  namespace: default
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  template:
+    metadata:
+      labels:
+        app: {{ template "common.fullname" . }}
+        release: {{ .Release.Name }}
+      {{- if (.Values.stellarNetwork.job).labels }}
+        {{- range $key, $value := .Values.stellarNetwork.job.labels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
+      {{- if (.Values.stellarNetwork.job).annotations }}
+      annotations:
+        {{- range $key, $value := .Values.stellarNetwork.job.annotations }}
+          {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
+    spec:
+      {{- if (.Values.stellarNetwork.job).serviceAccountName }}
+      serviceAccountName: {{ .Values.stellarNetwork.job.serviceAccountName | default "default" }}
+      {{- end }}
+      containers:
+      - name: takeovernator
+        image: {{ include "common.takeovernatorImage" . | quote }}
+        command: ["/bin/bash", "-c", "/bin/bash /scripts/upgrade_network.sh {{ .Values.stellarNetwork.protocol }} {{ .Values.stellarNetwork.baseReserve }} {{ .Values.stellarNetwork.maxTx }} && /bin/bash /scripts/takeovernator.sh"]
+        imagePullPolicy: {{ .Values.global.image.takeovernator.pullPolicy }}
+        volumeMounts:
+        - name: takeovernator-volume
+          mountPath: /scripts/upgrade_network.sh
+          subPath: upgrade_network.sh
+          readOnly: true
+        - name: takeovernator-volume
+          mountPath: /scripts/takeovernator.sh
+          subPath: takeovernator.sh
+          readOnly: true
+        - name: takeovernator-volume
+          mountPath: /root/.config/stc/default.net
+          subPath: default.net
+          readOnly: true
+      volumes:
+      - name: takeovernator-volume
+        configMap:
+          name: {{ template "common.fullname" . }}
+      restartPolicy: Never
+  backoffLimit: 5
