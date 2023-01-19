@@ -89,7 +89,7 @@ spec:
   type: ClusterIP
   ports:
     - name: core
-      port: {{ .Values.web.horizonConfig.port | default 8000 }}
+      port: 80
       targetPort: {{ .Values.web.horizonConfig.port | default 8000 }}
   selector:
     app: {{ template "common.fullname" . }}-web
