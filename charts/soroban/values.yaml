@@ -41,7 +41,7 @@ sorobanRpc:
   sorobanRpcConfig:
     port: 8000
     ingress:
-      host: soroban-rpc.stellar-ops.com
+      host: example.com
       annotations:
         kubernetes.io/ingress.class: "public"
         cert-manager.io/cluster-issuer: "default"
