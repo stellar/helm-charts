@@ -40,6 +40,11 @@ sorobanRpc:
   ## and port where soroban-rpc server will listen.
   sorobanRpcConfig:
     port: 8000
+    ingress:
+      host: soroban-rpc.stellar-ops.com
+      annotations:
+        kubernetes.io/ingress.class: "public"
+        cert-manager.io/cluster-issuer: "default"
 
   ## List of CLI arguments to provide to the soroban RPC binary
   # cliArgs: []

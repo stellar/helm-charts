@@ -79,3 +79,33 @@ spec:
       targetPort: {{ .Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
   selector:
     app: {{ template "common.fullname" . }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  {{- if (.Values.sorobanRpc.sorobanRpcConfig.ingress).annotations }}
+  annotations:
+    {{- range $key, $value := .Values.sorobanRpc.sorobanRpcConfig.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    {{- end }}
+spec:
+  tls:
+  - secretName: {{ template "common.fullname" . }}-cert
+    hosts:
+    - {{ .Values.sorobanRpc.sorobanRpcConfig.ingress.host }}
+  rules:
+  - host: {{ .Values.sorobanRpc.sorobanRpcConfig.ingress.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ template "common.fullname" . }}
+            port:
+              number: {{ .Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
