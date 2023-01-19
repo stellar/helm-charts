@@ -100,6 +100,18 @@ ingest:
   #    cpu: 250m
   #    memory: 2Gi
 
+  ## Controls whether ingesting instances are exposed via k8s Ingress
+  ingress:
+    enabled: false
+    host: horizon-ingest.example.com
+    ## Extra annotations to add to the Ingress object
+    #annotations:
+    #  kubernetes.io/ingress.class: "public"
+    #  cert-manager.io/cluster-issuer: "default"
+    ## Extra labels to add to the Ingress object
+    #labels:
+    #  mylabel: myvalue
+
   coreExporter:
     ## Common prometheus config examples do not allow it to scrape 2 ports
     ## If you'd like to scrape both horizon and core metrics example
@@ -160,3 +172,15 @@ web:
   #  requests:
   #    cpu: 250m
   #    memory: 2Gi
+
+  ## Controls whether ingesting instances are exposed via k8s Ingress
+  ingress:
+    enabled: false
+    host: horizon-web.example.com
+    ## Extra annotations to add to the Ingress object
+    #annotations:
+    #  kubernetes.io/ingress.class: "public"
+    #  cert-manager.io/cluster-issuer: "default"
+    ## Extra labels to add to the Ingress object
+    #labels:
+    #  mylabel: myvalue

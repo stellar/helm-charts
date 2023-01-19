@@ -130,4 +130,25 @@ spec:
       targetPort: 11626
   selector:
     app: {{ template "common.fullname" . }}-ingest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "common.fullname" . }}-ingest
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}-ingest
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: horizon
+      port: 80
+      targetPort: {{ .Values.ingest.horizonConfig.port | default 8000 }}
+  selector:
+    app: {{ template "common.fullname" . }}-ingest
 {{- end }}
