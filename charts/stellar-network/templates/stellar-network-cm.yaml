@@ -1,0 +1,106 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- else }}
+  namespace: default
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  upgrade_network.sh: |
+    #!/bin/bash
+    
+    set -eu
+    
+    if [ "$#" -ne 3 ]; then
+      echo "FAIL Not the correct number of parameters"
+      echo "upgrade_network.sh protocol, basereserve, maxtx"
+      exit 1
+    fi
+    
+    PROTOCOL="$1"
+    BASE_RESERVE="$2"
+    MAXTX="$3"
+    
+    if TIMESTAMP=$(date --utc -d "now + 30seconds" "+%Y-%m-%dT%H:%M:%SZ") ; then
+      echo "upgrade_network.sh: Preparing to upgrade the network"
+      curl -s "{{ .Release.Name }}-core:11626/upgrades?mode=set&protocolversion=${PROTOCOL}&upgradetime=${TIMESTAMP}&basereserve=${BASE_RESERVE}&maxtxsetsize=${MAXTX}"
+      sleep 5
+      curl -s "{{ .Release.Name }}-core:11626/info" | jq '.info.network,.info.ledger,.info.status'
+    else
+      echo "upgrade_network.sh: Failed to upgrade the network"
+      exit 2
+    fi
+  default.net: |
+    [net]
+    name = default
+    network-id = "{{ .Values.global.networkPassphrase }}"
+    horizon = {{ .Values.global.horizonUrl}}
+  takeovernator.sh: |
+    #!/bin/bash
+
+    set -eu
+
+    NETWORK_SHORTNAME=default
+    HORIZON_ENDPOINT={{ .Values.global.horizonUrl }} 
+    NETWORK_ROOT_SEED={{ .Values.stellarNetwork.networkRootSeed }}
+    NETWORK_ROOT_PUB=`stc -pub <<<$NETWORK_ROOT_SEED`
+    HOLDING_ACCOUNT_SEED={{ .Values.stellarNetwork.holdingAccountSeed }}
+    HOLDING_ACCOUNT_PUB=`stc -pub <<<$HOLDING_ACCOUNT_SEED`
+    # 100 Billion xlm in stroops
+    #HOLDING_ACCOUNT_BALANCE_STROOP=1000000000000000000
+    HOLDING_ACCOUNT_BALANCE_STROOP=100000000
+    FRIENDBOT_ACCOUNT_SEED={{ .Values.stellarNetwork.friendbotAccountSeed }}
+    FRIENDBOT_ACCOUNT_PUB=`stc -pub <<<$FRIENDBOT_ACCOUNT_SEED`
+    # 10 Billion xlm in stroops
+    #FRIENDBOT_ACCOUNT_BALANCE_STROOP=100000000000000000
+    FRIENDBOT_ACCOUNT_BALANCE_STROOP=10000000
+    
+    # check horizon is up
+    LATEST_LEDGER=`curl -s ${HORIZON_ENDPOINT} | jq '.core_latest_ledger'`
+    if (( $LATEST_LEDGER > 1 )); then
+      HOLDING_ACCOUNT_EXISTS=$(curl --write-out '%{http_code}' --silent --output /dev/null ${HORIZON_ENDPOINT}/accounts/${HOLDING_ACCOUNT_PUB})
+      
+      if [ $HOLDING_ACCOUNT_EXISTS -ne 404 ]; then
+        # holding account exists, do nothing
+        echo "takeovernator: holding account ${HOLDING_ACCOUNT_PUB} exists, skipping"
+      else
+       # create holding account
+        echo "takeovernator: creating $HOLDING_ACCOUNT_PUB holding account"
+        stc -net $NETWORK_SHORTNAME -o /tmp/takeovernator.xdr -c -u -key /dev/fd/3 - 3<<<$NETWORK_ROOT_SEED << EOF
+    tx.sourceAccount: $NETWORK_ROOT_PUB
+    tx.operations.len: 1
+    tx.operations[0].body.type: CREATE_ACCOUNT
+    tx.operations[0].body.createAccountOp.destination: $HOLDING_ACCOUNT_PUB
+    tx.operations[0].body.createAccountOp.startingBalance: $HOLDING_ACCOUNT_BALANCE_STROOP
+    EOF
+    
+        stc -net $NETWORK_SHORTNAME -post /tmp/takeovernator.xdr 
+      fi
+      
+      FRIENDBOT_ACCOUNT_EXISTS=$(curl --write-out '%{http_code}' --silent --output /dev/null ${HORIZON_ENDPOINT}/accounts/${FRIENDBOT_ACCOUNT_PUB})
+      
+      if [ $FRIENDBOT_ACCOUNT_EXISTS -ne 404 ]; then
+        # friendbot account exists, do nothing
+        echo "takeovernator: friendbot account $FRIENDBOT_ACCOUNT_PUB exists, skipping"
+      else
+        # fund friendbot
+        echo "takeovernator: creating $FRIENDBOT_ACCOUNT_PUB Friendbot account"
+        stc -net $NETWORK_SHORTNAME -o /tmp/takeovernator.xdr -c -u -key /dev/fd/3 - 3<<<$HOLDING_ACCOUNT_SEED << EOF
+    tx.sourceAccount: $HOLDING_ACCOUNT_PUB
+    tx.operations.len: 1
+    tx.operations[0].body.type: CREATE_ACCOUNT
+    tx.operations[0].body.createAccountOp.destination: $FRIENDBOT_ACCOUNT_PUB
+    tx.operations[0].body.createAccountOp.startingBalance: $FRIENDBOT_ACCOUNT_BALANCE_STROOP
+    EOF
+        
+        stc -net $NETWORK_SHORTNAME -post /tmp/takeovernator.xdr 
+      fi
+    fi

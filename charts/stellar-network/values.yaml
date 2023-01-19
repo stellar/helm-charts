@@ -1,0 +1,31 @@
+global:
+  # namespace: default
+  networkPassphrase: "Test SDF Network ; September 2015"
+  horizonUrl: "https://horizon-testnet.stellar.org"
+  # nameOverride:
+  # fullnameOverride:
+  image:
+    takeovernator:
+      name: takeovernator
+      registry: docker.io
+      repository: stellar/takeovernator
+      # tag: x.x.x
+      ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+      pullPolicy: IfNotPresent
+
+stellarNetwork:
+  protocol: 20
+  baseReserve: 5000000
+  maxTx: 105
+  networkRootSeed: S...GLQ
+  holdingAccountSeed: S..GRR
+  friendbotAccountSeed: S...GPG
+  
+  # serviceAccountName: default
+
+    # annotations:
+    #   prometheus.io/scrape: "true"
+    #   prometheus.io/port: "6000"
+    # labels:
+    #   environment: "dev"
+    #   mylabel1: "myvalue1"
