@@ -29,6 +29,21 @@ data:
     BASE_RESERVE="$2"
     MAXTX="$3"
     
+    ### wait for core to become available
+    while true
+    do
+      STATE=$(2>&1 curl -s "{{ .Release.Name }}-core:11626/info")
+      [[ "$STATE" =~ 'state" : "'([^\"]*)'"' ]]; then
+      if [ "${BASH_REMATCH[1]}" = "Synced!" ]; then
+        echo "upgrade_network.sh: ${BASH_REMATCH}"
+        break
+      else
+        echo "upgrade_network.sh: ${BASH_REMATCH}. Waiting 10 seconds and will check again."
+        sleep 10
+        STATE="" # reset to null
+      fi
+    done    
+
     if TIMESTAMP=$(date --utc -d "now + 30seconds" "+%Y-%m-%dT%H:%M:%SZ") ; then
       echo "upgrade_network.sh: Preparing to upgrade the network"
       curl -s "{{ .Release.Name }}-core:11626/upgrades?mode=set&protocolversion=${PROTOCOL}&upgradetime=${TIMESTAMP}&basereserve=${BASE_RESERVE}&maxtxsetsize=${MAXTX}"
@@ -52,12 +67,27 @@ data:
 
     set -eu
 
-    NETWORK_SHORTNAME=default
     {{- if (.Values.global).horizonUrl }}
     HORIZON_ENDPOINT={{ .Values.global.horizonUrl }} 
     {{- else }}
     HORIZON_ENDPOINT={{ .Release.name }}-horizon-ingest
     {{- end }}
+
+    # wait until horizon is up
+    while true
+    do
+      LATEST_LEDGER=`curl -s ${HORIZON_ENDPOINT} | jq '.core_latest_ledger'`
+      if (( $LATEST_LEDGER > 1 )); then
+        echo "takeovernator: latest_ledger is ${LATEST_LEDGER}."
+        break
+      else
+        echo "takeovernator: latest_ledger is ${LATEST_LEDGER}. Waiting 10 seconds and will check again."
+        sleep 10
+        LATEST_LEDGER="" # reset to null
+      fi
+    done
+
+    NETWORK_SHORTNAME=default
     NETWORK_ROOT_SEED={{ .Values.stellarNetwork.networkRootSeed }}
     NETWORK_ROOT_PUB=`stc -pub <<<$NETWORK_ROOT_SEED`
     HOLDING_ACCOUNT_SEED={{ .Values.stellarNetwork.holdingAccountSeed }}
