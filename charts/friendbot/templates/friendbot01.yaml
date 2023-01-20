@@ -132,7 +132,7 @@ metadata:
 stringData:
   friendbot.conf: |
     port = {{ .Values.friendbot.configmap.port | default 8000 }}
-    friendbot_secret = {{ .Values.friendbot.configmap.friendbot_secret }}
+    friendbot_secret = {{ .Values.friendbot.configmap.friendbotAccountSeed }}
     networkPassphrase =  {{ .Values.global.networkPassphrase | quote }}
     horizonUrl =  {{ .Values.global.horizonUrl | quote }}
     starting_balance =  {{ .Values.friendbot.configmap.starting_balance | default 10000 }}
