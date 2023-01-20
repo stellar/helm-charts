@@ -23,6 +23,3 @@
 {{ .Values.global.image.core.registry }}/{{ .Values.global.image.core.repository }}:{{ default .Chart.AppVersion .Values.global.image.core.tag }}
 {{- end -}}
 
-{{- define "core.config" -}}
-{{- default "Please pass core.coreConfig value" .Values.core.coreConfig }}
-{{- end -}}

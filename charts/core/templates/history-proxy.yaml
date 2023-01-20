@@ -1,0 +1,85 @@
+{{- if and (.Values.core.historyProxy.enabled) }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "common.fullname" . }}-nginx
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  default.conf: |
+    server {
+      listen 80;
+      server_name _;
+      {{- if (.Values.core.historyProxy).localPath }}
+      root {{ .Values.core.historyProxy.localPath }};
+      {{- else -}}
+      root /var/lib/stellar/local_archive;
+      {{- end }}
+
+      location / {
+        # First attempt to serve request as file, then
+        # as directory, then fall back to a 404
+        try_files $uri $uri/ =404;
+      }
+    }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "common.fullname" . }}-history
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}-history
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: {{ template "common.fullname" . }}
+{{- if and (.Values.core.historyProxy.ingress.enabled) }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "common.fullname" . }}-history
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  {{- if (.Values.core.historyProxy.ingress).annotations }}
+  annotations:
+    {{- range $key, $value := .Values.core.historyProxy.ingress.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    {{- end }}
+spec:
+  tls:
+  - secretName: {{ template "common.fullname" . }}-history-cert
+    hosts:
+    - {{ .Values.core.historyProxy.ingress.host }}
+  rules:
+  - host: {{ .Values.core.historyProxy.ingress.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ template "common.fullname" . }}-history
+            port:
+              number: 80
+{{- end }}
+{{- end }}
