@@ -36,6 +36,6 @@
 {{- if (.Values.sorobanRpc).horizonUrl }}
 {{- .Values.sorobanRpc.horizonUrl }}
 {{- else -}}
-{{- printf "http://%s-ingest:%s" .Release.Name "8000" -}}
+{{- printf "http://%s-ingest:%s" .Release.Name "80" -}}
 {{- end -}}
 {{- end -}}
