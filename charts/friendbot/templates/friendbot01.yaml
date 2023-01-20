@@ -142,6 +142,6 @@ stringData:
     {{- if (.Values.global).horizonUrl }}
     horizonUrl =  {{ .Values.global.horizonUrl | quote }}
     {{- else }}
-    horizonUrl =  {{ Release.Name }}-horizon-ingest
+    horizonUrl =  {{ .Release.Name }}-horizon-ingest
     {{- end }}
  
