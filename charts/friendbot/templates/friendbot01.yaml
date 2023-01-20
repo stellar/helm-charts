@@ -132,16 +132,16 @@ metadata:
 stringData:
   friendbot.conf: |
     port = {{ .Values.friendbot.configmap.port | default 8000 }}
-    friendbot_secret = {{ .Values.friendbot.configmap.friendbotAccountSeed }}
+    friendbot_secret = {{ .Values.friendbot.configmap.friendbotAccountSeed | quote }}
     networkPassphrase =  {{ .Values.global.networkPassphrase | quote }}
-    starting_balance =  {{ .Values.friendbot.configmap.starting_balance | default 10000 }}
+    starting_balance =  {{ .Values.friendbot.configmap.starting_balance | default 10000 | quote }}
     num_minions = {{ .Values.friendbot.configmap.num_minions | default 1000 }}
     base_fee = {{ .Values.friendbot.configmap.base_fee | default 100000 }}
     minion_batch_size = {{ .Values.friendbot.configmap.minion_batch_size | default 50 }}
     submit_tx_retries_allowed = {{ .Values.friendbot.configmap.tx | default 5 }}
     {{- if (.Values.global).horizonUrl }}
-    horizonUrl =  {{ .Values.global.horizonUrl | quote }}
+    horizon_url =  {{ .Values.global.horizonUrl | quote }}
     {{- else }}
-    horizonUrl =  {{ .Release.Name }}-horizon-ingest
+    horizon_url =  {{ .Release.Name }}-horizon-ingest
     {{- end }}
  
