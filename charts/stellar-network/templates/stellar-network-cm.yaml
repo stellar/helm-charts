@@ -72,6 +72,19 @@ data:
     {{- else }}
     HORIZON_ENDPOINT={{ .Release.name }}-horizon-ingest
     {{- end }}
+    NETWORK_SHORTNAME=default
+    NETWORK_ROOT_SEED={{ .Values.stellarNetwork.networkRootSeed }}
+    NETWORK_ROOT_PUB=`stc -pub <<<$NETWORK_ROOT_SEED`
+    HOLDING_ACCOUNT_SEED={{ .Values.stellarNetwork.holdingAccountSeed }}
+    HOLDING_ACCOUNT_PUB=`stc -pub <<<$HOLDING_ACCOUNT_SEED`
+    # 100 Billion xlm in stroops
+    #HOLDING_ACCOUNT_BALANCE_STROOP=1000000000000000000
+    HOLDING_ACCOUNT_BALANCE_STROOP=100000000
+    FRIENDBOT_ACCOUNT_SEED={{ .Values.stellarNetwork.friendbotAccountSeed }}
+    FRIENDBOT_ACCOUNT_PUB=`stc -pub <<<$FRIENDBOT_ACCOUNT_SEED`
+    # 10 Billion xlm in stroops
+    #FRIENDBOT_ACCOUNT_BALANCE_STROOP=100000000000000000
+    FRIENDBOT_ACCOUNT_BALANCE_STROOP=10000000
 
     # wait until horizon is up
     while true
@@ -87,21 +100,7 @@ data:
       fi
     done
 
-    NETWORK_SHORTNAME=default
-    NETWORK_ROOT_SEED={{ .Values.stellarNetwork.networkRootSeed }}
-    NETWORK_ROOT_PUB=`stc -pub <<<$NETWORK_ROOT_SEED`
-    HOLDING_ACCOUNT_SEED={{ .Values.stellarNetwork.holdingAccountSeed }}
-    HOLDING_ACCOUNT_PUB=`stc -pub <<<$HOLDING_ACCOUNT_SEED`
-    # 100 Billion xlm in stroops
-    #HOLDING_ACCOUNT_BALANCE_STROOP=1000000000000000000
-    HOLDING_ACCOUNT_BALANCE_STROOP=100000000
-    FRIENDBOT_ACCOUNT_SEED={{ .Values.stellarNetwork.friendbotAccountSeed }}
-    FRIENDBOT_ACCOUNT_PUB=`stc -pub <<<$FRIENDBOT_ACCOUNT_SEED`
-    # 10 Billion xlm in stroops
-    #FRIENDBOT_ACCOUNT_BALANCE_STROOP=100000000000000000
-    FRIENDBOT_ACCOUNT_BALANCE_STROOP=10000000
-    
-    # check horizon is up
+    # one final check horizon is up
     LATEST_LEDGER=`curl -s ${HORIZON_ENDPOINT} | jq '.core_latest_ledger'`
     if (( $LATEST_LEDGER > 1 )); then
       HOLDING_ACCOUNT_EXISTS=$(curl --write-out '%{http_code}' --silent --output /dev/null ${HORIZON_ENDPOINT}/accounts/${HOLDING_ACCOUNT_PUB})
