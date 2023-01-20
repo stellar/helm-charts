@@ -10,17 +10,17 @@ sources:
 dependencies:
   - name: core
     repository: "https://helm.stellar.org/charts"
-    version: 0.0.1
+    version: 0.0.2
     condition: core.enabled
   - name: horizon
     repository: "https://helm.stellar.org/charts"
-    version: 0.0.1
+    version: 0.0.4
     condition: horizon.enabled
   - name: soroban-rpc
     repository: "https://helm.stellar.org/charts"
-    version: 0.0.1
+    version: 0.0.2
     condition: soroban-rpc.enabled
   - name: friendbot
     repository: "https://helm.stellar.org/charts"
-    version: 0.0.1
+    version: 0.0.2
     condition: friendbot.enabled

@@ -1,7 +1,7 @@
 apiVersion: v1
 name: core
 description: This chart will deploy Stellar Core node
-version: 0.0.1
+version: 0.0.2
 appVersion: "19.6.1-1158.c0ad35aa1.focal-soroban"
 maintainers:
   - name: Stellar Development Foundation
