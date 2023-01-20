@@ -5,10 +5,10 @@ global:
   # nameOverride:
   # fullnameOverride:
   image:
-    takeovernator:
-      name: takeovernator
-      registry: docker.io
-      repository: stellar/takeovernator
+    xdrppStc:
+      name: xdrpp-stc
+      registry: docker-registry.services.stellar-ops.com
+      repository: stellar/xdrpp-stc
       # tag: x.x.x
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
       pullPolicy: IfNotPresent

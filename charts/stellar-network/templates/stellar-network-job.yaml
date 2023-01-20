@@ -35,10 +35,10 @@ spec:
       serviceAccountName: {{ .Values.stellarNetwork.job.serviceAccountName | default "default" }}
       {{- end }}
       containers:
-      - name: takeovernator
-        image: {{ include "common.takeovernatorImage" . | quote }}
+      - name: xdrpp-stc
+        image: {{ include "common.xdrppStcImage" . | quote }}
         command: ["/bin/bash", "-c", "/bin/bash /scripts/upgrade_network.sh {{ .Values.stellarNetwork.protocol }} {{ .Values.stellarNetwork.baseReserve }} {{ .Values.stellarNetwork.maxTx }} && /bin/bash /scripts/takeovernator.sh"]
-        imagePullPolicy: {{ .Values.global.image.takeovernator.pullPolicy }}
+        imagePullPolicy: {{ .Values.global.image.xdrppStc.pullPolicy }}
         volumeMounts:
         - name: takeovernator-volume
           mountPath: /scripts/upgrade_network.sh
