@@ -19,6 +19,6 @@
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{- define "common.takeovernatorImage" -}}
-{{ .Values.global.image.takeovernator.registry }}/{{ .Values.global.image.takeovernator.repository }}:{{ .Values.global.image.takeovernator.tag | default "latest" }}
+{{- define "common.xdrppStc" -}}
+{{ .Values.global.image.xdrppStc.registry }}/{{ .Values.global.image.xdrppStc.repository }}:{{ .Values.global.image.xdrppStc.tag | default "latest" }}
 {{- end -}}
