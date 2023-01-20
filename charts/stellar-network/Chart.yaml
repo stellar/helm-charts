@@ -8,8 +8,19 @@ maintainers:
 sources:
   - https://github.com/stellar/helm-charts
 dependencies:
+  - name: core
+    repository: "https://helm.stellar.org/charts"
+    version: 0.0.1
+    condition: core.enabled
+  - name: horizon
+    repository: "https://helm.stellar.org/charts"
+    version: 0.0.1
+    condition: horizon.enabled
+  - name: soroban
+    repository: "https://helm.stellar.org/charts"
+    version: 0.0.1
+    condition: soroban.enabled
   - name: friendbot
     repository: "https://helm.stellar.org/charts"
     version: 0.0.1
     condition: friendbot.enabled
-  

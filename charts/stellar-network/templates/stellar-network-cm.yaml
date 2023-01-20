@@ -33,14 +33,15 @@ data:
     while true
     do
       STATE=$(2>&1 curl -s "{{ .Release.Name }}-core:11626/info")
-      [[ "$STATE" =~ 'state" : "'([^\"]*)'"' ]]; then
-      if [ "${BASH_REMATCH[1]}" = "Synced!" ]; then
-        echo "upgrade_network.sh: ${BASH_REMATCH}"
-        break
-      else
-        echo "upgrade_network.sh: ${BASH_REMATCH}. Waiting 10 seconds and will check again."
-        sleep 10
-        STATE="" # reset to null
+      if [[ "$STATE" =~ 'state" : "'([^\"]*)'"' ]]; then
+        if [ "${BASH_REMATCH[1]}" = "Synced!" ]; then
+          echo "upgrade_network.sh: ${BASH_REMATCH}"
+          break
+        else
+          echo "upgrade_network.sh: ${BASH_REMATCH}. Waiting 10 seconds and will check again."
+          sleep 10
+          STATE="" # reset to null
+        fi
       fi
     done    
 
