@@ -22,3 +22,7 @@
 {{- define "common.sorobanRpcImage" -}}
 {{ .Values.global.image.sorobanRpc.registry }}/{{ .Values.global.image.sorobanRpc.repository }}:{{ default .Chart.AppVersion .Values.global.image.sorobanRpc.tag }}
 {{- end -}}
+
+{{- define "common.stellarCoreUrl" -}}
+{{- printf "http://%s-core:%s" .Release.Name "11626" -}}
+{{- end -}}
