@@ -1,7 +1,7 @@
 apiVersion: v1
 name: friendbot
 description: This chart will deploy friendbot to your private network
-version: 0.0.1
+version: 0.0.2
 appVersion: "6fbbdc47"
 description: Stellar Friendbot Helm Chart
 maintainers: 
