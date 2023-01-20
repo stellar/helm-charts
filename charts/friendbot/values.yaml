@@ -52,7 +52,7 @@ friendbot:
 
   configmap:
     port: 8000 
-    friendbot_secret: "XXXXXXX"
+    # friendbotAccountSeed: "XXXXXXX" # this comes from stellar-network parent chart
     # starting_balance: 10000
     # num_minions: 1000
     # base_fee: 10000
