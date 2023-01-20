@@ -107,7 +107,7 @@ spec:
       {{- end }}
       {{- if (.Values.core.historyProxy).enabled }}
       - name: history-proxy
-        image: "{{ .Values.global.image.historyProxy.registry }}/{{ .Values.global.image.historyProxy.repository }}:{{ .Values.global.image.historyProxy.tag }}"
+        image: "{{ .Values.global.image.nginx.registry }}/{{ .Values.global.image.nginx.repository }}:{{ .Values.global.image.nginx.tag }}"
         imagePullPolicy: {{ .Values.global.image.core.pullPolicy }}
         ports:
         - containerPort: 80

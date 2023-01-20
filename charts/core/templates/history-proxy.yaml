@@ -18,9 +18,9 @@ data:
       listen 80;
       server_name _;
       {{- if (.Values.core.historyProxy).localPath }}
-      root {{ .Values.core.historyProxy.localPath }}
+      root {{ .Values.core.historyProxy.localPath }};
       {{- else -}}
-      root /var/lib/stellar/local_archive
+      root /var/lib/stellar/local_archive;
       {{- end }}
 
       location / {

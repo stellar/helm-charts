@@ -48,7 +48,8 @@ global:
       ##
       pullPolicy: Always
 
-    historyProxy:
+    ## We use nginx for the history proxy service
+    nginx:
       registry: docker.io
       repository: nginx
       tag: 1.17
