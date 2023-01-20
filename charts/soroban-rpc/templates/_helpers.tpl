@@ -24,5 +24,18 @@
 {{- end -}}
 
 {{- define "common.stellarCoreUrl" -}}
+{{- if (.Values.sorobanRpc).stellarCoreUrl }}
+{{- .Values.sorobanRpc.stellarCoreUrl }}
+{{- else -}}
 {{- printf "http://%s-core:%s" .Release.Name "11626" -}}
+{{- end -}}
+{{- end -}}
+
+
+{{- define "common.horizonUrl" -}}
+{{- if (.Values.sorobanRpc).horizonUrl }}
+{{- .Values.sorobanRpc.horizonUrl }}
+{{- else -}}
+{{- printf "http://%s-ingest:%s" .Release.Name "8000" -}}
+{{- end -}}
 {{- end -}}

@@ -47,7 +47,7 @@ spec:
         - /bin/bash
         - -c
         # sleep command in the following command is temporary arrangement since soroban rpc needs everything in place. 
-        - sleep 10 && /usr/bin/stellar-soroban-rpc --endpoint=0.0.0.0:{{.Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}  --horizon-url={{ .Values.sorobanRpc.horizonUrl | quote }}  --log-level={{.Values.sorobanRpc.logLevel | default  "info" | quote}} --stellar-core-url={{ include "common.stellarCoreUrl" .}} --network-passphrase={{.Values.sorobanRpc.networkPassphrase | default "Test SDF Future Network ; October 2022" | quote}} --tx-concurrency={{.Values.sorobanRpc.txConcurrency | default 2 }} --tx-queue={{.Values.sorobanRpc.txQueue | default 10 }}
+        - sleep 10 && /usr/bin/stellar-soroban-rpc --endpoint=0.0.0.0:{{.Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}  --horizon-url={{ include "common.horizonUrl" .}}  --log-level={{.Values.sorobanRpc.logLevel | default  "info" | quote}} --stellar-core-url={{ include "common.stellarCoreUrl" .}} --network-passphrase={{.Values.sorobanRpc.networkPassphrase | default "Test SDF Future Network ; October 2022" | quote}} --tx-concurrency={{.Values.sorobanRpc.txConcurrency | default 2 }} --tx-queue={{.Values.sorobanRpc.txQueue | default 10 }}
         imagePullPolicy: {{ .Values.global.image.sorobanRpc.pullPolicy }}
         ports:
         - containerPort: {{ .Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
