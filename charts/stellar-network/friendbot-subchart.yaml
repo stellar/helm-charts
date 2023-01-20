@@ -1,7 +1,0 @@
-## Subchart config for friendbot
-friendbot:
-  enabled: true
-  friendbot:
-    configmap:
-      friendbot_secret: "YYYYYYYY"
-
