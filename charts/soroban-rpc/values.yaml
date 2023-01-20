@@ -32,10 +32,6 @@ global:
 sorobanRpc:
   ## See global.image.sorobanRpc for image settings
 
-  ## Whether to deploy non-ingesting instances
-  ## Useful with read-only DB replica
-  enabled: true
-
   ## This variable allows overrides of default settings. It will be used as a container port
   ## and port where soroban-rpc server will listen.
   sorobanRpcConfig:
@@ -46,15 +42,24 @@ sorobanRpc:
         kubernetes.io/ingress.class: "public"
         cert-manager.io/cluster-issuer: "default"
 
-  ## List of CLI arguments to provide to the soroban RPC binary
-  # cliArgs: []
-  cliArgs:
-  - --horizon-url=http://localhost:8001
-  - --stellar-core-url=http://localhost:11626
-  - --log-level=info
-  - --network-passphrase=__NETWORK__
-  - --tx-concurrency=2
-  - --tx-queue=10
+  # horizonUrl for stellar-soroban-rpc to connect to horizon.
+  horizonUrl: "https://horizon-futurenet.stellar.org"
+
+  # stellarCoreUrl for stellar-soroban-rpc to connect to stellar-core watcher node.
+  # This value defaults to the core watcher service.
+  # stellarCoreUrl: "http://localhost:11626"
+
+  # networkPassphrase for stellar-soroban-rpc to connect to network.
+  networkPassphrase: "Test SDF Future Network ; October 2022"
+
+  # txConcurrency stellar-soroban-rpc transactions concurrency.
+  txConcurrency: 2
+
+  # txQueue stellar-soroban-rpc transactions queue.
+  txQueue: 10
+
+  # Set logLevel for stellar-soroban-rpc
+  logLevel: "info"
 
   ## For production use cases we recommend at least 2 replicas
   replicaCount: 1
@@ -81,7 +86,17 @@ sorobanRpc:
 
 core:
   enabled: true
+  global:
+    image:
+      core:
+        registry: docker-registry.services.stellar-ops.com
+        repository: dev/stellar-core
+        tag: 19.6.1-1158.c0ad35aa1.focal-soroban
   core:
+    persistence:
+      enabled: true
+      storageClass: default
+      size: 100G
     config:
       bucketDirPath: "/var/lib/stellar/buckets"
       database: "sqlite3:///var/lib/stellar/stellar.db"
