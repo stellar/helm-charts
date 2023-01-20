@@ -163,8 +163,9 @@ data:
     {{ end -}}
     {{ if (.Values.core.config).historyArchives -}}
     {{ range $key, $value := .Values.core.config.historyArchives -}}
-    [{{ $key }}]
+    [HISTORY.{{ $key }}]
     get={{ get $value "get" | quote }}
     put={{ get $value "put" | quote }}
+    mkdir={{ get $value "mkdir" | quote }}
     {{ end -}}
     {{ end -}}
