@@ -11,8 +11,6 @@ global:
   ##   - core.coreConfig
   network: testnet # XXX currently testnet and pubnet are not supported
 
-  ## Required when global.network is set to non-standard network
-  # historyArchiveUrls: "url1,url2,url3"
   # networkPassphrase: "My Stellar Network; June 2020"
 
   ## String to partially override common.fullname template (will maintain the release name)
@@ -50,6 +48,16 @@ global:
       ##
       pullPolicy: Always
 
+    historyProxy:
+      registry: docker.io
+      repository: nginx
+      tag: 1.17
+      ## Specify a imagePullPolicy
+      ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+      ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+      ##
+      pullPolicy: Always
+
 core:
   ## See global.image.core for image settings
 
@@ -78,6 +86,33 @@ core:
     enabled: false
     storageClass: default
     size: 100G
+
+  ## Validators need to publish history archives. historyProxy section
+  # will make the chart deplo reverse proxy nginx container
+  historyProxy:
+    enabled: false
+
+    ## Path to serve over http
+    # localPath: /var/lib/stellar/local_archive
+    ## Uncomment to set resource limits
+    #resources:
+    #  limits:
+    #    cpu: 250m
+    #    memory: 512Mi
+    #  requests:
+    #    cpu: 50m
+    #    memory: 50Mi
+
+    ingress:
+      enabled: false
+      host: history-proxy.example.com
+      ## Extra annotations to add to the Ingress object
+      #annotations:
+      #  kubernetes.io/ingress.class: "public"
+      #  cert-manager.io/cluster-issuer: "default"
+      ## Extra labels to add to the Ingress object
+      #labels:
+      #  mylabel: myvalue
 
   ## Uncomment to set resource limits
   #resources:

@@ -105,10 +105,34 @@ spec:
 {{ toYaml .Values.core.coreExporter.resources | indent 10 }}
         {{- end }}
       {{- end }}
+      {{- if (.Values.core.historyProxy).enabled }}
+      - name: history-proxy
+        image: "{{ .Values.global.image.historyProxy.registry }}/{{ .Values.global.image.historyProxy.repository }}:{{ .Values.global.image.historyProxy.tag }}"
+        imagePullPolicy: {{ .Values.global.image.core.pullPolicy }}
+        ports:
+        - containerPort: 80
+          name: http
+        {{- if (.Values.core.historyProxy).resources }}
+        resources:
+{{ toYaml .Values.core.historyProxy.resources | indent 10 }}
+        {{- end }}
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d
+          name: nginx-config
+        {{- if .Values.core.persistence.enabled }}
+        - mountPath: /var/lib/stellar
+          name: {{ template "common.fullname" . }}-var-lib-stellar
+        {{- end }}
+      {{- end }}
       volumes:
       - name: core-config
         configMap:
           name: {{ template "common.fullname" . }}
+      {{- if (.Values.core.historyProxy).enabled }}
+      - name: nginx-config
+        configMap:
+          name: {{ template "common.fullname" . }}-nginx
+      {{- end }}
   {{- if .Values.core.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
