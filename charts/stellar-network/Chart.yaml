@@ -16,10 +16,10 @@ dependencies:
     repository: "https://helm.stellar.org/charts"
     version: 0.0.1
     condition: horizon.enabled
-  - name: soroban
+  - name: soroban-rpc
     repository: "https://helm.stellar.org/charts"
     version: 0.0.1
-    condition: soroban.enabled
+    condition: soroban-rpc.enabled
   - name: friendbot
     repository: "https://helm.stellar.org/charts"
     version: 0.0.1
