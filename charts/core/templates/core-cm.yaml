@@ -80,7 +80,7 @@ data:
     NODE_SEED={{ .Values.core.config.nodeSeed | quote }}
     {{ end -}}
     {{ if (.Values.core.config).nodeIsValidator -}}
-    NODE_IS_VALIDATOR={{ .Values.core.config.nodeIsValidator | quote }}
+    NODE_IS_VALIDATOR={{ .Values.core.config.nodeIsValidator }}
     {{ end -}}
     {{ if (.Values.core.config).failureSafety -}}
     FAILURE_SAFETY={{ .Values.core.config.failureSafety | quote }}
@@ -89,7 +89,7 @@ data:
     UNSAFE_QUORUM={{ .Values.core.config.unsafeQuorum }}
     {{ end -}}
     {{ if (.Values.core.config).catchupComplete -}}
-    CATCHUP_COMPLETE={{ .Values.core.config.catchupComplete | quote }}
+    CATCHUP_COMPLETE={{ .Values.core.config.catchupComplete }}
     {{ end -}}
     {{ if (.Values.core.config).catchupRecent -}}
     CATCHUP_RECENT={{ .Values.core.config.catchupRecent }}
