@@ -95,9 +95,9 @@ spec:
   tls:
   - secretName: {{ template "common.fullname" . }}-cert
     hosts:
-    - {{ .Values.sorobanRpc.sorobanRpcConfig.ingress.host }}
+    - {{ .Values.sorobanRpc.sorobanRpcConfig.ingress.host | quote }}
   rules:
-  - host: {{ .Values.sorobanRpc.sorobanRpcConfig.ingress.host }}
+  - host: {{ .Values.sorobanRpc.sorobanRpcConfig.ingress.host | quote }}
     http:
       paths:
       - path: /
