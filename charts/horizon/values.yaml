@@ -62,7 +62,7 @@ ingest:
 
   ## This variable allows overrides of default settings
   horizonConfig:
-    stellarCoreUrl: http://reynholm-industries-core:11626
+    {}
     # port: 8001
 
   ## pre existing secret that contains the DATABASE_URL key with postgres URL
