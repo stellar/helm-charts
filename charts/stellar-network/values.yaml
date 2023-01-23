@@ -1,25 +1,29 @@
 global:
   # namespace: default
-  networkPassphrase: "Test SDF Network ; September 2015"
-  horizonUrl: "https://horizon-testnet.stellar.org"
+  networkPassphrase: "Reynholm Industries Network ; January 2023"
+  horizonUrl: "http://reynholm-industries-horizon-ingest:80/"
   # nameOverride:
   # fullnameOverride:
   image:
     xdrppStc:
       name: xdrpp-stc
       registry: docker-registry.services.stellar-ops.com
-      repository: stellar/xdrpp-stc
+      repository: dev/xdrpp-stc
       # tag: x.x.x
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
       pullPolicy: IfNotPresent
+    core:
+      registry: docker-registry.services.stellar-ops.com
+      repository: dev/stellar-core
+      tag: 19.6.1-1158.c0ad35aa1.focal-soroban
 
 stellarNetwork:
   protocol: 20
-  baseReserve: 5000000
+  baseReserve: "5000000"
   maxTx: 105
-  networkRootSeed: S...GLQ
-  holdingAccountSeed: S..GRR
-  friendbotAccountSeed: S...GPG
+  networkRootSeed: SAQ3ITDEA37QVW2NZX33OLLKBWDNFYCUI5SHPGYOSZU7FRLCRZQMOHXE
+  holdingAccountSeed: SBG73WKEYM26DRSBCF32JNKM27H2QJVMEKJEJPNGOGS2XCGRI5NLJ7TA
+  friendbotAccountSeed: SDHKPK6B3KBEHEBR6JWLUMTPJFTG5ZNO5PYU7RE3MEGM2INGF3HJ5TCW
   
   # serviceAccountName: default
 
@@ -29,3 +33,200 @@ stellarNetwork:
     # labels:
     #   environment: "dev"
     #   mylabel1: "myvalue1"
+
+# Reynholm Industries Network Validator definition
+core:
+  enabled: true
+  core:
+    persistence:
+      enabled: true
+      storageClass: default
+      size: 50G
+    config:
+      bucketDirPath: "/var/lib/stellar/buckets"
+      database: "sqlite3:///var/lib/stellar/stellar.db"
+      httpPort: 11626
+      publicHttpPort: true
+      commands:
+        - "ll?level=info"
+      networkPassphrase: "Reynholm Industries Network ; January 2023"
+      peerPort: 11625
+      unsafeQuorum: true
+      catchupComplete: false
+      catchupRecent: 1024
+      automaticMaintenancePeriod: 360
+      automaticMaintenanceCount: 150
+      runStandalone: false
+      invariantChecks:
+        - ".*"
+      nodeIsValidator: true
+      nodeSeed: "SDRRAU477ZZIDF3JMDMVCOXJS7HPBMKMZWMRA2URKVYPD24LTZ6WYJYR"
+      nodeHomeDomain: "stellar.reynholm.industries"
+      homeDomains:
+      - homeDomain: "stellar.reynholm.industries"
+        quality: "LOW"
+      historyArchives:
+        local:
+          get: "cp /var/lib/stellar/local_archive/{0} {1}"
+          put: "cp --no-preserve=mode {0} /var/lib/stellar/local_archive/{1}"
+          mkdir: "mkdir -p /var/lib/stellar/local_archive/{0}"
+    historyProxy:
+      enabled: true
+
+    ## Path to serve over http
+    # localPath: /var/lib/stellar/local_archive
+    ## Uncomment to set resource limits
+    #resources:
+    #  limits:
+    #    cpu: 250m
+    #    memory: 512Mi
+    #  requests:
+    #    cpu: 50m
+    #    memory: 50Mi
+
+    ingress:
+      enabled: false
+      host: history-proxy.example.com
+      ## Extra annotations to add to the Ingress object
+      #annotations:
+      #  kubernetes.io/ingress.class: "public"
+      #  cert-manager.io/cluster-issuer: "default"
+      ## Extra labels to add to the Ingress object
+      #labels:
+      #  mylabel: myvalue
+
+horizon:
+  global:
+    network: reynholm-industries
+    historyArchiveUrls: "http://reynholm-industries-core-history"
+    image:
+      horizon:
+        registry: docker-registry.services.stellar-ops.com
+        repository: dev/stellar-horizon
+        tag: 2.22.0-soroban-323
+  ingest:
+    ## List of CLI arguments to provide to the stellar-horizon binary
+    # cliArgs:
+    # - "--apply-migrations"
+  
+    ## pre existing secret that contains the DATABASE_URL key with postgres URL
+    existingSecret: "reynholm-industries-horizon-db"
+  
+    persistence:
+      enabled: true
+      storageClass: default
+      size: 50G
+
+    resources:
+      limits:
+        cpu: 2
+        memory: 4Gi
+      requests:
+        cpu: 250m
+        memory: 2Gi
+  
+    coreConfig: |
+      PUBLIC_HTTP_PORT=true
+      ENABLE_PULL_MODE=true
+      INVARIANT_CHECKS=[".*"]
+      [[HOME_DOMAINS]]
+      HOME_DOMAIN="stellar.reynholm.industries"
+      QUALITY="LOW"
+      [[VALIDATORS]]
+      NAME="reynholm_1"
+      HOME_DOMAIN="stellar.reynholm.industries"
+      PUBLIC_KEY="GASUUX4CTOUCD7XSNKTAL5RSFHLGO5OUXGXCMIQCBC2QYUMYQS2TWQ3S"
+      ADDRESS="reynholm-industries-core"
+      HISTORY="curl -sf http://reynholm-industries-core-history/{0} -o {1}"
+
+soroban-rpc:
+  ## See global.image.sorobanRpc for image settings
+  enabled: true
+
+  ## This variable allows overrides of default settings. It will be used as a container port
+  ## and port where soroban-rpc server will listen.
+  sorobanRpc:
+    stellarCoreUrl: "http://reynholm-industries-soroban-core-watcher:11626"
+    networkPassphrase: "Reynholm Industries Network ; January 2023"
+    sorobanRpcConfig:
+      port: 8000
+      ingress:
+        host: "reynholm-industries-soroban.stellar-ops.com"
+        annotations:
+          kubernetes.io/ingress.class: "public"
+          cert-manager.io/cluster-issuer: "default"
+
+    ## List of CLI arguments to provide to the soroban RPC binary
+    # cliArgs: []
+    #cliArgs:
+    #- --horizon-url=http://localhost:8000
+    #- --stellar-core-url=http://localhost:11626
+    #- --log-level=info
+    #- --network-passphrase=__NETWORK__
+    #- --tx-concurrency=2
+    #- --tx-queue=10
+
+    ## For production use cases we recommend at least 2 replicas
+    replicaCount: 1
+
+    ## Uncomment to use custom service account
+    # serviceAccountName: default
+
+    ## Additional annotations or labels to add the Deployment template
+    # annotations:
+    #   prometheus.io/scrape: "true"
+    #   prometheus.io/port: "6000"
+    # labels:
+    #   environment: "dev"
+    #   mylabel1: "dev-value"
+
+    ## Uncomment to set resource limits
+    # resources:
+    #  limits:
+    #    cpu: 2
+    #    memory: 4Gi
+    #  requests:
+    #    cpu: 250m
+    #    memory: 2Gi
+  core:
+    global:
+      nameOverride: soroban-core-watcher
+    enabled: true
+    core:
+      persistence:
+        enabled: true
+        storageClass: default
+        size: 50G
+      config:
+        bucketDirPath: "/var/lib/stellar/buckets"
+        database: "sqlite3:///var/lib/stellar/stellar.db"
+        httpPort: 11626
+        publicHttpPort: true
+        commands:
+          - "ll?level=info"
+        networkPassphrase: "Reynholm Industries Network ; January 2023"
+        peerPort: 11625
+        unsafeQuorum: true
+        catchupComplete: false
+        catchupRecent: 1024
+        automaticMaintenancePeriod: 360
+        automaticMaintenanceCount: 150
+        runStandalone: false
+        invariantChecks:
+          - ".*"
+        homeDomains:
+        - homeDomain: "stellar.reynholm.industries"
+          quality: "LOW"
+        validators:
+          - name: "reynholm_1"
+            homeDomain: "stellar.reynholm.industries"
+            publicKey: "GASUUX4CTOUCD7XSNKTAL5RSFHLGO5OUXGXCMIQCBC2QYUMYQS2TWQ3S"
+            address: "reynholm-industries-core"
+            history: "curl -sf http://reynholm-industries-core-history/{0} -o {1}"
+friendbot:
+  enabled: true
+  friendbot:
+    configmap:
+      friendbotAccountSeed: "SDHKPK6B3KBEHEBR6JWLUMTPJFTG5ZNO5PYU7RE3MEGM2INGF3HJ5TCW"
+    ingress:
+      host: reynholm-industries-friendbot.stellar-ops.com
