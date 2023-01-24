@@ -90,7 +90,11 @@ data:
     # wait until horizon is up
     while true
     do
-      LATEST_LEDGER=`curl -s ${HORIZON_ENDPOINT} | jq '.core_latest_ledger'`
+      if ! LATEST_LEDGER=`2>&1 curl -s ${HORIZON_ENDPOINT} | jq '.core_latest_ledger'`; then
+        echo "takeovernator: curl is unable to fetch latest_ledger."
+      fi
+      echo "takeovernator: Horizon endpoint: ${HORIZON_ENDPOINT}"
+      echo "takeovernator: Latest Ledger is: ${LATEST_LEDGER}"
       if (( $LATEST_LEDGER > 1 )); then
         echo "takeovernator: latest_ledger is ${LATEST_LEDGER}."
         break
