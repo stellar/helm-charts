@@ -17,6 +17,7 @@ data:
   ENABLE_CAPTIVE_CORE_INGESTION: "true"
   STELLAR_CORE_BINARY_PATH: "/usr/bin/stellar-core"
   CAPTIVE_CORE_CONFIG_APPEND_PATH: "/config/stellar-core.cfg"
+  TMPDIR: "/var/lib/stellar"
   CAPTIVE_CORE_STORAGE_PATH: "/var/lib/stellar"
   CAPTIVE_CORE_REUSE_STORAGE_PATH: "True"
   CAPTIVE_CORE_USE_DB: "False"
