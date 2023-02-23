@@ -20,19 +20,19 @@ data:
   TMPDIR: "/var/lib/stellar"
   CAPTIVE_CORE_STORAGE_PATH: "/var/lib/stellar"
   CAPTIVE_CORE_REUSE_STORAGE_PATH: "True"
-  CAPTIVE_CORE_USE_DB: "False"
+  CAPTIVE_CORE_USE_DB: {{ .Values.ingest.horizonConfig.captiveCoreUseDb | default "false" | quote}}
   PORT: {{ .Values.ingest.horizonConfig.port | default "8000" | quote}}
   ADMIN_PORT: {{ .Values.ingest.horizonConfig.adminPort | default "6000" | quote}}
   STELLAR_CORE_URL: {{ .Values.ingest.horizonConfig.stellarCoreUrl | default "http://127.0.0.1:11626" | quote}}
   INGEST_FAILED_TRANSACTIONS: {{ .Values.ingest.horizonConfig.ingestFailedTransactions | default "true" | quote}}
-  PER_HOUR_RATE_LIMIT: {{ .Values.ingest.horizonConfig.perHourRateLimit | default "8000" | quote}}
+  PER_HOUR_RATE_LIMIT: {{ .Values.ingest.horizonConfig.perHourRateLimit | default "3600" | quote}}
   MAX_DB_CONNECTIONS: {{ .Values.ingest.horizonConfig.maxDBConnections | default "20" | quote}}
   SSE_UPDATE_FREQUENCY: {{ .Values.ingest.horizonConfig.SseUpdateFrequency | default "4" | quote}}
   CONNECTION_TIMEOUT: {{ .Values.ingest.horizonConfig.connectionTimeout | default "10" | quote}}
   ALLOW_EMPTY_LEDGER_DATA_RESPONSES: {{ .Values.ingest.horizonConfig.allowEmptyLedgerDataResponses | default "true" | quote}}
+  DISABLE_PATH_FINDING: {{ .Values.ingest.horizonConfig.disablePathFinding | default "false" | quote}}
   ENABLE_ASSET_STATS: {{ .Values.ingest.horizonConfig.enableAssetStats | default "true" | quote}}
   ENABLE_ACCOUNTS_FOR_SIGNER: {{ .Values.ingest.horizonConfig.enableAccountsForSigner | default "false" | quote}}
-  ENABLE_EXPERIMENTAL_INGESTION: {{ .Values.ingest.horizonConfig.enableExperimentalIngestion | default "false" | quote}}
   HISTORY_RETENTION_COUNT: {{ .Values.ingest.horizonConfig.historyRetentionCount | default "34560" | quote}}  # 2 days worth of history
   HISTORY_ARCHIVE_URLS: {{ include "horizon.historyArchiveUrls" . | quote }}
   NETWORK_PASSPHRASE: {{ include "horizon.networkPassphrase" . | quote }}
