@@ -30,12 +30,3 @@
 {{- printf "http://%s-core:%s" .Release.Name "11626" -}}
 {{- end -}}
 {{- end -}}
-
-
-{{- define "common.horizonUrl" -}}
-{{- if (.Values.sorobanRpc).horizonUrl }}
-{{- .Values.sorobanRpc.horizonUrl }}
-{{- else -}}
-{{- printf "http://%s-horizon-ingest:%s" .Release.Name "80" -}}
-{{- end -}}
-{{- end -}}

@@ -42,10 +42,6 @@ sorobanRpc:
         kubernetes.io/ingress.class: "public"
         cert-manager.io/cluster-issuer: "default"
 
-  # horizonUrl for stellar-soroban-rpc to connect to horizon.
-  # sorobanRpc.horizonUrl value defaults to the horizon service in the namespace.
-  # horizonUrl: "https://horizon-futurenet.stellar.org"
-
   # stellarCoreUrl for stellar-soroban-rpc to connect to stellar-core watcher node.
   # sorobanRpc.stellarCoreUrl value defaults to the core watcher service.
   # stellarCoreUrl: "http://localhost:11626"
