@@ -49,12 +49,6 @@ sorobanRpc:
   # networkPassphrase for stellar-soroban-rpc to connect to network.
   networkPassphrase: "Test SDF Future Network ; October 2022"
 
-  # txConcurrency stellar-soroban-rpc transactions concurrency.
-  txConcurrency: 2
-
-  # txQueue stellar-soroban-rpc transactions queue.
-  txQueue: 10
-
   # Set logLevel for stellar-soroban-rpc
   logLevel: "info"
 
