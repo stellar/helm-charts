@@ -19,9 +19,9 @@ global:
   image:
     sorobanRpc:
       registry: docker.io
-      repository: satyamz/soroban-rpc
+      repository: 2opremio/soroban-rpc
       ## Optional tag. Defaults to the appVersion from Chart.yaml
-      tag: latest
+      tag: 6dc54bd
 
       ## Specify a imagePullPolicy
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
@@ -42,22 +42,12 @@ sorobanRpc:
         kubernetes.io/ingress.class: "public"
         cert-manager.io/cluster-issuer: "default"
 
-  # horizonUrl for stellar-soroban-rpc to connect to horizon.
-  # sorobanRpc.horizonUrl value defaults to the horizon service in the namespace.
-  # horizonUrl: "https://horizon-futurenet.stellar.org"
-
   # stellarCoreUrl for stellar-soroban-rpc to connect to stellar-core watcher node.
   # sorobanRpc.stellarCoreUrl value defaults to the core watcher service.
   # stellarCoreUrl: "http://localhost:11626"
 
   # networkPassphrase for stellar-soroban-rpc to connect to network.
   networkPassphrase: "Test SDF Future Network ; October 2022"
-
-  # txConcurrency stellar-soroban-rpc transactions concurrency.
-  txConcurrency: 2
-
-  # txQueue stellar-soroban-rpc transactions queue.
-  txQueue: 10
 
   # Set logLevel for stellar-soroban-rpc
   logLevel: "info"
