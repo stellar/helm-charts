@@ -1,7 +1,5 @@
 # Stellar Horizon Helm Chart
 
-Please note that this chart is not complete yet and should not be used for production deployments.
-
 The chart can deploy ingesting horizon pod and, optionally, dedicated non-ingesting pod(s).
 By default horizon will be connected to the TESTNET network.
 
