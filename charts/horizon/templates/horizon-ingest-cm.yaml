@@ -20,7 +20,10 @@ data:
   TMPDIR: "/var/lib/stellar"
   CAPTIVE_CORE_STORAGE_PATH: "/var/lib/stellar"
   CAPTIVE_CORE_REUSE_STORAGE_PATH: "True"
+  CAPTIVE_CORE_REUSE_STORAGE_DIR: "True"
   CAPTIVE_CORE_USE_DB: {{ .Values.ingest.horizonConfig.captiveCoreUseDb | default "false" | quote}}
+  ENABLE_EXPERIMENTAL_INGESTION: "false"
+  FRIENDBOT_URL: "https://friendbot.stellar.org"
   PORT: {{ .Values.ingest.horizonConfig.port | default "8000" | quote}}
   ADMIN_PORT: {{ .Values.ingest.horizonConfig.adminPort | default "6000" | quote}}
   STELLAR_CORE_URL: {{ .Values.ingest.horizonConfig.stellarCoreUrl | default "http://127.0.0.1:11626" | quote}}
