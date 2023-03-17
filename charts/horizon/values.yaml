@@ -62,8 +62,8 @@ ingest:
 
   ## This variable allows overrides of default settings
   horizonConfig:
-    {}
     # port: 8001
+    perHourRateLimit: 0
 
   ## pre existing secret that contains the DATABASE_URL key with postgres URL
   existingSecret: ""
@@ -73,13 +73,14 @@ ingest:
   # coreConfig:
 
   ## For production use cases we recommend at least 2 replicas
-  replicaCount: 1
+  replicaCount: 2
 
   ## Uncomment to use custom service account
   # serviceAccountName: default
 
   ## Additional annotations or labels to add the Deployment template
-  # annotations:
+  annotations:
+    reloader.stakater.com/auto: "true"
   #   prometheus.io/scrape: "true"
   #   prometheus.io/port: "6000"
   # labels:
