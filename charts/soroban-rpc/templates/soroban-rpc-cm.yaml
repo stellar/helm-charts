@@ -13,6 +13,10 @@ metadata:
     heritage: {{ .Release.Service }}
 data:
   soroban-rpc.cfg: |
+    CAPTIVE_CORE_CONFIG_PATH="/config/stellar-captive-core.cfg"
+    CAPTIVE_CORE_STORAGE_PATH="/var/lib/stellar/captive-core"
+    CAPTIVE_CORE_USE_DB=true
+    STELLAR_CORE_BINARY_PATH="/usr/bin/stellar-core"
     ENDPOINT={{ .Values.sorobanRpc.sorobanRpcConfig.endpoint | default "0.0.0.0:8000" | quote }}
     {{ if (.Values.sorobanRpc.sorobanRpcConfig).friendbotUrl -}}
     FRIENDBOT_URL={{ .Values.sorobanRpc.sorobanRpcConfig.friendbotUrl | quote }}
@@ -22,18 +26,6 @@ data:
     {{ end -}}
     {{ if (.Values.sorobanRpc.sorobanRpcConfig).stellarCoreUrl -}}
     STELLAR_CORE_URL={{ .Values.sorobanRpc.sorobanRpcConfig.stellarCoreUrl | quote }}
-    {{ end -}}
-    {{ if (.Values.sorobanRpc.sorobanRpcConfig).captiveCoreConfigPath -}}
-    CAPTIVE_CORE_CONFIG_PATH={{ .Values.sorobanRpc.sorobanRpcConfig.captiveCoreConfigPath | quote }}
-    {{ end -}}
-    {{ if (.Values.sorobanRpc.sorobanRpcConfig).captiveCoreStoragePath -}}
-    CAPTIVE_CORE_STORAGE_PATH={{ .Values.sorobanRpc.sorobanRpcConfig.captiveCoreStoragePath | quote }}
-    {{ end -}}
-    {{ if (.Values.sorobanRpc.sorobanRpcConfig).captiveCoreUseDb -}}
-    CAPTIVE_CORE_USE_DB={{ .Values.sorobanRpc.sorobanRpcConfig.captiveCoreUseDb }}
-    {{ end -}}
-    {{ if (.Values.sorobanRpc.sorobanRpcConfig).stellarCoreBinaryPath -}}
-    STELLAR_CORE_BINARY_PATH={{ .Values.sorobanRpc.sorobanRpcConfig.stellarCoreBinaryPath | quote }}
     {{ end -}}
     {{ if (.Values.sorobanRpc.sorobanRpcConfig).historyArchiveUrls -}}
     HISTORY_ARCHIVE_URLS={{ .Values.sorobanRpc.sorobanRpcConfig.historyArchiveUrls | quote }}
@@ -54,11 +46,11 @@ data:
     {{ if (.Values.sorobanRpc.coreConfig).database -}}
     DATABASE={{ (.Values.sorobanRpc.coreConfig).database | quote }}
     {{ end -}}
-    {{ if (.Values.sorobanRpc.coreConfig).experimentalBucketlistDb -}}
-    EXPERIMENTAL_BUCKETLIST_DB={{ (.Values.sorobanRpc.coreConfig).experimentalBucketlistDb }}
+    {{ if (.Values.sorobanRpc.coreConfig).bucketlistDb -}}
+    EXPERIMENTAL_BUCKETLIST_DB={{ (.Values.sorobanRpc.coreConfig).bucketlistDb }}
     {{ end -}}
-    {{ if (.Values.sorobanRpc.coreConfig).experimentalBucketlistDbIndexPageSizeExponent -}}
-    EXPERIMENTAL_BUCKETLIST_DB_INDEX_PAGE_SIZE_EXPONENT={{ (.Values.sorobanRpc.coreConfig).experimentalBucketlistDbIndexPageSizeExponent }}
+    {{ if (.Values.sorobanRpc.coreConfig).bucketlistDbIndexPageSizeExponent -}}
+    EXPERIMENTAL_BUCKETLIST_DB_INDEX_PAGE_SIZE_EXPONENT={{ (.Values.sorobanRpc.coreConfig).bucketlistDbIndexPageSizeExponent }}
     {{ end -}}
     {{ if (.Values.sorobanRpc.coreConfig).httpPort -}}
     HTTP_PORT={{ .Values.sorobanRpc.coreConfig.httpPort }}

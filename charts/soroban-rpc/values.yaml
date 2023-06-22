@@ -43,10 +43,6 @@ sorobanRpc:
     friendbotUrl: "https://friendbot-futurenet.stellar.org/"
     networkPassphrase: "Test SDF Future Network ; October 2022"
     stellarCoreUrl: "http://localhost:11626"
-    captiveCoreConfigPath: "/config/stellar-captive-core.cfg"
-    captiveCoreStoragePath: "/var/lib/stellar/captive-core"
-    captiveCoreUseDb: true
-    stellarCoreBinaryPath: "/usr/bin/stellar-core"
     historyArchiveUrls: "http://history-futurenet.stellar.org"
     dbPath: "/var/lib/stellar/soroban-rpc-db.sqlite"
     stellarCaptiveCorePort: 11626
@@ -59,8 +55,8 @@ sorobanRpc:
     peerPort: 11625
 
     database: "sqlite3:///var/lib/stellar/stellar-captive-core.db"
-    experimentalBucketlistDb: "true"
-    experimentalBucketlistDbIndexPageSizeExponent: 12
+    bucketlistDb: "true"
+    bucketlistDbIndexPageSizeExponent: 12
 
     failureSafety: 0
     unsafeQuorum: true
