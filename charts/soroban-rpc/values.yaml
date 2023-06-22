@@ -87,7 +87,7 @@ sorobanRpc:
       kubernetes.io/ingress.class: "public"
       cert-manager.io/cluster-issuer: "default"
 
-  ## Whether to provision persistent volume. Recommended for production use cases
+  ## Whether to provision persistent volume. Recommended for production use cases. Usage of the PV has benefit of avoiding ephemeral storage, which can vary on different infrastructure and potentially be too low for the combined needs of the rpc and captive core processes. Choosing a PV storage class also allows leveraging any IaaS provided volumes with solid read/write performance.
   persistence:
     enabled: false
     storageClass: default
