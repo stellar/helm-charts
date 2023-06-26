@@ -17,46 +17,33 @@ data:
     CAPTIVE_CORE_STORAGE_PATH="/var/lib/stellar/captive-core"
     CAPTIVE_CORE_USE_DB=true
     STELLAR_CORE_BINARY_PATH="/usr/bin/stellar-core"
-    ENDPOINT={{ .Values.sorobanRpc.sorobanRpcConfig.endpoint | default "0.0.0.0:8000" | quote }}
+    ENDPOINT="0.0.0.0:8000"
+    ADMIN_ENDPOINT="0.0.0.0:6061"
+    DB_PATH="/var/lib/stellar/soroban-rpc-db.sqlite"
+    STELLAR_CAPTIVE_CORE_HTTP_PORT=11626
     {{ if (.Values.sorobanRpc.sorobanRpcConfig).friendbotUrl -}}
     FRIENDBOT_URL={{ .Values.sorobanRpc.sorobanRpcConfig.friendbotUrl | quote }}
     {{ end -}}
     {{ if (.Values.sorobanRpc.sorobanRpcConfig).networkPassphrase -}}
     NETWORK_PASSPHRASE={{ .Values.sorobanRpc.sorobanRpcConfig.networkPassphrase | quote }}
     {{ end -}}
-    {{ if (.Values.sorobanRpc.sorobanRpcConfig).stellarCoreUrl -}}
-    STELLAR_CORE_URL={{ .Values.sorobanRpc.sorobanRpcConfig.stellarCoreUrl | quote }}
-    {{ end -}}
     {{ if (.Values.sorobanRpc.sorobanRpcConfig).historyArchiveUrls -}}
     HISTORY_ARCHIVE_URLS={{ .Values.sorobanRpc.sorobanRpcConfig.historyArchiveUrls | quote }}
-    {{ end -}}
-    {{ if (.Values.sorobanRpc.sorobanRpcConfig).dbPath -}}
-    DB_PATH={{ .Values.sorobanRpc.sorobanRpcConfig.dbPath | quote }}
-    {{ end -}}
-    {{ if (.Values.sorobanRpc.sorobanRpcConfig).stellarCaptiveCorePort -}}
-    STELLAR_CAPTIVE_CORE_HTTP_PORT={{ .Values.sorobanRpc.sorobanRpcConfig.stellarCaptiveCorePort }}
     {{ end -}}
     {{ if (.Values.sorobanRpc.sorobanRpcConfig).checkpointFrequence -}}
     CHECKPOINT_FREQUENCY={{ .Values.sorobanRpc.sorobanRpcConfig.checkpointFrequence }}
     {{ end }}
   stellar-captive-core.cfg: |
+    DATABASE="sqlite3:///var/lib/stellar/stellar-captive-core.db"
+    HTTP_PORT=11626
+    PUBLIC_HTTP_PORT=true
+    PEER_PORT=11625
+    EXPERIMENTAL_BUCKETLIST_DB=true
     {{ if (.Values.sorobanRpc.coreConfig).bucketDirPath -}}
     BUCKET_DIR_PATH={{ .Values.sorobanRpc.coreConfig.bucketDirPath |quote -}}
     {{ end }}
-    {{ if (.Values.sorobanRpc.coreConfig).database -}}
-    DATABASE={{ (.Values.sorobanRpc.coreConfig).database | quote }}
-    {{ end -}}
-    {{ if (.Values.sorobanRpc.coreConfig).bucketlistDb -}}
-    EXPERIMENTAL_BUCKETLIST_DB={{ (.Values.sorobanRpc.coreConfig).bucketlistDb }}
-    {{ end -}}
     {{ if (.Values.sorobanRpc.coreConfig).bucketlistDbIndexPageSizeExponent -}}
     EXPERIMENTAL_BUCKETLIST_DB_INDEX_PAGE_SIZE_EXPONENT={{ (.Values.sorobanRpc.coreConfig).bucketlistDbIndexPageSizeExponent }}
-    {{ end -}}
-    {{ if (.Values.sorobanRpc.coreConfig).httpPort -}}
-    HTTP_PORT={{ .Values.sorobanRpc.coreConfig.httpPort }}
-    {{ end -}}
-    {{ if (.Values.sorobanRpc.coreConfig).publicHttpPort -}}
-    PUBLIC_HTTP_PORT={{ .Values.sorobanRpc.coreConfig.publicHttpPort }}
     {{ end -}}
     {{ if (.Values.sorobanRpc.coreConfig).httpMaxClient -}}
     HTTP_MAX_CLIENT={{ .Values.sorobanRpc.coreConfig.httpMaxClient }}
@@ -69,9 +56,6 @@ data:
     {{ end -}}
     {{ if (.Values.sorobanRpc.coreConfig).networkPassphrase  -}}
     NETWORK_PASSPHRASE={{ .Values.sorobanRpc.coreConfig.networkPassphrase | quote }}
-    {{ end -}}
-    {{ if (.Values.sorobanRpc.coreConfig).peerPort -}}
-    PEER_PORT={{ .Values.sorobanRpc.coreConfig.peerPort }}
     {{ end -}}
     {{ if (.Values.sorobanRpc.coreConfig).targetPeerConnections -}}
     TARGET_PEER_CONNECTIONS={{ .Values.sorobanRpc.coreConfig.targetPeerConnections }}

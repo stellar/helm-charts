@@ -32,32 +32,16 @@ global:
 sorobanRpc:
   ## See global.image.sorobanRpc for image settings
 
-
-  ## This variable allows overrides of default settings. It will be used as a container port
-  ## and port where soroban-rpc server will listen.
-  # port: 8000
-
   ## Soroban-rpc config variables
   sorobanRpcConfig:
-    endopoint: "0.0.0.0:8000"
     friendbotUrl: "https://friendbot-futurenet.stellar.org/"
     networkPassphrase: "Test SDF Future Network ; October 2022"
-    stellarCoreUrl: "http://localhost:11626"
     historyArchiveUrls: "http://history-futurenet.stellar.org"
-    dbPath: "/var/lib/stellar/soroban-rpc-db.sqlite"
-    stellarCaptiveCorePort: 11626
     checkpointFrequence: 64
 
   coreConfig:
     networkPassphrase: "Test SDF Future Network ; October 2022"
-    httpPort: 11626
-    publicHttpPort: true
-    peerPort: 11625
-
-    database: "sqlite3:///var/lib/stellar/stellar-captive-core.db"
-    bucketlistDb: "true"
     bucketlistDbIndexPageSizeExponent: 12
-
     failureSafety: 0
     unsafeQuorum: true
 
@@ -83,9 +67,10 @@ sorobanRpc:
 
   ingress:
     host: example.com
-    annotations:
-      kubernetes.io/ingress.class: "public"
-      cert-manager.io/cluster-issuer: "default"
+    ## Additional annotations to add the Ingress template
+    #annotations:
+    #  kubernetes.io/ingress.class: "public"
+    #  cert-manager.io/cluster-issuer: "default"
 
   ## Whether to provision persistent volume. Recommended for production use cases. Usage of the PV has benefit of avoiding ephemeral storage, which can vary on different infrastructure and potentially be too low for the combined needs of the rpc and captive core processes. Choosing a PV storage class also allows leveraging any IaaS provided volumes with solid read/write performance.
   persistence:
@@ -99,7 +84,7 @@ sorobanRpc:
   ## Additional annotations or labels to add the StatefulSet template
   # annotations:
   #   prometheus.io/scrape: "true"
-  #   prometheus.io/port: "8001"
+  #   prometheus.io/port: "6061"
   # labels:
   #   environment: "dev"
   #   mylabel1: "dev-value"

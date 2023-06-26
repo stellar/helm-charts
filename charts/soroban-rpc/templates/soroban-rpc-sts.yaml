@@ -57,8 +57,10 @@ spec:
           mountPath: /var/lib/stellar
         {{- end }}
         ports:
-        - containerPort: {{ .Values.sorobanRpc.port | default 8000 }}
+        - containerPort: 8000
           name: soroban-rpc
+        - containerPort: 6061
+          name: admin-port
         {{if (.Values.sorobanRpc).resources}}
         resources:
 {{ toYaml .Values.sorobanRpc.resources | indent 10 }}
@@ -95,8 +97,8 @@ spec:
   type: ClusterIP
   ports:
     - name: soroban-rpc
-      port: {{ .Values.sorobanRpc.port | default 8000 }}
-      targetPort: {{ .Values.sorobanRpc.port | default 8000 }}
+      port: 8000
+      targetPort: 8000
   selector:
     app: {{ template "common.fullname" . }}
 ---
@@ -128,4 +130,4 @@ spec:
           service:
             name: {{ template "common.fullname" . }}
             port:
-              number: {{ .Values.sorobanRpc.port | default 8000 }}
+              number: 8000
