@@ -19,9 +19,9 @@ global:
   image:
     sorobanRpc:
       registry: docker.io
-      repository: 2opremio/soroban-rpc
+      repository: stellar/soroban-rpc
       ## Optional tag. Defaults to the appVersion from Chart.yaml
-      tag: 6dc54bd
+      # tag: abc123
 
       ## Specify a imagePullPolicy
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
@@ -32,36 +32,59 @@ global:
 sorobanRpc:
   ## See global.image.sorobanRpc for image settings
 
-  ## This variable allows overrides of default settings. It will be used as a container port
-  ## and port where soroban-rpc server will listen.
+  ## Soroban-rpc config variables
   sorobanRpcConfig:
-    port: 8000
-    ingress:
-      host: example.com
-      annotations:
-        kubernetes.io/ingress.class: "public"
-        cert-manager.io/cluster-issuer: "default"
+    friendbotUrl: "https://friendbot-futurenet.stellar.org/"
+    networkPassphrase: "Test SDF Future Network ; October 2022"
+    historyArchiveUrls: "http://history-futurenet.stellar.org"
+    checkpointFrequence: 64
 
-  # stellarCoreUrl for stellar-soroban-rpc to connect to stellar-core watcher node.
-  # sorobanRpc.stellarCoreUrl value defaults to the core watcher service.
-  # stellarCoreUrl: "http://localhost:11626"
+  coreConfig:
+    networkPassphrase: "Test SDF Future Network ; October 2022"
+    bucketlistDbIndexPageSizeExponent: 12
+    failureSafety: 0
+    unsafeQuorum: true
 
-  # networkPassphrase for stellar-soroban-rpc to connect to network.
-  networkPassphrase: "Test SDF Future Network ; October 2022"
+    homeDomains:
+    - homeDomain: "futurenet.stellar.org"
+      quality: "MEDIUM"
+    validators:
+      - name: "sdf_futurenet_1"
+        homeDomain: "futurenet.stellar.org"
+        publicKey: "GBRIF2N52GVN3EXBBICD5F4L5VUFXK6S6VOUCF6T2DWPLOLGWEPPYZTF"
+        address: "horizon-devnet-core-001a.dev.stellar002.external.stellar-ops.com"
+        history: "curl -sf http://history-futurenet.stellar.org/{0} -o {1}"
+      - name: "sdf_futurenet_2"
+        homeDomain: "futurenet.stellar.org"
+        publicKey: "GAQM2MF22BYOGIF47RZ2523YK7ZL7Z3CIIX6CCPZBWWLE6KJTXMD4SLO"
+        address: "horizon-devnet-core-002a.dev.stellar002.external.stellar-ops.com"
+        history: "curl -sf http://history-futurenet.stellar.org/{0} -o {1}"
+      - name: "sdf_futurenet_3"
+        homeDomain: "futurenet.stellar.org"
+        publicKey: "GC2HLBHG4Z7KV73OPKZD6EWXIXM5QOIZVKN5OS4V2HISDOJC3TUORLY4"
+        address: "horizon-devnet-core-003a.dev.stellar002.external.stellar-ops.com"
+        history: "curl -sf http://history-futurenet.stellar.org/{0} -o {1}"
 
-  # Set logLevel for stellar-soroban-rpc
-  logLevel: "info"
+  ingress:
+    host: example.com
+    ## Additional annotations to add the Ingress template
+    #annotations:
+    #  kubernetes.io/ingress.class: "public"
+    #  cert-manager.io/cluster-issuer: "default"
 
-  ## For production use cases we recommend at least 2 replicas
-  replicaCount: 1
+  ## Whether to provision persistent volume. Recommended for production use cases. Usage of the PV has benefit of avoiding ephemeral storage, which can vary on different infrastructure and potentially be too low for the combined needs of the rpc and captive core processes. Choosing a PV storage class also allows leveraging any IaaS provided volumes with solid read/write performance.
+  persistence:
+    enabled: false
+    storageClass: default
+    size: 100G
 
   ## Uncomment to use custom service account
   # serviceAccountName: default
 
-  ## Additional annotations or labels to add the Deployment template
+  ## Additional annotations or labels to add the StatefulSet template
   # annotations:
   #   prometheus.io/scrape: "true"
-  #   prometheus.io/port: "6000"
+  #   prometheus.io/port: "6061"
   # labels:
   #   environment: "dev"
   #   mylabel1: "dev-value"
@@ -75,52 +98,3 @@ sorobanRpc:
   #    cpu: 250m
   #    memory: 2Gi
 
-core:
-  enabled: true
-  global:
-    image:
-      core:
-        registry: docker-registry.services.stellar-ops.com
-        repository: dev/stellar-core
-        tag: 19.6.1-1158.c0ad35aa1.focal-soroban
-  core:
-    persistence:
-      enabled: true
-      storageClass: default
-      size: 100G
-    config:
-      bucketDirPath: "/var/lib/stellar/buckets"
-      database: "sqlite3:///var/lib/stellar/stellar.db"
-      httpPort: 11626
-      publicHttpPort: true
-      commands:
-        - "ll?level=info"
-      networkPassphrase: "Test SDF Future Network ; October 2022"
-      peerPort: 11625
-      unsafeQuorum: true
-      catchupComplete: false
-      catchupRecent: 1024
-      automaticMaintenancePeriod: 360
-      automaticMaintenanceCount: 150
-      runStandalone: false
-      invariantChecks:
-        - ".*"
-      homeDomains:
-      - homeDomain: "futurenet.stellar.org"
-        quality: "LOW"
-      validators:
-        - name: "futurenet_1"
-          homeDomain: "futurenet.stellar.org"
-          publicKey: "GBRIF2N52GVN3EXBBICD5F4L5VUFXK6S6VOUCF6T2DWPLOLGWEPPYZTF"
-          address: "horizon-devnet-core-001a.dev.stellar002.external.stellar-ops.com"
-          history: "curl -sf http://history-futurenet.stellar.org/{0} -o {1}"
-        - name: "futurenet_2"
-          homeDomain: "futurenet.stellar.org"
-          publicKey: "GAQM2MF22BYOGIF47RZ2523YK7ZL7Z3CIIX6CCPZBWWLE6KJTXMD4SLO"
-          address: "horizon-devnet-core-002a.dev.stellar002.external.stellar-ops.com"
-          history: "curl -sf http://history-futurenet.stellar.org/{0} -o {1}"
-        - name: "futurenet_3"
-          homeDomain: "futurenet.stellar.org"
-          publicKey: "GC2HLBHG4Z7KV73OPKZD6EWXIXM5QOIZVKN5OS4V2HISDOJC3TUORLY4"
-          address: "horizon-devnet-core-003a.dev.stellar002.external.stellar-ops.com"
-          history: "curl -sf http://history-futurenet.stellar.org/{0} -o {1}"

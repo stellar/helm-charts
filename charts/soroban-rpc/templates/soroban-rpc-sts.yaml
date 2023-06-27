@@ -1,6 +1,6 @@
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ template "common.fullname" . }}
   {{- if .Release.Namespace }}
@@ -12,7 +12,10 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  replicas: {{ .Values.sorobanRpc.replicaCount }}
+  # Currently Soroban RPC doesn't support HA deployments.
+  # For that reason we hardcode replicas value at 1
+  replicas: 1
+  serviceName: {{ template "common.fullname" . }}
   selector:
     matchLabels:
       app: {{ template "common.fullname" . }}
@@ -43,19 +46,40 @@ spec:
       containers:
       - name: soroban-rpc
         image: {{ include "common.sorobanRpcImage" . | quote }}
-        command:
-        - /bin/bash
-        - -c
-        # sleep command in the following command is temporary arrangement since soroban rpc needs everything in place. 
-        - sleep 10 && /usr/bin/stellar-soroban-rpc --endpoint=0.0.0.0:{{.Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}  --log-level={{.Values.sorobanRpc.logLevel | default  "info" | quote}} --stellar-core-url={{ include "common.stellarCoreUrl" .}} --network-passphrase={{.Values.sorobanRpc.networkPassphrase | default "Test SDF Future Network ; October 2022" | quote}}
+        args: ["--config-path", "/config/soroban-rpc.cfg"]
         imagePullPolicy: {{ .Values.global.image.sorobanRpc.pullPolicy }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /config
+          readOnly: true
+        {{- if .Values.sorobanRpc.persistence.enabled }}
+        - name: {{ template "common.fullname" . }}-var-lib-stellar
+          mountPath: /var/lib/stellar
+        {{- end }}
         ports:
-        - containerPort: {{ .Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
+        - containerPort: 8000
           name: soroban-rpc
+        - containerPort: 6061
+          name: admin-port
         {{if (.Values.sorobanRpc).resources}}
         resources:
 {{ toYaml .Values.sorobanRpc.resources | indent 10 }}
         {{- end }}
+      volumes:
+      - name: config-volume
+        configMap:
+          name: {{ template "common.fullname" . }}
+  {{- if .Values.sorobanRpc.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ template "common.fullname" . }}-var-lib-stellar
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: {{ .Values.sorobanRpc.persistence.storageClass }}
+      resources:
+        requests:
+          storage: {{ .Values.sorobanRpc.persistence.size | quote }}
+  {{- end }}
 ---
 apiVersion: v1
 kind: Service
@@ -73,8 +97,8 @@ spec:
   type: ClusterIP
   ports:
     - name: soroban-rpc
-      port: {{ .Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
-      targetPort: {{ .Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
+      port: 8000
+      targetPort: 8000
   selector:
     app: {{ template "common.fullname" . }}
 ---
@@ -85,9 +109,9 @@ metadata:
   {{- if .Release.Namespace }}
   namespace: {{ .Release.Namespace }}
   {{- end }}
-  {{- if (.Values.sorobanRpc.sorobanRpcConfig.ingress).annotations }}
+  {{- if (.Values.sorobanRpc.ingress).annotations }}
   annotations:
-    {{- range $key, $value := .Values.sorobanRpc.sorobanRpcConfig.ingress.annotations }}
+    {{- range $key, $value := .Values.sorobanRpc.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
     {{- end }}
@@ -95,9 +119,9 @@ spec:
   tls:
   - secretName: {{ template "common.fullname" . }}-cert
     hosts:
-    - {{ .Values.sorobanRpc.sorobanRpcConfig.ingress.host | quote }}
+    - {{ .Values.sorobanRpc.ingress.host | quote }}
   rules:
-  - host: {{ .Values.sorobanRpc.sorobanRpcConfig.ingress.host | quote }}
+  - host: {{ .Values.sorobanRpc.ingress.host | quote }}
     http:
       paths:
       - path: /
@@ -106,4 +130,4 @@ spec:
           service:
             name: {{ template "common.fullname" . }}
             port:
-              number: {{ .Values.sorobanRpc.sorobanRpcConfig.port | default 8000 }}
+              number: 8000

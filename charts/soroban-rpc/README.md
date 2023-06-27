@@ -10,7 +10,7 @@ Default parameters should be fine for dev environments.
 
 Add SDF helm repo to your system:
 ```
-helm repo add stellar https://helm.stellar.org/charts
+helm repo add stellar https://helm.stellar.org/charts && helm repo update
 ```
 For example to render manifests you can use the following command:
 ```

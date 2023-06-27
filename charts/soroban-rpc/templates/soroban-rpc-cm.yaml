@@ -1,0 +1,188 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  soroban-rpc.cfg: |
+    CAPTIVE_CORE_CONFIG_PATH="/config/stellar-captive-core.cfg"
+    CAPTIVE_CORE_STORAGE_PATH="/var/lib/stellar/captive-core"
+    CAPTIVE_CORE_USE_DB=true
+    STELLAR_CORE_BINARY_PATH="/usr/bin/stellar-core"
+    ENDPOINT="0.0.0.0:8000"
+    ADMIN_ENDPOINT="0.0.0.0:6061"
+    DB_PATH="/var/lib/stellar/soroban-rpc-db.sqlite"
+    STELLAR_CAPTIVE_CORE_HTTP_PORT=11626
+    {{ if (.Values.sorobanRpc.sorobanRpcConfig).friendbotUrl -}}
+    FRIENDBOT_URL={{ .Values.sorobanRpc.sorobanRpcConfig.friendbotUrl | quote }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.sorobanRpcConfig).networkPassphrase -}}
+    NETWORK_PASSPHRASE={{ .Values.sorobanRpc.sorobanRpcConfig.networkPassphrase | quote }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.sorobanRpcConfig).historyArchiveUrls -}}
+    HISTORY_ARCHIVE_URLS={{ .Values.sorobanRpc.sorobanRpcConfig.historyArchiveUrls | quote }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.sorobanRpcConfig).checkpointFrequence -}}
+    CHECKPOINT_FREQUENCY={{ .Values.sorobanRpc.sorobanRpcConfig.checkpointFrequence }}
+    {{ end }}
+  stellar-captive-core.cfg: |
+    DATABASE="sqlite3:///var/lib/stellar/stellar-captive-core.db"
+    HTTP_PORT=11626
+    PUBLIC_HTTP_PORT=true
+    PEER_PORT=11625
+    EXPERIMENTAL_BUCKETLIST_DB=true
+    {{ if (.Values.sorobanRpc.coreConfig).bucketDirPath -}}
+    BUCKET_DIR_PATH={{ .Values.sorobanRpc.coreConfig.bucketDirPath |quote -}}
+    {{ end }}
+    {{ if (.Values.sorobanRpc.coreConfig).bucketlistDbIndexPageSizeExponent -}}
+    EXPERIMENTAL_BUCKETLIST_DB_INDEX_PAGE_SIZE_EXPONENT={{ (.Values.sorobanRpc.coreConfig).bucketlistDbIndexPageSizeExponent }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).httpMaxClient -}}
+    HTTP_MAX_CLIENT={{ .Values.sorobanRpc.coreConfig.httpMaxClient }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).commands  -}}
+    COMMANDS=["{{- join "\",\"" .Values.sorobanRpc.coreConfig.commands }}"]
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).nodeNames  -}}
+    NODE_NAMES=["{{- join "\",\"" .Values.sorobanRpc.coreConfig.nodeNames }}"]
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).networkPassphrase  -}}
+    NETWORK_PASSPHRASE={{ .Values.sorobanRpc.coreConfig.networkPassphrase | quote }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).targetPeerConnections -}}
+    TARGET_PEER_CONNECTIONS={{ .Values.sorobanRpc.coreConfig.targetPeerConnections }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).maxAdditionalPeerConnections -}}
+    MAX_ADDITIONAL_PEER_CONNECTIONS={{ .Values.sorobanRpc.coreConfig.maxAdditionalPeerConnections }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).maxPendingConnections -}}
+    MAX_PENDING_CONNECTIONS={{ .Values.sorobanRpc.coreConfig.maxPendingConnections }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).peerAuthenticationTimeout -}}
+    PEER_AUTHENTICATION_TIMEOUT={{ .Values.sorobanRpc.coreConfig.peerAuthenticationTimeout }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).peerStragglerTimeout -}}
+    PEER_STRAGGLER_TIMEOUT={{ .Values.sorobanRpc.coreConfig.peerStragglerTimeout }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).peerTimeout -}}
+    PEER_TIMEOUT={{ .Values.sorobanRpc.coreConfig.peerTimeout }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).preferredPeers  -}}
+    PREFERRED_PEERS=["{{- join "\",\"" .Values.sorobanRpc.coreConfig.preferredPeers }}"]
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).preferredPeerKeys  -}}
+    PREFERRED_PEER_KEYS=["{{- join "\",\"" .Values.sorobanRpc.coreConfig.preferredPeerKeys}}"]
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).preferredPeersOnly -}}
+    PREFERRED_PEERS_ONLY={{ .Values.sorobanRpc.coreConfig.preferredPeersOnly | quote }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).minimumIdlePercent -}}
+    MINIMUM_IDLE_PERCENT={{ .Values.sorobanRpc.coreConfig.minimumIdlePercent }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).knownPeers  -}}
+    KNOWN_PEERS=["{{- join "\",\"" .Values.sorobanRpc.coreConfig.knownPeers }}"]
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).knownCursors  -}}
+    KNOWN_CURSORS=["{{- join "\",\"" .Values.sorobanRpc.coreConfig.knownCursors }}"]
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).nodeSeed  -}}
+    NODE_SEED={{ .Values.sorobanRpc.coreConfig.nodeSeed | quote }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).nodeIsValidator -}}
+    NODE_IS_VALIDATOR={{ .Values.sorobanRpc.coreConfig.nodeIsValidator }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).failureSafety -}}
+    FAILURE_SAFETY={{ .Values.sorobanRpc.coreConfig.failureSafety | quote }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).unsafeQuorum -}}
+    UNSAFE_QUORUM={{ .Values.sorobanRpc.coreConfig.unsafeQuorum }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).catchupComplete -}}
+    CATCHUP_COMPLETE={{ .Values.sorobanRpc.coreConfig.catchupComplete }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).catchupRecent -}}
+    CATCHUP_RECENT={{ .Values.sorobanRpc.coreConfig.catchupRecent }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).haltOnInternalTransactionError -}}
+    HALT_ON_INTERNAL_TRANSACTION_ERROR={{ .Values.sorobanRpc.coreConfig.haltOnInternalTransactionError | quote }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).peerReadingCapacity -}}
+    PEER_READING_CAPACITY={{ .Values.sorobanRpc.coreConfig.peerReadingCapacity }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).peerFloodReadingCapacity -}}
+    PEER_FLOOD_READING_CAPACITY={{ .Values.sorobanRpc.coreConfig.peerFloodReadingCapacity }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).flowControlSendMoreBatchSize -}}
+    FLOW_CONTROL_SEND_MORE_BATCH_SIZE={{ .Values.sorobanRpc.coreConfig.flowControlSendMoreBatchSize }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).maxConcurrentSubprocesses -}}
+    MAX_CONCURRENT_SUBPROCESSES={{ .Values.sorobanRpc.coreConfig.maxConcurrentSubprocesses }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).automaticMaintenancePeriod -}}
+    AUTOMATIC_MAINTENANCE_PERIOD={{ .Values.sorobanRpc.coreConfig.automaticMaintenancePeriod }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).automaticMaintenanceCount -}}
+    AUTOMATIC_MAINTENANCE_COUNT={{ .Values.sorobanRpc.coreConfig.automaticMaintenanceCount }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).runStandalone -}}
+    RUN_STANDALONE={{ .Values.sorobanRpc.coreConfig.runStandalone | quote }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).invariantChecks  -}}
+    INVARIANT_CHECKS=["{{- join "\",\"" .Values.sorobanRpc.coreConfig.invariantChecks }}"]
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).manualClose -}}
+    MANUAL_CLOSE={{ .Values.sorobanRpc.coreConfig.manualClose | quote }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).artificiallyGenerateLoadForTesting -}}
+    ARTIFICIALLY_GENERATE_LOAD_FOR_TESTING={{ .Values.sorobanRpc.coreConfig.artificiallyGenerateLoadForTesting | quote }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).artificiallyAccelerateTimeForTesting -}}
+    ARTIFICIALLY_ACCELERATE_TIME_FOR_TESTING={{ .Values.sorobanRpc.coreConfig.artificiallyAccelerateTimeForTesting | quote }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).artificiallySetCloseTimeForTesting -}}
+    ARTIFICIALLY_SET_CLOSE_TIME_FOR_TESTING={{ .Values.sorobanRpc.coreConfig.artificiallySetCloseTimeForTesting | quote }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).allowLocalhostForTesting -}}
+    ALLOW_LOCALHOST_FOR_TESTING={{ .Values.sorobanRpc.coreConfig.allowLocalhostForTesting | quote }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).nodeHomeDomain -}}
+    NODE_HOME_DOMAIN={{ .Values.sorobanRpc.coreConfig.nodeHomeDomain | quote }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).homeDomains -}}
+    {{- range $homeDomain := .Values.sorobanRpc.coreConfig.homeDomains }}
+    [[HOME_DOMAINS]]
+    HOME_DOMAIN={{ get $homeDomain "homeDomain" | quote }}
+    QUALITY={{ get $homeDomain "quality" | quote}}
+    {{- end }}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).validators -}}
+    {{ range $validator := .Values.sorobanRpc.coreConfig.validators -}}
+    [[VALIDATORS]]
+    NAME={{ get $validator "name" | quote }}
+    HOME_DOMAIN={{ get $validator "homeDomain" | quote }}
+    PUBLIC_KEY={{ get $validator "publicKey" | quote }}
+    ADDRESS={{ get $validator "address" | quote }}
+    {{ if get $validator "quality" -}}
+    QUALITY={{ get $validator "quality" | quote }}
+    {{ end -}}
+    {{ if get $validator "history" -}}
+    HISTORY={{ get $validator "history" | quote }}
+    {{ end -}}
+    {{ end -}}
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).historyArchives -}}
+    {{ range $key, $value := .Values.sorobanRpc.coreConfig.historyArchives -}}
+    [HISTORY.{{ $key }}]
+    get={{ get $value "get" | quote }}
+    put={{ get $value "put" | quote }}
+    mkdir={{ get $value "mkdir" | quote }}
+    {{ end -}}
+    {{ end -}}
