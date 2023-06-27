@@ -67,6 +67,8 @@ sorobanRpc:
 
   ingress:
     host: example.com
+    ## Optional TLS secret to use. If not set ingress will default to $releasename-cert
+    # tlsSecretName: mysecret.tls
     ## Additional annotations to add the Ingress template
     #annotations:
     #  kubernetes.io/ingress.class: "public"
