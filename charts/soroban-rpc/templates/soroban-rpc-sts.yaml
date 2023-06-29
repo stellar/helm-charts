@@ -52,7 +52,7 @@ spec:
         - name: config-volume
           mountPath: /config
           readOnly: true
-        {{- if .Values.sorobanRpc.persistence.enabled }}
+        {{- if (.Values.sorobanRpc.persistence).enabled }}
         - name: {{ template "common.fullname" . }}-var-lib-stellar
           mountPath: /var/lib/stellar
         {{- end }}
@@ -69,7 +69,7 @@ spec:
       - name: config-volume
         configMap:
           name: {{ template "common.fullname" . }}
-  {{- if .Values.sorobanRpc.persistence.enabled }}
+  {{- if (.Values.sorobanRpc.persistence).enabled }}
   volumeClaimTemplates:
   - metadata:
       name: {{ template "common.fullname" . }}-var-lib-stellar
