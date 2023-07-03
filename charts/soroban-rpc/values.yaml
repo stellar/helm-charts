@@ -78,7 +78,11 @@ sorobanRpc:
     #annotations:
     #  cert-manager.io/cluster-issuer: "default"
 
-  ## Whether to provision persistent volume. Recommended for production use cases. Usage of the PV has benefit of avoiding ephemeral storage, which can vary on different infrastructure and potentially be too low for the combined needs of the rpc and captive core processes. Choosing a PV storage class also allows leveraging any IaaS provided volumes with solid read/write performance.
+  ## Whether to provision persistent volume(PV). Recommended for production use cases and any deployment that is
+  ## configured to be on the pubnet network. On pubnet network, disk requirements start at 30GB minimum,
+  ## which pushes on the typical upper limit of ephemeral storage provided in cluster containers.
+  ## Choosing a PV storage class available on from your cluster also allows choosing one that can provide a known
+  ## performant read/write throughput, we recommend at least 3k IOPS, 5MB/sec.
   persistence:
     enabled: false
     storageClass: default
