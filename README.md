@@ -26,3 +26,7 @@ $ helm uninstall sep-service
 # Horizon API server
 
 See https://github.com/stellar/helm-charts/tree/main/charts/horizon
+
+# Stellar Disbursement Platform
+
+See [stellar-disbursement-platform README.md](./charts/stellar-disbursement-platform/README.md)
