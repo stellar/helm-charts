@@ -9,12 +9,21 @@ The chart can deploy soroban rpc.
 Default parameters should be fine for dev environments.
 
 Add SDF helm repo to your system:
+
 ```
 helm repo add stellar https://helm.stellar.org/charts && helm repo update
 ```
-For example to render manifests you can use the following command:
+
+For example to render futurenet manifests you can use the following command:
+
 ```
 helm install my-soroban-rpc stellar/soroban-rpc
+```
+
+For example to render testnet manifests you can use the following command:
+
+```
+helm install my-soroban-rpc stellar/soroban-rpc --values=testnet-values.yaml
 ```
 
 ## TODO

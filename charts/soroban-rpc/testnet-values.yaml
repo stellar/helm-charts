@@ -1,0 +1,109 @@
+global:
+  ## String to use to explicitly set namespace name in manifests.
+  ## Useful for those using "helm template" to render templates
+  # namespace: mynamespace
+
+  ## String to partially override common.fullname template (will maintain the release name)
+  ##
+  # nameOverride:
+
+  ## String to fully override common.fullname template
+  ##
+  # fullnameOverride:
+
+  ## List of pre-existing image Pull Secrets to use
+  # imagePullSecrets:
+  # - imagepullsecret1
+  # - imagepullsecret2
+
+  image:
+    sorobanRpc:
+      registry: docker.io
+      repository: stellar/soroban-rpc
+      ## Optional tag. Defaults to the appVersion from Chart.yaml
+      # tag: abc123
+
+      ## Specify a imagePullPolicy
+      ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+      ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+      ##
+      pullPolicy: Always
+
+sorobanRpc:
+  ## See global.image.sorobanRpc for image settings
+
+  ## Soroban-rpc config variables
+  sorobanRpcConfig:
+    friendbotUrl: "https://friendbot-testnet.stellar.org/"
+    networkPassphrase: "Test SDF Network ; September 2015"
+    historyArchiveUrls: "https://history.stellar.org/prd/core-testnet/core_testnet_001"
+    checkpointFrequence: 64
+
+  coreConfig:
+    networkPassphrase: "Test SDF Network ; September 2015"
+    bucketlistDbIndexPageSizeExponent: 12
+    failureSafety: 0
+    unsafeQuorum: true
+
+    homeDomains:
+      - homeDomain: "testnet.stellar.org"
+        quality: "MEDIUM"
+    validators:
+      - name: "sdf_testnet_1"
+        homeDomain: "testnet.stellar.org"
+        publicKey: "GDKXE2OZMJIPOSLNA6N6F2BVCI3O777I2OOC4BV7VOYUEHYX7RTRYA7Y"
+        address: "core-testnet1.stellar.org"
+        history: "curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_001/{0} -o {1}"
+      - name: "sdf_testnet_2"
+        homeDomain: "testnet.stellar.org"
+        publicKey: "GCUCJTIYXSOXKBSNFGNFWW5MUQ54HKRPGJUTQFJ5RQXZXNOLNXYDHRAP"
+        address: "core-testnet2.stellar.org"
+        history: "curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_002/{0} -o {1}"
+      - name: "sdf_testnet_3"
+        homeDomain: "testnet.stellar.org"
+        publicKey: "GC2V2EFSXN6SQTWVYA5EPJPBWWIMSD2XQNKUOHGEKB535AQE2I6IXV2Z"
+        address: "core-testnet3.stellar.org"
+        history: "curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_003/{0} -o {1}"
+
+  ingress:
+    host: example.com
+
+    ## Optional TLS secret to use. If not set ingress will default to $releasename-cert
+    # tlsSecretName: mysecret.tls
+
+    ## ingressClassName to use for the ingress object
+    # ingressClassName: myingress
+
+    ## Additional annotations to add the Ingress template
+    #annotations:
+    #  cert-manager.io/cluster-issuer: "default"
+
+  ## Whether to provision persistent volume(PV). Recommended for production use cases and any deployment that is
+  ## configured to be on the pubnet network. On pubnet network, disk requirements start at 30GB minimum,
+  ## which pushes on the typical upper limit of ephemeral storage provided in cluster containers.
+  ## Choosing a PV storage class available on from your cluster also allows choosing one that can provide a known
+  ## performant read/write throughput, we recommend at least 3k IOPS, 5MB/sec.
+  persistence:
+    enabled: false
+    storageClass: default
+    size: 100G
+
+  ## Uncomment to use custom service account
+  # serviceAccountName: default
+
+  ## Additional annotations or labels to add the StatefulSet template
+  # annotations:
+  #   prometheus.io/scrape: "true"
+  #   prometheus.io/port: "6061"
+  # labels:
+  #   environment: "dev"
+  #   mylabel1: "dev-value"
+
+  ## Uncomment to set resource limits
+  # resources:
+  #  limits:
+  #    cpu: 2
+  #    memory: 4Gi
+  #  requests:
+  #    cpu: 250m
+  #    memory: 2Gi
