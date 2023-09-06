@@ -6,6 +6,8 @@ PUBLIC_HTTP_PORT=true
 UNSAFE_QUORUM=true
 ENABLE_PULL_MODE=true
 INVARIANT_CHECKS=["AccountSubEntriesCountIsValid", "ConservationOfLumens", "ConstantProductInvariant", "LedgerEntryIsValid", "LiabilitiesMatchOffers", "SponsorshipCountIsValid"]
+EXPERIMENTAL_BUCKETLIST_DB=true
+EXPERIMENTAL_BUCKETLIST_DB_INDEX_PAGE_SIZE_EXPONENT=12
 [[HOME_DOMAINS]]
 HOME_DOMAIN="www.stellar.org"
 QUALITY="HIGH"
@@ -152,6 +154,8 @@ PUBLIC_KEY="GA5STBMV6QDXFDGD62MEHLLHZTPDI77U3PFOD2SELU5RJDHQWBR5NNK7"
 PUBLIC_HTTP_PORT=true
 ENABLE_PULL_MODE=true
 INVARIANT_CHECKS=["AccountSubEntriesCountIsValid", "ConservationOfLumens", "ConstantProductInvariant", "LedgerEntryIsValid", "LiabilitiesMatchOffers", "SponsorshipCountIsValid"]
+EXPERIMENTAL_BUCKETLIST_DB=true
+EXPERIMENTAL_BUCKETLIST_DB_INDEX_PAGE_SIZE_EXPONENT=12
 [[HOME_DOMAINS]]
 HOME_DOMAIN="testnet.stellar.org"
 QUALITY="HIGH"
