@@ -62,8 +62,9 @@ ingest:
 
   ## This variable allows overrides of default settings
   horizonConfig:
-    {}
+    applyMigrations: false
     # port: 8001
+
 
   ## pre existing secret that contains the DATABASE_URL key with postgres URL
   existingSecret: ""

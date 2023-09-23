@@ -14,6 +14,7 @@ metadata:
     heritage: {{ .Release.Service }}
 data:
   ADMIN_PORT: {{ .Values.ingest.horizonConfig.adminPort | default "6000" | quote}}
+  APPLY_MIGRATIONS: {{ .Values.ingest.horizonConfig.applyMigrations | default "false" | quote}}
   ALLOW_EMPTY_LEDGER_DATA_RESPONSES: {{ .Values.ingest.horizonConfig.allowEmptyLedgerDataResponses | default "true" | quote}}
   CAPTIVE_CORE_CONFIG_APPEND_PATH: "/config/stellar-core.cfg"
   CAPTIVE_CORE_REUSE_STORAGE_PATH: "True"
