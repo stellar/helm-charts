@@ -44,6 +44,7 @@ sorobanRpc:
     bucketlistDbIndexPageSizeExponent: 12
     failureSafety: 0
     unsafeQuorum: true
+    enableDiagnosticEvents: true
 
     homeDomains:
       - homeDomain: "testnet.stellar.org"

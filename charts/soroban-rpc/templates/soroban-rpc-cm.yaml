@@ -45,6 +45,9 @@ data:
     {{ if (.Values.sorobanRpc.coreConfig).bucketlistDbIndexPageSizeExponent -}}
     EXPERIMENTAL_BUCKETLIST_DB_INDEX_PAGE_SIZE_EXPONENT={{ (.Values.sorobanRpc.coreConfig).bucketlistDbIndexPageSizeExponent }}
     {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).enableDiagnosticEvents -}}
+    ENABLE_SOROBAN_DIAGNOSTIC_EVENTS={{ (.Values.sorobanRpc.coreConfig).enableDiagnosticEvents }}
+    {{ end -}}
     {{ if (.Values.sorobanRpc.coreConfig).httpMaxClient -}}
     HTTP_MAX_CLIENT={{ .Values.sorobanRpc.coreConfig.httpMaxClient }}
     {{ end -}}
