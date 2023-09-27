@@ -1,7 +1,7 @@
 apiVersion: v1
 name: soroban-rpc
 version: 0.1.0
-appVersion: "0.9.2"
+appVersion: "0.9.3"
 description: Stellar Soroban RPC Helm Chart. This chart will deploy Stellar Soroban API server
 maintainers:
   - name: Stellar Development Foundation
