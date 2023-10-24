@@ -34,7 +34,7 @@ sorobanRpc:
 
   ## Soroban-rpc config variables
   sorobanRpcConfig:
-    friendbotUrl: "https://friendbot-testnet.stellar.org/"
+    friendbotUrl: "https://friendbot.stellar.org/"
     networkPassphrase: "Test SDF Network ; September 2015"
     historyArchiveUrls: "https://history.stellar.org/prd/core-testnet/core_testnet_001"
     checkpointFrequence: 64
