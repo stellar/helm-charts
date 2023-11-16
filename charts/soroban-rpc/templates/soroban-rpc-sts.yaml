@@ -74,7 +74,7 @@ spec:
                     "id": 10235,
                     "method": "getHealth"
                   }' | grep "healthy"
-        {{if (.Values.sorobanRpc).resources}}
+        {{- if (.Values.sorobanRpc).resources}}
         resources:
 {{ toYaml .Values.sorobanRpc.resources | indent 10 }}
         {{- end }}

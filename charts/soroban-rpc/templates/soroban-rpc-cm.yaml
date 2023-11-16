@@ -32,7 +32,7 @@ data:
     {{ end -}}
     {{ if (.Values.sorobanRpc.sorobanRpcConfig).checkpointFrequence -}}
     CHECKPOINT_FREQUENCY={{ .Values.sorobanRpc.sorobanRpcConfig.checkpointFrequence }}
-    {{ end }}
+    {{- end }}
   stellar-captive-core.cfg: |
     DATABASE="sqlite3:///var/lib/stellar/stellar-captive-core.db"
     HTTP_PORT=11626
@@ -41,7 +41,7 @@ data:
     EXPERIMENTAL_BUCKETLIST_DB=true
     {{ if (.Values.sorobanRpc.coreConfig).bucketDirPath -}}
     BUCKET_DIR_PATH={{ .Values.sorobanRpc.coreConfig.bucketDirPath |quote -}}
-    {{ end }}
+    {{ end -}}
     {{ if (.Values.sorobanRpc.coreConfig).bucketlistDbIndexPageSizeExponent -}}
     EXPERIMENTAL_BUCKETLIST_DB_INDEX_PAGE_SIZE_EXPONENT={{ (.Values.sorobanRpc.coreConfig).bucketlistDbIndexPageSizeExponent }}
     {{ end -}}
