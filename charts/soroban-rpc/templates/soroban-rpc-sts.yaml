@@ -61,7 +61,20 @@ spec:
           name: soroban-rpc
         - containerPort: 6061
           name: admin-port
-        {{if (.Values.sorobanRpc).resources}}
+        readinessProbe:
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - |
+                curl --location --request POST 'http://127.0.0.1:8000/' \
+                  --header 'Content-Type: application/json' \
+                  --data-raw '{
+                    "jsonrpc": "2.0",
+                    "id": 10235,
+                    "method": "getHealth"
+                  }' | grep "healthy"
+        {{- if (.Values.sorobanRpc).resources}}
         resources:
 {{ toYaml .Values.sorobanRpc.resources | indent 10 }}
         {{- end }}
