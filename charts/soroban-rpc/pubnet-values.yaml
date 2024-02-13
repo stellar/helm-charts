@@ -37,7 +37,7 @@ sorobanRpc:
   sorobanRpcConfig:
     friendbotUrl: "https://friendbot.stellar.org/"
     networkPassphrase: "Public Global Stellar Network ; September 2015"
-    historyArchiveUrls: "https://history.stellar.org/prd/core-live/core_live_003"
+    historyArchiveUrls: "https://stellar-history-usw.franklintempleton.com/azuswshf401,https://stellar-archive-1-lobstr.s3.amazonaws.com,https://hercules-history.publicnode.org,https://stellar-full-history1.bdnodes.net,https://history.stellar.org/prd/core-live/core_live_003,https://history.stellar.org/prd/core-live/core_live_002,https://history.stellar.org/prd/core-live/core_live_001"
     checkpointFrequence: 64
 
   coreConfig:
