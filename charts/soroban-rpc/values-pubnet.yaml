@@ -20,9 +20,9 @@ global:
     sorobanRpc:
       registry: docker.io
       repository: stellar/soroban-rpc
-      tag: latest
       ## Optional tag. 
       ## If absent, defaults to the appVersion from Chart.yaml
+      # tag: latest
 
       ## Specify a imagePullPolicy
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
@@ -181,7 +181,7 @@ sorobanRpc:
         name: "FT_SCV_3"
         publickey: "GA7DV63PBUUWNUFAF4GAZVXU2OZMYRATDLKTC7VTCG7AU4XUPN5VRX4A"
   ingress:
-    host: yourhost.com
+    host: example.com
 
     ## Optional TLS secret to use. If not set ingress will default to $releasename-cert
     # tlsSecretName: mysecret.tls
