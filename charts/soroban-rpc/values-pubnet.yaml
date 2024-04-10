@@ -201,12 +201,12 @@ sorobanRpc:
   persistence:
     enabled: false
     storageClass: default
-    size: 100G
+    size: 300G
 
   ## Uncomment to use custom service account
   # serviceAccountName: default
 
-  ## Additional annotations or labels to add the StatefulSet template
+  ## Additional annotations or labels to add to deployment template
   # annotations:
   #   prometheus.io/scrape: "true"
   #   prometheus.io/port: "6061"

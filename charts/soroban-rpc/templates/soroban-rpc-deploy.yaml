@@ -1,6 +1,6 @@
 ---
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ template "common.fullname" . }}
   {{- if .Release.Namespace }}
@@ -15,7 +15,8 @@ spec:
   # Currently Soroban RPC doesn't support HA deployments.
   # For that reason we hardcode replicas value at 1
   replicas: 1
-  serviceName: {{ template "common.fullname" . }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: {{ template "common.fullname" . }}
@@ -53,7 +54,7 @@ spec:
           mountPath: /config
           readOnly: true
         {{- if (.Values.sorobanRpc.persistence).enabled }}
-        - name: {{ template "common.fullname" . }}-var-lib-stellar
+        - name: volume-var-lib-stellar
           mountPath: /var/lib/stellar
         {{- end }}
         ports:
@@ -73,8 +74,8 @@ spec:
                     "jsonrpc": "2.0",
                     "id": 10235,
                     "method": "getHealth"
-                  }' | grep "healthy"
-        {{- if (.Values.sorobanRpc).resources}}
+                  }' | grep "jsonrpc"
+        {{- if (.Values.sorobanRpc).resources }}
         resources:
 {{ toYaml .Values.sorobanRpc.resources | indent 10 }}
         {{- end }}
@@ -82,14 +83,8 @@ spec:
       - name: config-volume
         configMap:
           name: {{ template "common.fullname" . }}
-  {{- if (.Values.sorobanRpc.persistence).enabled }}
-  volumeClaimTemplates:
-  - metadata:
-      name: {{ template "common.fullname" . }}-var-lib-stellar
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      storageClassName: {{ .Values.sorobanRpc.persistence.storageClass }}
-      resources:
-        requests:
-          storage: {{ .Values.sorobanRpc.persistence.size | quote }}
-  {{- end }}
+      {{- if (.Values.sorobanRpc.persistence).enabled }}
+      - name: volume-var-lib-stellar
+        persistentVolumeClaim:
+          claimName: {{ template "common.fullname" . }}-var-lib-stellar-pvc
+      {{- end }}
