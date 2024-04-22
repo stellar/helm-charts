@@ -12,9 +12,13 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  # Currently Soroban RPC doesn't support HA deployments.
-  # For that reason we hardcode replicas value at 1
-  replicas: 1
+  # Currently Soroban RPC doesn't support HA deployments over a single shared data store
+  # but, each replica pod in a statefulset will have it's own data store on it's PVC.
+  # This statefulset creates two replicas which will be monitored by the readiness probe. 
+  # Having two replicas also ensures zero downtime during upgrades as at least one replica is 
+  # gauranteed to be running while the other one is upgraded and catching backup to network 
+  # after restart
+  replicas: 2
   serviceName: {{ template "common.fullname" . }}
   selector:
     matchLabels:
@@ -73,7 +77,11 @@ spec:
                     "jsonrpc": "2.0",
                     "id": 10235,
                     "method": "getHealth"
-                  }' | grep "healthy"
+                  }' | jq -es 'if (. | length) == 0 then null else .[0] end | .result | .status == "healthy" and (.latestLedger - .oldestLedger >= (.ledgerRetentionWindow - 10))' > /dev/null;
+          failureThreshold: 2
+          periodSeconds: 10
+          successThreshold: 2
+          timeoutSeconds: 5         
         {{- if (.Values.sorobanRpc).resources}}
         resources:
 {{ toYaml .Values.sorobanRpc.resources | indent 10 }}
