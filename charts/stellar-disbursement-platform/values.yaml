@@ -156,7 +156,6 @@ sdp:
   configMap:
     annotations:
     data:
-      BASE_URL: "http://localhost:8000"
       CRASH_TRACKER_TYPE: "DRY_RUN"
       EC256_PUBLIC_KEY: #required
       ENVIRONMENT: "dev"
