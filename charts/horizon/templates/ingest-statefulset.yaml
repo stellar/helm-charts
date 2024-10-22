@@ -52,9 +52,9 @@ spec:
         {{- end }}
         imagePullPolicy: {{ .Values.global.image.horizon.pullPolicy }}
         ports:
-        - containerPort: {{ .Values.ingest.horizonConfig.port | default 8000 }}
+        - containerPort: {{ .Values.ingest.config.port }}
           name: horizon
-        - containerPort: {{ .Values.ingest.horizonConfig.adminPort | default 6000 }}
+        - containerPort: {{ .Values.ingest.config.adminPort }}
           name: metrics
         - containerPort: 11626
           name: core
@@ -65,7 +65,7 @@ spec:
             name: {{ template "common.fullname" . }}-ingest-env
         readinessProbe:
           httpGet:
-            port: {{ .Values.ingest.horizonConfig.port | default 8000 }}
+            port: {{ .Values.ingest.config.port }}
             path: /health
           initialDelaySeconds: 5
           timeoutSeconds: 5
@@ -142,7 +142,7 @@ spec:
   ports:
     - name: horizon
       port: 80
-      targetPort: {{ .Values.ingest.horizonConfig.port | default 8000 }}
+      targetPort: {{ .Values.ingest.config.port }}
   selector:
     app: {{ template "common.fullname" . }}-ingest
 {{- end }}

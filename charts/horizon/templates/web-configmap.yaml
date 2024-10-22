@@ -11,22 +11,22 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
+  ADMIN_PORT: {{ .Values.web.config.adminPort | quote}}
+  ALLOW_EMPTY_LEDGER_DATA_RESPONSES: {{ .Values.web.config.allowEmptyLedgerDataResponses | quote}}
+  CONNECTION_TIMEOUT: {{ .Values.web.config.connectionTimeout | quote}}
+  ENABLE_ACCOUNTS_FOR_SIGNER: {{ .Values.web.config.enableAccountsForSigner | quote}}
+  ENABLE_ASSET_STATS: {{ .Values.web.config.enableAssetStats | quote}}
+  HISTORY_ARCHIVE_URLS: {{ include "horizon.historyArchiveUrls" . | quote }}
   INGEST: "false"
-  PORT: {{ .Values.web.horizonConfig.port | default "8000" | quote}}
-  ADMIN_PORT: {{ .Values.web.horizonConfig.adminPort | default "6000" | quote}}
-  {{ if .Values.web.horizonConfig.stellarCoreUrl -}}
-  STELLAR_CORE_URL: {{ .Values.web.horizonConfig.stellarCoreUrl | quote}}
+  MAX_DB_CONNECTIONS: {{ .Values.web.config.maxDBConnections | quote}}
+  MAX_PATH_LENGTH: {{ .Values.web.config.maxPathLength | quote}}
+  NETWORK_PASSPHRASE: {{ include "horizon.networkPassphrase" . | quote }}
+  PER_HOUR_RATE_LIMIT: {{ .Values.web.config.perHourRateLimit | quote}}
+  PORT: {{ .Values.web.config.port | quote}}
+  SSE_UPDATE_FREQUENCY: {{ .Values.web.config.sseUpdateFrequency | quote}}
+  {{ if .Values.web.config.stellarCoreUrl -}}
+  STELLAR_CORE_URL: {{ .Values.web.config.stellarCoreUrl | quote}}
   {{- else }}
   STELLAR_CORE_URL: http://{{ template "common.fullname" . }}-ingest-core:11626
   {{- end }}
-  PER_HOUR_RATE_LIMIT: {{ .Values.web.horizonConfig.perHourRateLimit | default "8000" | quote}}
-  MAX_DB_CONNECTIONS: {{ .Values.web.horizonConfig.maxDBConnections | default "20" | quote}}
-  SSE_UPDATE_FREQUENCY: {{ .Values.web.horizonConfig.SseUpdateFrequency | default "4" | quote}}
-  CONNECTION_TIMEOUT: {{ .Values.web.horizonConfig.connectionTimeout | default "10" | quote}}
-  ALLOW_EMPTY_LEDGER_DATA_RESPONSES: {{ .Values.web.horizonConfig.allowEmptyLedgerDataResponses | default "true" | quote}}
-  ENABLE_ASSET_STATS: {{ .Values.web.horizonConfig.enableAssetStats | default "true" | quote}}
-  ENABLE_ACCOUNTS_FOR_SIGNER: {{ .Values.web.horizonConfig.enableAccountsForSigner | default "false" | quote}}
-  MAX_PATH_LENGTH: {{ .Values.web.horizonConfig.maxPathLength | default "3" | quote}}
-  HISTORY_ARCHIVE_URLS: {{ include "horizon.historyArchiveUrls" . | quote }}
-  NETWORK_PASSPHRASE: {{ include "horizon.networkPassphrase" . | quote }}
 {{- end }}
