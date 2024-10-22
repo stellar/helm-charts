@@ -1,4 +1,4 @@
-{{- if and (.Values.ingest.enabled) (.Values.ingest.ingress.enabled) }}
+{{- if and .Values.ingest.enabled .Values.ingest.ingress.enabled }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -7,7 +7,7 @@ metadata:
   {{- if .Release.Namespace }}
   namespace: {{ .Release.Namespace }}
   {{- end }}
-  {{- if (.Values.ingest.ingress).annotations }}
+  {{- if .Values.ingest.ingress.annotations }}
   annotations:
     {{- range $key, $value := .Values.ingest.ingress.annotations }}
       {{ $key }}: {{ $value | quote }}
@@ -30,7 +30,7 @@ spec:
             port:
               number: 80
 {{- end }}
-{{- if and (.Values.web.enabled) (.Values.web.ingress.enabled) }}
+{{- if and .Values.web.enabled .Values.web.ingress.enabled }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -39,7 +39,7 @@ metadata:
   {{- if .Release.Namespace }}
   namespace: {{ .Release.Namespace }}
   {{- end }}
-  {{- if (.Values.web.ingress).annotations }}
+  {{- if .Values.web.ingress.annotations }}
   annotations:
     {{- range $key, $value := .Values.web.ingress.annotations }}
       {{ $key }}: {{ $value | quote }}

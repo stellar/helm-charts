@@ -1,4 +1,4 @@
-{{- if (.Values.web).enabled }}
+{{- if .Values.web.enabled }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -23,29 +23,29 @@ spec:
         app: {{ template "common.fullname" . }}-web
         release: {{ .Release.Name }}
         horizon_network: {{ .Values.global.network }}
-      {{- if (.Values.web).labels }}
+      {{- if .Values.web.labels }}
         {{- range $key, $value := .Values.web.labels }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       {{- end }}
-      {{- if (.Values.web).annotations }}
+      {{- if .Values.web.annotations }}
       annotations:
         {{- range $key, $value := .Values.web.annotations }}
           {{ $key }}: {{ $value | quote }}
           {{- end }}
       {{- end }}
     spec:
-      {{- if (.Values.web).serviceAccountName }}
+      {{- if .Values.web.serviceAccountName }}
       serviceAccountName: {{ .Values.web.serviceAccountName | default "default" }}
       {{- end }}
-      {{- if (.Values.global).imagePullSecrets }}
+      {{- if .Values.global.imagePullSecrets }}
       imagePullSecrets:
 {{ toYaml .Values.global.imagePullSecrets | indent 8 }}
       {{- end }}
       containers:
       - name: horizon
         image: {{ include "common.horizonImage" . | quote }}
-        {{- if (.Values.web).cliArgs }}
+        {{- if .Values.web.cliArgs }}
         args:
           {{- range $flag := .Values.web.cliArgs }}
           - {{ $flag | quote }}
@@ -68,7 +68,7 @@ spec:
             path: /health
           initialDelaySeconds: 5
           timeoutSeconds: 5
-        {{- if (.Values.web).resources }}
+        {{- if .Values.web.resources }}
         resources:
 {{ toYaml .Values.web.resources | indent 10 }}
         {{- end }}

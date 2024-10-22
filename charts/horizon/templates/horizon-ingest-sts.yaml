@@ -1,4 +1,4 @@
-{{- if (.Values.ingest).enabled }}
+{{- if .Values.ingest.enabled }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -24,29 +24,29 @@ spec:
         app: {{ template "common.fullname" . }}-ingest
         release: {{ .Release.Name }}
         horizon_network: {{ .Values.global.network }}
-      {{- if (.Values.ingest).labels }}
+      {{- if .Values.ingest.labels }}
         {{- range $key, $value := .Values.ingest.labels }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       {{- end }}
-      {{- if (.Values.ingest).annotations }}
+      {{- if .Values.ingest.annotations }}
       annotations:
         {{- range $key, $value := .Values.ingest.annotations }}
           {{ $key }}: {{ $value | quote }}
           {{- end }}
       {{- end }}
     spec:
-      {{- if (.Values.ingest).serviceAccountName }}
+      {{- if .Values.ingest.serviceAccountName }}
       serviceAccountName: {{ .Values.ingest.serviceAccountName | default "default" }}
       {{- end }}
-      {{- if (.Values.global).imagePullSecrets }}
+      {{- if .Values.global.imagePullSecrets }}
       imagePullSecrets:
 {{ toYaml .Values.global.imagePullSecrets | indent 8 }}
       {{- end }}
       containers:
       - name: horizon
         image: {{ include "common.horizonImage" . | quote }}
-        {{- if (.Values.ingest).cliArgs }}
+        {{- if .Values.ingest.cliArgs }}
         args:
           {{- range $flag := .Values.ingest.cliArgs }}
           - {{ $flag | quote }}
@@ -71,7 +71,7 @@ spec:
             path: /health
           initialDelaySeconds: 5
           timeoutSeconds: 5
-        {{- if (.Values.ingest).resources }}
+        {{- if .Values.ingest.resources }}
         resources:
 {{ toYaml .Values.ingest.resources | indent 10 }}
         {{- end }}
@@ -82,14 +82,14 @@ spec:
         - mountPath: /var/lib/stellar
           name: {{ template "common.fullname" . }}-ingest-var-lib-stellar
         {{- end }}
-      {{- if (.Values.ingest.coreExporter).enabled }}
+      {{- if .Values.ingest.coreExporter.enabled }}
       - name: stellar-core-prometheus-exporter
         image: "{{ .Values.global.image.coreExporter.registry }}/{{ .Values.global.image.coreExporter.repository }}:{{ .Values.global.image.coreExporter.tag }}"
         imagePullPolicy: {{ .Values.global.image.coreExporter.pullPolicy }}
         ports:
         - containerPort: 9473
           name: metrics
-        {{- if (.Values.ingest.coreExporter).resources }}
+        {{- if .Values.ingest.coreExporter.resources }}
         resources:
 {{ toYaml .Values.ingest.coreExporter.resources | indent 10 }}
         {{- end }}

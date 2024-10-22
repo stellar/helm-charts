@@ -1,4 +1,4 @@
-{{- if (.Values.web).enabled }}
+{{- if .Values.web.enabled }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -16,7 +16,7 @@ data:
   INGEST: "false"
   PORT: {{ .Values.web.horizonConfig.port | default "8000" | quote}}
   ADMIN_PORT: {{ .Values.web.horizonConfig.adminPort | default "6000" | quote}}
-  {{ if (.Values.web).horizonConfig.stellarCoreUrl -}}
+  {{ if .Values.web.horizonConfig.stellarCoreUrl -}}
   STELLAR_CORE_URL: {{ .Values.web.horizonConfig.stellarCoreUrl | quote}}
   {{- else }}
   STELLAR_CORE_URL: http://{{ template "common.fullname" . }}-ingest-core:11626
