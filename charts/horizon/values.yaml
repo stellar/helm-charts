@@ -57,7 +57,7 @@ ingest:
   - "--apply-migrations"
 
   ## Horizon config
-  config:
+  horizonConfig:
     adminPort: 6000
     allowEmptyLedgerDataResponses: true
     applyMigrations: false
@@ -153,7 +153,7 @@ web:
   # cliArgs: []
 
   ## Horizon config
-  config:
+  horizonConfig:
     adminPort: 6000
     allowEmptyLedgerDataResponses: true
     connectionTimeout: 10

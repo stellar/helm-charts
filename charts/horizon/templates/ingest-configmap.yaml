@@ -11,33 +11,33 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
-  ADMIN_PORT: {{ .Values.ingest.config.adminPort | quote}}
-  APPLY_MIGRATIONS: {{ .Values.ingest.config.applyMigrations | quote}}
-  ALLOW_EMPTY_LEDGER_DATA_RESPONSES: {{ .Values.ingest.config.allowEmptyLedgerDataResponses | quote}}
+  ADMIN_PORT: {{ .Values.ingest.horizonConfig.adminPort | quote}}
+  APPLY_MIGRATIONS: {{ .Values.ingest.horizonConfig.applyMigrations | quote}}
+  ALLOW_EMPTY_LEDGER_DATA_RESPONSES: {{ .Values.ingest.horizonConfig.allowEmptyLedgerDataResponses | quote}}
   CAPTIVE_CORE_CONFIG_APPEND_PATH: "/config/stellar-core.cfg"
   CAPTIVE_CORE_REUSE_STORAGE_PATH: "True"
   CAPTIVE_CORE_REUSE_STORAGE_DIR: "True"
   CAPTIVE_CORE_STORAGE_PATH: "/var/lib/stellar"
-  CAPTIVE_CORE_USE_DB: {{ .Values.ingest.config.captiveCoreUseDb | quote}}
-  CONNECTION_TIMEOUT: {{ .Values.ingest.config.connectionTimeout | quote}}
-  DISABLE_PATH_FINDING: {{ .Values.ingest.config.disablePathFinding | quote}}
-  ENABLE_ACCOUNTS_FOR_SIGNER: {{ .Values.ingest.config.enableAccountsForSigner | quote}}
-  ENABLE_ASSET_STATS: {{ .Values.ingest.config.enableAssetStats | quote}}
+  CAPTIVE_CORE_USE_DB: {{ .Values.ingest.horizonConfig.captiveCoreUseDb | quote}}
+  CONNECTION_TIMEOUT: {{ .Values.ingest.horizonConfig.connectionTimeout | quote}}
+  DISABLE_PATH_FINDING: {{ .Values.ingest.horizonConfig.disablePathFinding | quote}}
+  ENABLE_ACCOUNTS_FOR_SIGNER: {{ .Values.ingest.horizonConfig.enableAccountsForSigner | quote}}
+  ENABLE_ASSET_STATS: {{ .Values.ingest.horizonConfig.enableAssetStats | quote}}
   ENABLE_CAPTIVE_CORE_INGESTION: "true"
   ENABLE_EXPERIMENTAL_INGESTION: "false"
-  {{- if .Values.ingest.config.friendbotUrl }}
-  FRIENDBOT_URL: {{ .Values.ingest.config.friendbotUrl | quote}}
+  {{- if .Values.ingest.horizonConfig.friendbotUrl }}
+  FRIENDBOT_URL: {{ .Values.ingest.horizonConfig.friendbotUrl | quote}}
   {{- end }}
   HISTORY_ARCHIVE_URLS: {{ include "horizon.historyArchiveUrls" . | quote }}
-  HISTORY_RETENTION_COUNT: {{ .Values.ingest.config.historyRetentionCount | quote}}
-  INGEST_FAILED_TRANSACTIONS: {{ .Values.ingest.config.ingestFailedTransactions | quote}}
+  HISTORY_RETENTION_COUNT: {{ .Values.ingest.horizonConfig.historyRetentionCount | quote}}
+  INGEST_FAILED_TRANSACTIONS: {{ .Values.ingest.horizonConfig.ingestFailedTransactions | quote}}
   INGEST: "true"
-  MAX_DB_CONNECTIONS: {{ .Values.ingest.config.maxDBConnections | quote}}
+  MAX_DB_CONNECTIONS: {{ .Values.ingest.horizonConfig.maxDBConnections | quote}}
   NETWORK_PASSPHRASE: {{ include "horizon.networkPassphrase" . | quote }}
-  PER_HOUR_RATE_LIMIT: {{ .Values.ingest.config.perHourRateLimit | quote}}
-  PORT: {{ .Values.ingest.config.port | quote}}
-  SSE_UPDATE_FREQUENCY: {{ .Values.ingest.config.sseUpdateFrequency | quote}}
+  PER_HOUR_RATE_LIMIT: {{ .Values.ingest.horizonConfig.perHourRateLimit | quote}}
+  PORT: {{ .Values.ingest.horizonConfig.port | quote}}
+  SSE_UPDATE_FREQUENCY: {{ .Values.ingest.horizonConfig.sseUpdateFrequency | quote}}
   STELLAR_CORE_BINARY_PATH: "/usr/bin/stellar-core"
-  STELLAR_CORE_URL: {{ .Values.ingest.config.stellarCoreUrl | quote}}
+  STELLAR_CORE_URL: {{ .Values.ingest.horizonConfig.stellarCoreUrl | quote}}
   TMPDIR: "/var/lib/stellar"
 {{- end }}
