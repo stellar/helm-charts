@@ -1,4 +1,4 @@
-{{- if (.Values.ingest).enabled }}
+{{- if .Values.ingest.enabled }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -20,14 +20,14 @@ data:
   CAPTIVE_CORE_STORAGE_PATH: "/var/lib/stellar"
   CAPTIVE_CORE_USE_DB: {{ .Values.ingest.horizonConfig.captiveCoreUseDb | default "False" | quote}}
   CONNECTION_TIMEOUT: {{ .Values.ingest.horizonConfig.connectionTimeout | default "10" | quote}}
-  {{- if (.Values.ingest.horizonConfig).disablePathFinding }}
+  {{- if .Values.ingest.horizonConfig.disablePathFinding }}
   DISABLE_PATH_FINDING: {{ .Values.ingest.horizonConfig.disablePathFinding | default "False" | quote}}
   {{- end }}
   ENABLE_ACCOUNTS_FOR_SIGNER: {{ .Values.ingest.horizonConfig.enableAccountsForSigner | default "false" | quote}}
   ENABLE_ASSET_STATS: {{ .Values.ingest.horizonConfig.enableAssetStats | default "true" | quote}}
   ENABLE_CAPTIVE_CORE_INGESTION: "true"
   ENABLE_EXPERIMENTAL_INGESTION: "false"
-  {{- if (.Values.ingest.horizonConfig).friendbotUrl }}
+  {{- if .Values.ingest.horizonConfig.friendbotUrl }}
   FRIENDBOT_URL: {{ .Values.ingest.horizonConfig.friendbotUrl | default "https://friendbot.stellar.org" | quote}}
   {{- end }}
   HISTORY_ARCHIVE_URLS: {{ include "horizon.historyArchiveUrls" . | quote }}
