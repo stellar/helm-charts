@@ -1,8 +1,4 @@
 global:
-  ## String to use to explicitly set namespace name in manifests.
-  ## Useful for those using "helm template" to render templates
-  # namespace: mynamespace
-
   ## Stellar network to use. When set to "testnet" or "pubnet" default
   ## recommended config will be used.
   ## When set to any other value you have to provide extra settings:
