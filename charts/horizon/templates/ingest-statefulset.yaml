@@ -50,7 +50,7 @@ spec:
           - {{ $flag | quote }}
           {{- end }}
         {{- end }}
-        imagePullPolicy: {{ .Values.global.image.horizon.pullPolicy }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.ingest.horizonConfig.port | default 8000 }}
           name: horizon
@@ -82,8 +82,8 @@ spec:
         {{- end }}
       {{- if .Values.ingest.coreExporter.enabled }}
       - name: stellar-core-prometheus-exporter
-        image: "{{ .Values.global.image.coreExporter.registry }}/{{ .Values.global.image.coreExporter.repository }}:{{ .Values.global.image.coreExporter.tag }}"
-        imagePullPolicy: {{ .Values.global.image.coreExporter.pullPolicy }}
+        image: "{{ .Values.ingest.coreExporter.image.registry }}/{{ .Values.ingest.coreExporter.image.repository }}:{{ .Values.ingest.coreExporter.image.tag }}"
+        imagePullPolicy: {{ .Values.ingest.coreExporter.image.pullPolicy }}
         ports:
         - containerPort: 9473
           name: metrics
