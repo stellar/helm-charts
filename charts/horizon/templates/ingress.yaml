@@ -4,9 +4,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ template "common.fullname" . }}-ingest
-  {{- if .Release.Namespace }}
   namespace: {{ .Release.Namespace }}
-  {{- end }}
   {{- if .Values.ingest.ingress.annotations }}
   annotations:
     {{- range $key, $value := .Values.ingest.ingress.annotations }}
@@ -36,9 +34,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ template "common.fullname" . }}-web
-  {{- if .Release.Namespace }}
   namespace: {{ .Release.Namespace }}
-  {{- end }}
   {{- if .Values.web.ingress.annotations }}
   annotations:
     {{- range $key, $value := .Values.web.ingress.annotations }}
