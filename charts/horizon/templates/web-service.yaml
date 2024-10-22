@@ -1,0 +1,21 @@
+{{- if .Values.web.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "common.fullname" . }}-web
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "common.fullname" . }}-web
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: core
+      port: 80
+      targetPort: {{ .Values.web.config.port }}
+  selector:
+    app: {{ template "common.fullname" . }}-web
+{{- end }}

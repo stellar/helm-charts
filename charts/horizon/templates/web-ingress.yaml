@@ -1,0 +1,30 @@
+{{- if and .Values.web.enabled .Values.web.ingress.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "common.fullname" . }}-web
+  namespace: {{ .Release.Namespace }}
+  {{- if .Values.web.ingress.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.web.ingress.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    {{- end }}
+spec:
+  tls:
+  - secretName: {{ template "common.fullname" . }}-web-cert
+    hosts:
+    - {{ .Values.web.ingress.host }}
+  rules:
+  - host: {{ .Values.web.ingress.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ template "common.fullname" . }}-web
+            port:
+              number: 80
+{{- end }}

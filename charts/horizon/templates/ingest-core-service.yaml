@@ -1,0 +1,21 @@
+{{- if .Values.ingest.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "common.fullname" . }}-ingest-core
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "common.fullname" . }}-ingest-core
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: core
+      port: 11626
+      targetPort: 11626
+  selector:
+    app: {{ template "common.fullname" . }}-ingest
+{{- end }}

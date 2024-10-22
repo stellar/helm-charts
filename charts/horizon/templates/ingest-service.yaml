@@ -1,0 +1,21 @@
+{{- if .Values.ingest.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "common.fullname" . }}-ingest
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "common.fullname" . }}-ingest
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: horizon
+      port: 80
+      targetPort: {{ .Values.ingest.config.port }}
+  selector:
+    app: {{ template "common.fullname" . }}-ingest
+{{- end }}

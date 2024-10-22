@@ -70,23 +70,4 @@ spec:
         resources:
 {{ toYaml .Values.web.resources | indent 10 }}
         {{- end }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ template "common.fullname" . }}-web
-  namespace: {{ .Release.Namespace }}
-  labels:
-    app: {{ template "common.fullname" . }}-web
-    chart: {{ template "common.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-spec:
-  type: ClusterIP
-  ports:
-    - name: core
-      port: 80
-      targetPort: {{ .Values.web.horizonConfig.port | default 8000 }}
-  selector:
-    app: {{ template "common.fullname" . }}-web
 {{- end }}
