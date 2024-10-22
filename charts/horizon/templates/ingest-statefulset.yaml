@@ -23,32 +23,31 @@ spec:
         release: {{ .Release.Name }}
         horizon_network: {{ .Values.global.network }}
       {{- if .Values.ingest.labels }}
-        {{- range $key, $value := .Values.ingest.labels }}
+      {{- range $key, $value := .Values.ingest.labels }}
         {{ $key }}: {{ $value | quote }}
-        {{- end }}
+      {{- end }}
       {{- end }}
       {{- if .Values.ingest.annotations }}
       annotations:
-        {{- range $key, $value := .Values.ingest.annotations }}
-          {{ $key }}: {{ $value | quote }}
-          {{- end }}
+      {{- range $key, $value := .Values.ingest.annotations }}
+        {{ $key }}: {{ $value | quote }}
+      {{- end }}
       {{- end }}
     spec:
       {{- if .Values.ingest.serviceAccountName }}
-      serviceAccountName: {{ .Values.ingest.serviceAccountName | default "default" }}
+      serviceAccountName: {{ .Values.ingest.serviceAccountName }}
       {{- end }}
       {{- if .Values.global.imagePullSecrets }}
-      imagePullSecrets:
-{{ toYaml .Values.global.imagePullSecrets | indent 8 }}
+      imagePullSecrets: {{ toYaml .Values.global.imagePullSecrets | nindent 8 }}
       {{- end }}
       containers:
       - name: horizon
         image: {{ include "common.horizonImage" . | quote }}
         {{- if .Values.ingest.cliArgs }}
         args:
-          {{- range $flag := .Values.ingest.cliArgs }}
-          - {{ $flag | quote }}
-          {{- end }}
+        {{- range $flag := .Values.ingest.cliArgs }}
+        - {{ $flag | quote }}
+        {{- end }}
         {{- end }}
         imagePullPolicy: {{ .Values.global.image.horizon.pullPolicy }}
         ports:

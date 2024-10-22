@@ -7,10 +7,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
   {{- if .Values.ingest.ingress.annotations }}
   annotations:
-    {{- range $key, $value := .Values.ingest.ingress.annotations }}
-      {{ $key }}: {{ $value | quote }}
-    {{- end }}
-    {{- end }}
+  {{- range $key, $value := .Values.ingest.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+  {{- end }}
 spec:
   tls:
   - secretName: {{ template "common.fullname" . }}-ingest-cert
