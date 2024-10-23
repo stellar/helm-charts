@@ -102,42 +102,4 @@ spec:
         requests:
           storage: {{ .Values.ingest.persistence.size | quote }}
   {{- end }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "common.fullname" . }}-ingest-core
-  namespace: {{ .Release.Namespace }}
-  labels:
-    app: {{ include "common.fullname" . }}-ingest-core
-    chart: {{ include "common.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-spec:
-  type: ClusterIP
-  ports:
-    - name: core
-      port: 11626
-      targetPort: 11626
-  selector:
-    app: {{ include "common.fullname" . }}-ingest
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "common.fullname" . }}-ingest
-  namespace: {{ .Release.Namespace }}
-  labels:
-    app: {{ include "common.fullname" . }}-ingest
-    chart: {{ include "common.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-spec:
-  type: ClusterIP
-  ports:
-    - name: horizon
-      port: 80
-      targetPort: {{ .Values.ingest.horizonConfig.port }}
-  selector:
-    app: {{ include "common.fullname" . }}-ingest
 {{- end }}

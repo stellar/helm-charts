@@ -66,23 +66,4 @@ spec:
         {{- if .Values.web.resources }}
         resources: {{ toYaml .Values.web.resources | nindent 10 }}
         {{- end }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "common.fullname" . }}-web
-  namespace: {{ .Release.Namespace }}
-  labels:
-    app: {{ include "common.fullname" . }}-web
-    chart: {{ include "common.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-spec:
-  type: ClusterIP
-  ports:
-    - name: core
-      port: 80
-      targetPort: {{ .Values.web.horizonConfig.port }}
-  selector:
-    app: {{ include "common.fullname" . }}-web
 {{- end }}
