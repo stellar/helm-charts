@@ -49,9 +49,9 @@ spec:
         {{- end }}
         imagePullPolicy: {{ .Values.global.image.horizon.pullPolicy }}
         ports:
-        - containerPort: {{ .Values.web.horizonConfig.port | default 8000 }}
+        - containerPort: {{ .Values.web.horizonConfig.port }}
           name: horizon
-        - containerPort: {{ .Values.web.horizonConfig.adminPort | default 6000 }}
+        - containerPort: {{ .Values.web.horizonConfig.adminPort }}
           name: metrics
         envFrom:
         - secretRef:
@@ -60,7 +60,7 @@ spec:
             name: {{ template "common.fullname" . }}-web-env
         readinessProbe:
           httpGet:
-            port: {{ .Values.web.horizonConfig.port | default 8000 }}
+            port: {{ .Values.web.horizonConfig.port }}
             path: /health
           initialDelaySeconds: 5
           timeoutSeconds: 5
@@ -84,7 +84,7 @@ spec:
   ports:
     - name: core
       port: 80
-      targetPort: {{ .Values.web.horizonConfig.port | default 8000 }}
+      targetPort: {{ .Values.web.horizonConfig.port }}
   selector:
     app: {{ template "common.fullname" . }}-web
 {{- end }}

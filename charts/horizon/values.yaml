@@ -56,11 +56,24 @@ ingest:
   cliArgs:
   - "--apply-migrations"
 
-  ## This variable allows overrides of default settings
+  ## Horizon config
   horizonConfig:
+    adminPort: 6000
+    allowEmptyLedgerDataResponses: true
     applyMigrations: false
-    # port: 8001
-
+    captiveCoreUseDb: false
+    connectionTimeout: 10
+    disablePathFinding: false
+    enableAccountsForSigner: false
+    enableAssetStats: true
+    friendbotUrl: ""
+    historyRetentionCount: 34560
+    ingestFailedTransactions: true
+    maxDBConnections: 20
+    perHourRateLimit: 3600
+    port: 8000
+    sseUpdateFrequency: 4
+    stellarCoreUrl: "http://127.0.0.1:11626"
 
   ## pre existing secret that contains the DATABASE_URL key with postgres URL
   existingSecret: ""
@@ -135,9 +148,19 @@ web:
   ## List of CLI arguments to provide to the stellar-horizon binary
   cliArgs: []
 
-  ## This variable allows overrides of default settings
-  horizonConfig: {}
-    # port: 8001
+  ## Horizon config
+  horizonConfig:
+    adminPort: 6000
+    allowEmptyLedgerDataResponses: true
+    connectionTimeout: 10
+    enableAccountsForSigner: false
+    enableAssetStats: true
+    maxDBConnections: 20
+    maxPathLength: 3
+    perHourRateLimit: 8000
+    port: 8000
+    sseUpdateFrequency: 4
+    stellarCoreUrl: "" # defaults to igest's core instance
 
   ## pre existing secret that contains the DATABASE_URL key with postgres URL
   existingSecret: ""
