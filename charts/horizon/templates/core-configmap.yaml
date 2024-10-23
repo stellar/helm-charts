@@ -3,14 +3,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "common.fullname" . }}-core
+  name: {{ include "common.fullname" . }}-core
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ template "common.fullname" . }}-core
-    chart: {{ template "common.chart" . }}
+    app: {{ include "common.fullname" . }}-core
+    chart: {{ include "common.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
-  stellar-core.cfg: |
-{{ include "core.config" . | indent 4 }}
+  stellar-core.cfg: | {{ include "core.config" . | nindent 4 }}
 {{- end }}

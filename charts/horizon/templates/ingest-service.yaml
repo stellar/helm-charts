@@ -3,11 +3,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "common.fullname" . }}-ingest
+  name: {{ include "common.fullname" . }}-ingest
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ template "common.fullname" . }}-ingest
-    chart: {{ template "common.chart" . }}
+    app: {{ include "common.fullname" . }}-ingest
+    chart: {{ include "common.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -15,7 +15,7 @@ spec:
   ports:
     - name: horizon
       port: 80
-      targetPort: {{ .Values.ingest.config.port }}
+      targetPort: {{ .Values.ingest.horizonConfig.port }}
   selector:
-    app: {{ template "common.fullname" . }}-ingest
+    app: {{ include "common.fullname" . }}-ingest
 {{- end }}

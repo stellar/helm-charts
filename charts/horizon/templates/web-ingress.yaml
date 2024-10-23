@@ -3,17 +3,17 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ template "common.fullname" . }}-web
+  name: {{ include "common.fullname" . }}-web
   namespace: {{ .Release.Namespace }}
   {{- if .Values.web.ingress.annotations }}
   annotations:
     {{- range $key, $value := .Values.web.ingress.annotations }}
-      {{ $key }}: {{ $value | quote }}
+    {{ $key }}: {{ $value | quote }}
     {{- end }}
-    {{- end }}
+  {{- end }}
 spec:
   tls:
-  - secretName: {{ template "common.fullname" . }}-web-cert
+  - secretName: {{ include "common.fullname" . }}-web-cert
     hosts:
     - {{ .Values.web.ingress.host }}
   rules:
@@ -24,7 +24,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: {{ template "common.fullname" . }}-web
+            name: {{ include "common.fullname" . }}-web
             port:
               number: 80
 {{- end }}
