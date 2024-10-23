@@ -34,20 +34,18 @@ spec:
       {{- end }}
     spec:
       {{- if .Values.web.serviceAccountName }}
-      serviceAccountName: {{ .Values.web.serviceAccountName | default "default" }}
+      serviceAccountName: {{ .Values.web.serviceAccountName }}
       {{- end }}
       {{- if .Values.global.imagePullSecrets }}
-      imagePullSecrets:
-{{ toYaml .Values.global.imagePullSecrets | indent 8 }}
-      {{- end }}
-      containers:
+      imagePullSecrets: {{ toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      {{- end }}      containers:
       - name: horizon
         image: {{ include "common.horizonImage" . | quote }}
         {{- if .Values.web.cliArgs }}
         args:
-          {{- range $flag := .Values.web.cliArgs }}
-          - {{ $flag | quote }}
-          {{- end }}
+        {{- range $flag := .Values.web.cliArgs }}
+        - {{ $flag | quote }}
+        {{- end }}
         {{- end }}
         imagePullPolicy: {{ .Values.global.image.horizon.pullPolicy }}
         ports:
