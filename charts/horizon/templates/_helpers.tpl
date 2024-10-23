@@ -25,9 +25,9 @@
 
 {{- define "core.config" -}}
 {{- if eq .Values.global.network "testnet" -}}
-{{- template "core.testnetConfig" }}
+{{- include "core.testnetConfig" . }}
 {{- else if eq .Values.global.network "pubnet" -}}
-{{- template "core.pubnetConfig" }}
+{{- include "core.pubnetConfig" . }}
 {{- else -}}
 {{- .Values.ingest.coreConfig }}
 {{- end -}}

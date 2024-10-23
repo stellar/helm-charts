@@ -3,11 +3,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "common.fullname" . }}-web-env
+  name: {{ include "common.fullname" . }}-web-env
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ template "common.fullname" . }}-web
-    chart: {{ template "common.chart" . }}
+    app: {{ include "common.fullname" . }}-web
+    chart: {{ include "common.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
@@ -24,9 +24,9 @@ data:
   PER_HOUR_RATE_LIMIT: {{ .Values.web.horizonConfig.perHourRateLimit | quote}}
   PORT: {{ .Values.web.horizonConfig.port | quote}}
   SSE_UPDATE_FREQUENCY: {{ .Values.web.horizonConfig.sseUpdateFrequency | quote}}
-  {{ if .Values.web.horizonConfig.stellarCoreUrl -}}
+  {{- if .Values.web.horizonConfig.stellarCoreUrl -}}
   STELLAR_CORE_URL: {{ .Values.web.horizonConfig.stellarCoreUrl | quote}}
   {{- else }}
-  STELLAR_CORE_URL: http://{{ template "common.fullname" . }}-ingest-core:11626
+  STELLAR_CORE_URL: http://{{ include "common.fullname" . }}-ingest-core:11626
   {{- end }}
 {{- end }}
