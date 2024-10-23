@@ -3,42 +3,40 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ template "common.fullname" . }}-ingest
+  name: {{ include "common.fullname" . }}-ingest
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ template "common.fullname" . }}-ingest
-    chart: {{ template "common.chart" . }}
+    app: {{ include "common.fullname" . }}-ingest
+    chart: {{ include "common.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.ingest.replicaCount }}
-  serviceName: {{ template "common.fullname" . }}-ingest
+  serviceName: {{ include "common.fullname" . }}-ingest
   selector:
     matchLabels:
-      app: {{ template "common.fullname" . }}-ingest
+      app: {{ include "common.fullname" . }}-ingest
   template:
     metadata:
       labels:
-        app: {{ template "common.fullname" . }}-ingest
+        app: {{ include "common.fullname" . }}-ingest
         release: {{ .Release.Name }}
         horizon_network: {{ .Values.global.network }}
-      {{- if .Values.ingest.labels }}
-      {{- range $key, $value := .Values.ingest.labels }}
+        {{- if .Values.ingest.labels }}
+        {{- range $key, $value := .Values.ingest.labels }}
         {{ $key }}: {{ $value | quote }}
-      {{- end }}
-      {{- end }}
+        {{- end }}
+        {{- end }}
       {{- if .Values.ingest.annotations }}
       annotations:
-      {{- range $key, $value := .Values.ingest.annotations }}
+        {{- range $key, $value := .Values.ingest.annotations }}
         {{ $key }}: {{ $value | quote }}
-      {{- end }}
+        {{- end }}
       {{- end }}
     spec:
-      {{- if .Values.ingest.serviceAccountName }}
       serviceAccountName: {{ .Values.ingest.serviceAccountName }}
-      {{- end }}
       {{- if .Values.global.imagePullSecrets }}
-      imagePullSecrets: {{ toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      imagePullSecrets: {{ toYaml .Values.global.imagePullSecrets | nindent 6 }}
       {{- end }}
       containers:
       - name: horizon
@@ -61,7 +59,7 @@ spec:
         - secretRef:
             name: {{ .Values.ingest.existingSecret }}
         - configMapRef:
-            name: {{ template "common.fullname" . }}-ingest-env
+            name: {{ include "common.fullname" . }}-ingest-env
         readinessProbe:
           httpGet:
             port: {{ .Values.ingest.horizonConfig.port }}
@@ -69,15 +67,14 @@ spec:
           initialDelaySeconds: 5
           timeoutSeconds: 5
         {{- if .Values.ingest.resources }}
-        resources:
-{{ toYaml .Values.ingest.resources | indent 10 }}
+        resources: {{ toYaml .Values.ingest.resources | nindent 10 }}
         {{- end }}
         volumeMounts:
         - mountPath: /config
           name: core-config
         {{- if .Values.ingest.persistence.enabled }}
         - mountPath: /var/lib/stellar
-          name: {{ template "common.fullname" . }}-ingest-var-lib-stellar
+          name: {{ include "common.fullname" . }}-ingest-var-lib-stellar
         {{- end }}
       {{- if .Values.ingest.coreExporter.enabled }}
       - name: stellar-core-prometheus-exporter
@@ -87,18 +84,17 @@ spec:
         - containerPort: 9473
           name: metrics
         {{- if .Values.ingest.coreExporter.resources }}
-        resources:
-{{ toYaml .Values.ingest.coreExporter.resources | indent 10 }}
+        resources: {{ toYaml .Values.ingest.coreExporter.resources | nindent 10 }}
         {{- end }}
       {{- end }}
       volumes:
       - name: core-config
         configMap:
-          name: {{ template "common.fullname" . }}-core
+          name: {{ include "common.fullname" . }}-core
   {{- if .Values.ingest.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
-      name: {{ template "common.fullname" . }}-ingest-var-lib-stellar
+      name: {{ include "common.fullname" . }}-ingest-var-lib-stellar
     spec:
       accessModes: ["ReadWriteOnce"]
       storageClassName: {{ .Values.ingest.persistence.storageClass }}
@@ -110,11 +106,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "common.fullname" . }}-ingest-core
+  name: {{ include "common.fullname" . }}-ingest-core
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ template "common.fullname" . }}-ingest-core
-    chart: {{ template "common.chart" . }}
+    app: {{ include "common.fullname" . }}-ingest-core
+    chart: {{ include "common.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -124,16 +120,16 @@ spec:
       port: 11626
       targetPort: 11626
   selector:
-    app: {{ template "common.fullname" . }}-ingest
+    app: {{ include "common.fullname" . }}-ingest
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "common.fullname" . }}-ingest
+  name: {{ include "common.fullname" . }}-ingest
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ template "common.fullname" . }}-ingest
-    chart: {{ template "common.chart" . }}
+    app: {{ include "common.fullname" . }}-ingest
+    chart: {{ include "common.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -143,5 +139,5 @@ spec:
       port: 80
       targetPort: {{ .Values.ingest.horizonConfig.port }}
   selector:
-    app: {{ template "common.fullname" . }}-ingest
+    app: {{ include "common.fullname" . }}-ingest
 {{- end }}

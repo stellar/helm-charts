@@ -3,11 +3,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "common.fullname" . }}-ingest-env
+  name: {{ include "common.fullname" . }}-ingest-env
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ template "common.fullname" . }}-ingest
-    chart: {{ template "common.chart" . }}
+    app: {{ include "common.fullname" . }}-ingest
+    chart: {{ include "common.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
