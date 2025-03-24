@@ -20,7 +20,7 @@
 {{- end -}}
 
 {{- define "common.horizonImage" -}}
-{{ .Values.global.image.horizon.registry }}/{{ .Values.global.image.horizon.repository }}:{{ default .Chart.AppVersion .Values.global.image.horizon.tag }}
+{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}
 {{- end -}}
 
 {{- define "core.config" -}}
