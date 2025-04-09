@@ -77,11 +77,11 @@ global:
   ephemeralDatabase: true
 
   ## @extra global.eventBroker Configuration related to the event broker used by the application.
-  ## @param global.eventBroker.type The type of event broker to be used. Options: "NONE", "KAFKA". Default: "KAFKA".
+    ## @param global.eventBroker.type The type of event broker to be used. Options: "KAFKA", "SCHEDULER". Default: "SCHEDULER".
   ## @param global.eventBroker.urls A comma-separated list of broker URLs for the event broker.
   ## @param global.eventBroker.consumerGroupId The consumer group ID for the event broker.
   eventBroker:
-    type: "KAFKA"
+    type: "SCHEDULER"
     urls: #required
     consumerGroupId: #required
 
@@ -166,7 +166,6 @@ sdp:
   ## @param sdp.configMap.data.DISABLE_MFA Determines if email-based MFA should be disabled during login ("true" or "false").
   ## @param sdp.configMap.data.SDP_UI_BASE_URL The base URL of the SDP UI/dashboard.
   ## @param sdp.configMap.data.INSTANCE_NAME The name of the SDP instance. Example: "SDP Testnet".
-  ## @param sdp.configMap.data.ENABLE_SCHEDULER Whether the scheduled jobs are enabled in this instance ("true" or "false"). Default "false".
   ## @param sdp.configMap.data.SCHEDULER_PAYMENT_JOB_SECONDS The interval in seconds for the payment job that syncs payments between the SDP and the TSS.
   ## @param sdp.configMap.data.SCHEDULER_RECEIVER_INVITATION_JOB_SECONDS The interval in seconds for the receiver invitation job that sends invitations to new receivers. 0 or negative values disable the job.
   ## @param sdp.configMap.data.MAX_INVITATION_RESEND_ATTEMPTS The maximum number of times an invitation can be resent. 0 or negative values disable the job.
@@ -189,7 +188,6 @@ sdp:
       DISABLE_RECAPTCHA: "false"
       DISABLE_MFA: "false"
       INSTANCE_NAME: #required
-      ENABLE_SCHEDULER: "false"
       SCHEDULER_PAYMENT_JOB_SECONDS: "10"
       SCHEDULER_RECEIVER_INVITATION_JOB_SECONDS: "10"
       MAX_INVITATION_RESEND_ATTEMPTS: "3"
