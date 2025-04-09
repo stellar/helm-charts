@@ -6,11 +6,11 @@
 
 global:
   ## @extra global.eventBroker Configuration related to the event broker used by the application.
-  ## @param global.eventBroker.type The type of event broker to be used. Options: "NONE", "KAFKA". Default: "KAFKA".
+  ## @param global.eventBroker.type The type of event broker to be used. Options: "KAFKA", "SCHEDULER". Default: "SCHEDULER".
   ## @param global.eventBroker.urls A comma-separated list of broker URLs for the event broker.
   ## @param global.eventBroker.consumerGroupId The consumer group ID for the event broker.
   eventBroker:
-    type: "NONE"
+    type: "SCHEDULER"
 
 sdp:
 
@@ -20,7 +20,6 @@ sdp:
     domain: #required
     mtnDomain: #required
 
-  ## @param sdp.configMap.data.ENABLE_SCHEDULER Whether the scheduled jobs are enabled in this instance ("true" or "false"). Setting to "true" because broker type is `NONE`.
   ## @param sdp.configMap.data.SEP10_SIGNING_PUBLIC_KEY Anchor platform SEP10 signing public key.
   ## @param sdp.configMap.data.DISTRIBUTION_PUBLIC_KEY The public key of the Stellar distribution account that sends the Stellar payments.
   ## @param sdp.configMap.data.RECAPTCHA_SITE_KEY Site key for ReCaptcha. Required if using ReCaptcha.
@@ -28,7 +27,6 @@ sdp:
   configMap:
     annotations:
     data:
-      ENABLE_SCHEDULER: "true"
       SEP10_SIGNING_PUBLIC_KEY: #required
       DISTRIBUTION_PUBLIC_KEY: #required
       RECAPTCHA_SITE_KEY: #required
