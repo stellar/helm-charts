@@ -24,30 +24,15 @@ global:
   # - imagepullsecret1
   # - imagepullsecret2
 
-  image:
-    horizon:
-      registry: docker.io
-      repository: stellar/stellar-horizon
-      ## Optional tag. Defaults to the appVersion from Chart.yaml
-      # tag: 1.2.3
-
-      ## Specify a imagePullPolicy
-      ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
-      ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-      ##
-      pullPolicy: Always
-    coreExporter:
-      registry: docker.io
-      repository: stellar/stellar-core-prometheus-exporter
-      tag: latest
-      ## Specify a imagePullPolicy
-      ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
-      ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-      ##
-      pullPolicy: Always
+image:
+  registry: docker.io
+  repository: stellar/stellar-horizon
+  ## Optional tag. Defaults to the appVersion from Chart.yaml
+  # tag: 1.2.3
+  pullPolicy: Always
 
 ingest:
-  ## See global.image.horizon for image settings
+  ## See image for image settings
 
   ## Whether to deploy ingesting instances
   enabled: true
@@ -128,7 +113,11 @@ ingest:
     ## If you'd like to have prometheus
     enabled: true
 
-    ## See global.image.coreExporter for image settings
+    image:
+      registry: docker.io
+      repository: stellar/stellar-core-prometheus-exporter
+      tag: latest
+      pullPolicy: Always
 
     resources: {}
     #  limits:
@@ -139,7 +128,7 @@ ingest:
     #    memory: 128Mi
 
 web:
-  ## See global.image.horizon for image settings
+  ## See image for image settings
 
   ## Whether to deploy non-ingesting instances
   ## Useful with read-only DB replica

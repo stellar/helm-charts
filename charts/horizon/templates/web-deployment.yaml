@@ -46,7 +46,7 @@ spec:
         - {{ $flag | quote }}
         {{- end }}
         {{- end }}
-        imagePullPolicy: {{ .Values.global.image.horizon.pullPolicy }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.web.horizonConfig.port }}
           name: horizon
