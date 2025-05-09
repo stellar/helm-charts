@@ -97,7 +97,7 @@ spec:
       - name: core-config
         configMap:
           name: {{ include "common.fullname" . }}-core
-  {{- if .Values.ingest.persistence.enabled }}
+  {{- if and (.Values.ingest.persistence.enabled) (not (.Values.useDeployment))}}
   volumeClaimTemplates:
   - metadata:
       name: {{ include "common.fullname" . }}-ingest-var-lib-stellar
