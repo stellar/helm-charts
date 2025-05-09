@@ -1,7 +1,11 @@
 {{- if .Values.ingest.enabled }}
 ---
 apiVersion: apps/v1
+{{- if .Values.useDeployment }}
+kind: Deployment
+{{ else }}
 kind: StatefulSet
+{{- end }}
 metadata:
   name: {{ include "common.fullname" . }}-ingest
   namespace: {{ .Release.Namespace }}
@@ -12,7 +16,9 @@ metadata:
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.ingest.replicaCount }}
+  {{- if not (.Values.useDeployment) }}
   serviceName: {{ include "common.fullname" . }}-ingest
+  {{- end }}
   selector:
     matchLabels:
       app: {{ include "common.fullname" . }}-ingest
@@ -91,7 +97,7 @@ spec:
       - name: core-config
         configMap:
           name: {{ include "common.fullname" . }}-core
-  {{- if .Values.ingest.persistence.enabled }}
+  {{- if and (.Values.ingest.persistence.enabled) (not (.Values.useDeployment))}}
   volumeClaimTemplates:
   - metadata:
       name: {{ include "common.fullname" . }}-ingest-var-lib-stellar
