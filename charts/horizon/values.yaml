@@ -1,4 +1,10 @@
 global:
+  ## You can choose between a StatefulSet (default) or Deployment
+  ## Use a Deployment for a single pod in a non-critical (dev) environment
+  ## Otherwise, choose StatefulSet
+
+  # useDeployment: true
+
   ## Stellar network to use. When set to "testnet" or "pubnet" default
   ## recommended config will be used.
   ## When set to any other value you have to provide extra settings:
