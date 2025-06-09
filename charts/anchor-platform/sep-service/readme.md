@@ -87,8 +87,9 @@ The following is an example kubernetes secrets manifest that will store base64 e
 ```yaml
 apiVersion: v1
 data:
+  # Example JWT_SECRET string
   JWT_SECRET: c2VjcmV0
-  SEP10_SIGNING_SEED: U0FYM0FINjIyUjJYVDZEWFdXU1JJRENNTVVDQ01BVEJaNVU2WEtKV0RPN00yRUpVQkZDM0FXNVg=
+  SEP10_SIGNING_SEED: SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 kind: Secret
 metadata:
   name: apsigningseed
