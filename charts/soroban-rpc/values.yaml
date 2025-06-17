@@ -89,6 +89,9 @@ sorobanRpc:
     storageClass: default
     size: 100G
 
+  ## Soroban RPC pods do not need to be initialized in a specific order
+  podManagementPolicy: Parallel
+
   ## Uncomment to use custom service account
   # serviceAccountName: default
 

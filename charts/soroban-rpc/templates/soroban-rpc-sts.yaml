@@ -19,6 +19,7 @@ spec:
   # gauranteed to be running while the other one is upgraded and catching backup to network 
   # after restart
   replicas: 2
+  podManagementPolicy: {{ .Values.sorobanRpc.podManagementPolicy }}
   serviceName: {{ template "common.fullname" . }}
   selector:
     matchLabels:

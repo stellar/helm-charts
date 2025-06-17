@@ -17,6 +17,7 @@ metadata:
 spec:
   replicas: {{ .Values.ingest.replicaCount }}
   {{- if not (.Values.useDeployment) }}
+  podManagementPolicy: {{ .Values.ingest.podManagementPolicy }}
   serviceName: {{ include "common.fullname" . }}-ingest
   {{- end }}
   selector:
