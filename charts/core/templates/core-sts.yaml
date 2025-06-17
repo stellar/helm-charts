@@ -13,6 +13,7 @@ metadata:
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.core.replicaCount }}
+  podManagementPolicy: {{ .Values.core.podManagementPolicy }}
   serviceName: {{ template "common.fullname" . }}
   selector:
     matchLabels:

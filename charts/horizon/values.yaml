@@ -90,6 +90,9 @@ ingest:
   ## For production use cases we recommend at least 2 replicas
   replicaCount: 1
 
+  ## Horizon ingest pods do not need to be initialized in a specific order
+  podManagementPolicy: Parallel
+
   serviceAccountName: default
 
   ## Additional annotations or labels to add the Deployment template
