@@ -98,6 +98,7 @@ spec:
       - name: core-config
         configMap:
           name: {{ include "common.fullname" . }}-core
+      affinity: {{- toYaml .Values.ingest.affinity | nindent 8 }}
   {{- if and (.Values.ingest.persistence.enabled) (not (.Values.useDeployment))}}
   volumeClaimTemplates:
   - metadata:

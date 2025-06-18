@@ -91,6 +91,7 @@ spec:
       - name: config-volume
         configMap:
           name: {{ template "common.fullname" . }}
+      affinity: {{- toYaml .Values.sorobanRpc.affinity | nindent 8 }}
   {{- if (.Values.sorobanRpc.persistence).enabled }}
   volumeClaimTemplates:
   - metadata:

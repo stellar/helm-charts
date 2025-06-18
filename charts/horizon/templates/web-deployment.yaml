@@ -66,4 +66,5 @@ spec:
         {{- if .Values.web.resources }}
         resources: {{ toYaml .Values.web.resources | nindent 10 }}
         {{- end }}
+      affinity: {{- toYaml .Values.web.affinity | nindent 8 }}
 {{- end }}

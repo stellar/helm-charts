@@ -147,6 +147,7 @@ ingest:
     #    cpu: 50m
     #    memory: 128Mi
 
+  affinity: {}
   podDisruptionBudget: {}
 
 web:
@@ -209,4 +210,5 @@ web:
     labels: {}
     #  mylabel: myvalue
 
+  affinity: {}
   podDisruptionBudget: {}
