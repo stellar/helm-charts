@@ -11,12 +11,12 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-{{- if .Values.web.podDisruptionBudget.minAvailable }}
+  {{- if .Values.web.podDisruptionBudget.minAvailable }}
   minAvailable: {{ .Values.web.podDisruptionBudget.minAvailable }}
-{{- end }}
-{{- if .Values.web.podDisruptionBudget.maxUnavailable }}
+  {{- end }}
+  {{- if .Values.web.podDisruptionBudget.maxUnavailable }}
   maxUnavailable: {{ .Values.web.podDisruptionBudget.maxUnavailable }}
-{{- end }}
+  {{- end }}
   selector:
     matchLabels:
       app: {{ template "common.fullname" . }}
