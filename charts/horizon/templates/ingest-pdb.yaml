@@ -1,0 +1,23 @@
+---
+{{- if .Values.ingest.podDisruptionBudget }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "common.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+{{- if .Values.ingest.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.ingest.podDisruptionBudget.minAvailable }}
+{{- end }}
+{{- if .Values.ingest.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .Values.ingest.podDisruptionBudget.maxUnavailable }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ template "common.fullname" . }}
+{{- end }}

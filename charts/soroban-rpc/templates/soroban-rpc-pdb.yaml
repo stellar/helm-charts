@@ -1,0 +1,23 @@
+---
+{{- if .Values.sorobanRpc.podDisruptionBudget }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "common.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+{{- if .Values.sorobanRpc.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.sorobanRpc.podDisruptionBudget.minAvailable }}
+{{- end }}
+{{- if .Values.sorobanRpc.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .Values.sorobanRpc.podDisruptionBudget.maxUnavailable }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ template "common.fullname" . }}
+{{- end }}

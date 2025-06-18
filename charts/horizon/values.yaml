@@ -147,6 +147,8 @@ ingest:
     #    cpu: 50m
     #    memory: 128Mi
 
+  podDisruptionBudget: {}
+
 web:
   ## See global.image.horizon for image settings
 
@@ -206,3 +208,5 @@ web:
     ## Extra labels to add to the Ingress object
     labels: {}
     #  mylabel: myvalue
+
+  podDisruptionBudget: {}
