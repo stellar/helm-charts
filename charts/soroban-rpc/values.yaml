@@ -118,7 +118,7 @@ sorobanRpc:
   #     requiredDuringSchedulingIgnoredDuringExecution:
   #     - labelSelector:
   #         matchLabels:
-  #           app: account-viewer-v2
+  #           app: stellar-soroban-rpc
   #       topologyKey: kubernetes.io/hostname
   affinity: {}
 

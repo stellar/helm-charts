@@ -216,7 +216,7 @@ web:
   #     requiredDuringSchedulingIgnoredDuringExecution:
   #     - labelSelector:
   #         matchLabels:
-  #           app: account-viewer-v2
+  #           app: stellar-horizon
   #       topologyKey: kubernetes.io/hostname
   affinity: {}
 
