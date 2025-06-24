@@ -147,7 +147,19 @@ ingest:
     #    cpu: 50m
     #    memory: 128Mi
 
+  ## Example affinity
+  # affinity:
+  #   podAntiAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #     - labelSelector:
+  #         matchLabels:
+  #           app: stellar-horizon-ingest
+  #       topologyKey: kubernetes.io/hostname
   affinity: {}
+
+  ## Example podDisruptionBudget
+  # podDisruptionBudget:
+  #   minAvailable: 1
   podDisruptionBudget: {}
 
 web:
@@ -216,7 +228,7 @@ web:
   #     requiredDuringSchedulingIgnoredDuringExecution:
   #     - labelSelector:
   #         matchLabels:
-  #           app: stellar-horizon
+  #           app: stellar-horizon-web
   #       topologyKey: kubernetes.io/hostname
   affinity: {}
 
