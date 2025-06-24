@@ -112,5 +112,17 @@ sorobanRpc:
   #    cpu: 250m
   #    memory: 2Gi
 
+  ## Example affinity
+  # affinity:
+  #   podAntiAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #     - labelSelector:
+  #         matchLabels:
+  #           app: account-viewer-v2
+  #       topologyKey: kubernetes.io/hostname
   affinity: {}
+
+  ## Example podDisruptionBudget
+  # podDisruptionBudget:
+  #   minAvailable: 1
   podDisruptionBudget: {}

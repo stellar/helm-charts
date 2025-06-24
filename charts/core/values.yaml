@@ -147,5 +147,17 @@ core:
     #    cpu: 50m
     #    memory: 128Mi
 
+  ## Example affinity
+  # affinity:
+  #   podAntiAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #     - labelSelector:
+  #         matchLabels:
+  #           app: account-viewer-v2
+  #       topologyKey: kubernetes.io/hostname
   affinity: {}
+
+  ## Example podDisruptionBudget
+  # podDisruptionBudget:
+  #   minAvailable: 1
   podDisruptionBudget: {}
