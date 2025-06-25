@@ -134,6 +134,7 @@ spec:
         configMap:
           name: {{ template "common.fullname" . }}-nginx
       {{- end }}
+      affinity: {{- toYaml .Values.core.affinity | nindent 8 }}
   {{- if .Values.core.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
