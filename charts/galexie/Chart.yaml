@@ -1,0 +1,10 @@
+apiVersion: v1
+name: galexie
+version: 0.1.0
+appVersion: "24.0.0"
+description: Stellar Galexie Helm Chart. This chart will install Stellar Galexie
+maintainers:
+  - name: Stellar Development Foundation
+sources:
+  - https://github.com/stellar/helm-charts
+  - https://github.com/stellar/stellar-galexie
