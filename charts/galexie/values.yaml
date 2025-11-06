@@ -28,6 +28,11 @@ image:
 # Annotations on the Galexie deployment
 annotations: []
 
+# Environment variables for the Galexie deployment
+env: []
+# EnvFrom for the Galexie deployment
+envFrom: []
+
 # Resources for the Galexie deployment
 resources:
   limits:
