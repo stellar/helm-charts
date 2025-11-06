@@ -26,7 +26,7 @@ image:
   pullPolicy: IfNotPresent
 
 # Annotations on the Galexie deployment
-annotations: []
+annotations: {}
 
 # Environment variables for the Galexie deployment
 env: []
