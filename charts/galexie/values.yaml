@@ -1,0 +1,57 @@
+# Admin port where metrics are served
+adminPort: 6061
+
+# Which stellar network to use. The options are "pubnet" or "testnet"
+network: "pubnet"
+
+# The earliest ledger to create data for in the datastore. For quicker catchup,
+# choose a ledger closer to the most recent ledger in the network
+startLedger: "59000000"
+
+# Datastore configuration for files created by Galexie
+datastore:
+  # The options are "GCS" or "S3"
+  type: "GCS"
+  # The full path including the bucket name of where to create data
+  path: ""
+  # Number of ledgers per file
+  ledgersPerFile: 1
+  # Number of files per partition created in the destination folder
+  filesPerPartition: 64000
+
+# Image used by the Galexie deployment
+image:
+  repository: stellar/stellar-galexie
+  tag: 24.0.0
+  pullPolicy: IfNotPresent
+
+# Annotations on the Galexie deployment
+annotations: {}
+
+# Environment variables for the Galexie deployment
+env: []
+# EnvFrom for the Galexie deployment
+envFrom: []
+
+# Resources for the Galexie deployment
+resources:
+  limits:
+    cpu: 3
+    memory: 16Gi
+  requests:
+    cpu: 1.5
+    memory: 8Gi
+
+# Service account used by the Galexie deployment
+serviceAccount:
+  create: true
+  name: ""
+  annotations: []
+
+# Persistent volume claim for stellar core data used by Galexie
+persistentVolumeClaim:
+  storageClassName: default
+  # 100Gi is recommended for "pubnet". 10Gi is recommended for "testnet"
+  storage: 100Gi
+  volumeName: ""
+  annotations: []

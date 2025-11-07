@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ print (include "common.fullname" .) "-captive-core" | quote }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app: {{ include "common.fullname" . | quote }}
+    chart: {{ include "common.chart" . | quote }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  storageClassName: {{ .Values.persistentVolumeClaim.storageClassName | quote }}
+  {{- if .Values.persistentVolumeClaim.volumeName }}
+  volumeName: {{ .Values.persistentVolumeClaim.volumeName | quote }}
+  {{- end }}
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistentVolumeClaim.storage | quote }}

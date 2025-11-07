@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "common.fullname" . | quote }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app: {{ include "common.fullname" . | quote }}
+    chart: {{ include "common.chart" . | quote }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+data:
+  config.toml: |
+    admin_port = {{ .Values.adminPort }}
+
+    [datastore_config]
+      type = {{ .Values.datastore.type | quote }}
+
+    [datastore_config.params]
+      destination_bucket_path = {{ .Values.datastore.path | quote }}
+
+    [datastore_config.schema]
+      ledgers_per_file = {{ .Values.datastore.ledgersPerFile }}
+      files_per_partition = {{ .Values.datastore.filesPerPartition }}
+
+    [stellar_core_config]
+      network = {{ .Values.network | quote }}
+      storage_path = "/var/lib/stellar/captive-core"
