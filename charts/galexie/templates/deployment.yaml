@@ -18,6 +18,8 @@ spec:
   selector:
     matchLabels:
       app: {{ include "common.fullname" . | quote }}
+  strategy:
+    type: Recreate # Delete old pod to release PVC for new pod
   template:
     metadata:
       labels:
