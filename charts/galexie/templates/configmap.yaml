@@ -17,12 +17,24 @@ data:
       type = {{ .Values.datastore.type | quote }}
 
     [datastore_config.params]
-      destination_bucket_path = {{ .Values.datastore.path | quote }}
+      destination_bucket_path = {{ .Values.datastore.params.path | quote }}
+      region = {{ .Values.datastore.params.region | quote }}
+      endpoint_url = {{ .Values.datastore.params.endpoint_url | quote }}
 
     [datastore_config.schema]
-      ledgers_per_file = {{ .Values.datastore.ledgersPerFile }}
-      files_per_partition = {{ .Values.datastore.filesPerPartition }}
+      ledgers_per_file = {{ .Values.datastore.schema.ledgersPerFile }}
+      files_per_partition = {{ .Values.datastore.schema.filesPerPartition }}
 
     [stellar_core_config]
-      network = {{ .Values.network | quote }}
+      network = {{ .Values.stellarCore.network | quote }}
       storage_path = "/var/lib/stellar/captive-core"
+      history_archive_urls = {{ .Values.stellarCore.history_archive_urls | toJson }}
+      network_passphrase = {{ .Values.stellarCore.network_passphrase | quote }}
+      {{- if .Values.stellarCore.config }}
+      captive_core_toml_path = "/galexie-config/captive-core.cfg"
+      {{- end }}
+
+  {{- if .Values.stellarCore.config }}
+  captive-core.cfg: |
+    {{ .Values.stellarCore.config | nindent 4 }}
+  {{- end }}

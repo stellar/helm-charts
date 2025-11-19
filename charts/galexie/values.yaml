@@ -1,23 +1,41 @@
 # Admin port where metrics are served
 adminPort: 6061
 
-# Which stellar network to use. The options are "pubnet" or "testnet"
-network: "pubnet"
-
 # The earliest ledger to create data for in the datastore. For quicker catchup,
 # choose a ledger closer to the most recent ledger in the network
 startLedger: "59000000"
+
+# Stellar core configuration
+stellarCore:
+  # Which stellar network to use. The preset options are "pubnet" or "testnet".
+  # For a custom network configuration leave empty and set history_archive_urls,
+  # network_passphrase, and config.
+  network: "pubnet"
+  # List of history archives used in the network
+  history_archive_urls: []
+  # Passphrase for the network
+  network_passphrase: ""
+  # Overwrite the core default config with a full stellar core configuration
+  # https://developers.stellar.org/docs/validators/admin-guide/configuring
+  # Use a multiline string
+  config: ""
 
 # Datastore configuration for files created by Galexie
 datastore:
   # The options are "GCS" or "S3"
   type: "GCS"
-  # The full path including the bucket name of where to create data
-  path: ""
-  # Number of ledgers per file
-  ledgersPerFile: 1
-  # Number of files per partition created in the destination folder
-  filesPerPartition: 64000
+  params:
+    # If using s3, region must be specified
+    region: ""
+    # The endpoint URL for the S3-compatible storage. Should be left empty for S3 or GCS
+    endpoint_url: ""
+    # The full path including the bucket name of where to create data
+    path: ""
+  schema:
+    # Number of ledgers per file
+    ledgersPerFile: 1
+    # Number of files per partition created in the destination folder
+    filesPerPartition: 64000
 
 # Image used by the Galexie deployment
 image:
