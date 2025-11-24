@@ -1,10 +1,6 @@
 # Admin port where metrics are served
 adminPort: 6061
 
-# The earliest ledger to create data for in the datastore. For quicker catchup,
-# choose a ledger closer to the most recent ledger in the network
-startLedger: "59000000"
-
 # Stellar core configuration
 stellarCore:
   # Which stellar network to use. The preset options are "pubnet" or "testnet".
@@ -42,6 +38,12 @@ image:
   repository: stellar/stellar-galexie
   tag: 24.0.0
   pullPolicy: IfNotPresent
+
+# Additional flags to append to the galexie append command
+# By default this include start - The earliest ledger to create data for in the datastore.
+# For quicker catchup, choose a ledger closer to the most recent ledger in the network
+additionalFlags:
+  - "--start=59000000"
 
 # Annotations on the Galexie deployment
 annotations: {}
