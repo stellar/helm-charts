@@ -32,11 +32,13 @@ spec:
         - name: {{ .Chart.Name | quote }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
-          command: [
-            "galexie", "append",
-            "--config-file", "/galexie-config/config.toml",
-            "--start", "{{ .Values.startLedger }}"
-          ]
+          command:
+            - "galexie"
+            - "append"
+            - "--config-file=/galexie-config/config.toml"
+          {{- range .Values.additionalFlags }}
+            - {{ . | quote }}
+          {{- end }}
           ports:
             - containerPort: {{ .Values.adminPort }}
           {{- with .Values.env }}
