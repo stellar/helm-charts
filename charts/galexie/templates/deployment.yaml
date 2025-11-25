@@ -27,6 +27,8 @@ spec:
     spec:
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ .Values.serviceAccount.name | default (include "common.fullname" .) | quote }}
+      {{- else }}
+      serviceAccountName: {{ .Values.serviceAccount.name | default "default" | quote }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name | quote }}
