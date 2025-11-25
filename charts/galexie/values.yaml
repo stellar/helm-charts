@@ -39,8 +39,12 @@ image:
   tag: 24.0.0
   pullPolicy: IfNotPresent
 
-# Additional flags to append to the galexie append command
-# By default this include start - The earliest ledger to create data for in the datastore.
+# Galexie command to run. By default run append which exports any missing
+# ledger data after start flag and before end flag
+galexieCommand: "append"
+
+# Additional flags to append to the galexie command
+# By default this includes start - The earliest ledger to create data for in the datastore.
 # For quicker catchup, choose a ledger closer to the most recent ledger in the network
 additionalFlags:
   - "--start=59000000"
