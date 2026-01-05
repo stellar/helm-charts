@@ -35,7 +35,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           command:
-            - "galexie"
+            - "stellar-galexie"
             - {{ .Values.galexieCommand | quote }}
             - "--config-file=/galexie-config/config.toml"
           {{- range .Values.additionalFlags }}
