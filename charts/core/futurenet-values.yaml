@@ -9,7 +9,7 @@ global:
   ##   - global.historyArchiveUrls
   ##   - global.networkPassphrase
   ##   - core.coreConfig
-  network: futurenet # XXX currently futurenet, testnet and pubnet are not supported
+  network: futurenet
 
   ## Required when global.network is set to non-standard network
   # historyArchiveUrls: "url1,url2,url3"
