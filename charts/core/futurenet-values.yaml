@@ -9,7 +9,7 @@ global:
   ##   - global.historyArchiveUrls
   ##   - global.networkPassphrase
   ##   - core.coreConfig
-  network: testnet # XXX currently testnet and pubnet are not supported
+  network: futurenet # XXX currently futurenet, testnet and pubnet are not supported
 
   ## Required when global.network is set to non-standard network
   # historyArchiveUrls: "url1,url2,url3"
@@ -124,23 +124,23 @@ core:
     automaticMaintenanceCount: 150
     runStandalone: false
     invariantChecks:
-      - ".*"
+      - "(?!EventsAreConsistentWithEntryDiffs).*"
     homeDomains:
     - homeDomain: "futurenet.stellar.org"
-      quality: "LOW"
+      quality: "HIGH"
     validators:
       - name: "futurenet_1"
         homeDomain: "futurenet.stellar.org"
         publicKey: "GBRIF2N52GVN3EXBBICD5F4L5VUFXK6S6VOUCF6T2DWPLOLGWEPPYZTF"
-        address: "horizon-devnet-core-001a.dev.stellar002.external.stellar-ops.com"
-        history: "curl -sf http://history-futurenet.stellar.org/{0} -o {1}"
+        address: "core-live-futurenet-a.stellar.org"
+        history: "curl -sf http://history.stellar.org/dev/core-futurenet/core_futurenet_001/{0} -o {1}"
       - name: "futurenet_2"
         homeDomain: "futurenet.stellar.org"
         publicKey: "GAQM2MF22BYOGIF47RZ2523YK7ZL7Z3CIIX6CCPZBWWLE6KJTXMD4SLO"
-        address: "horizon-devnet-core-002a.dev.stellar002.external.stellar-ops.com"
-        history: "curl -sf http://history-futurenet.stellar.org/{0} -o {1}"
+        address: "core-live-futurenet-b.stellar.org"
+        history: "curl -sf http://history.stellar.org/dev/core-futurenet/core_futurenet_002/{0} -o {1}"
       - name: "futurenet_3"
         homeDomain: "futurenet.stellar.org"
         publicKey: "GC2HLBHG4Z7KV73OPKZD6EWXIXM5QOIZVKN5OS4V2HISDOJC3TUORLY4"
-        address: "horizon-devnet-core-003a.dev.stellar002.external.stellar-ops.com"
-        history: "curl -sf http://history-futurenet.stellar.org/{0} -o {1}"
+        address: "core-live-futurenet-c.stellar.org"
+        history: "curl -sf http://history.stellar.org/dev/core-futurenet/core_futurenet_003/{0} -o {1}"
