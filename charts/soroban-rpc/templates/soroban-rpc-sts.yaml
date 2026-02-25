@@ -72,13 +72,17 @@ spec:
               - /bin/sh
               - -c
               - |
-                curl --location --request POST 'http://127.0.0.1:8000/' \
+                curl -s --location --request POST 'http://127.0.0.1:8000/' \
                   --header 'Content-Type: application/json' \
                   --data-raw '{
                     "jsonrpc": "2.0",
                     "id": 10235,
                     "method": "getHealth"
+                  {{- if .Values.sorobanRpc.requireFullRetentionWindow }}
                   }' | jq -es 'if (. | length) == 0 then null else .[0] end | .result | .status == "healthy" and (.latestLedger - .oldestLedger >= (.ledgerRetentionWindow - 10))' > /dev/null;
+                  {{- else }}
+                  }' | jq -es 'if (. | length) == 0 then null else .[0] end | .result | .status == "healthy"' > /dev/null;
+                  {{- end }}
           failureThreshold: 2
           periodSeconds: 10
           successThreshold: 2

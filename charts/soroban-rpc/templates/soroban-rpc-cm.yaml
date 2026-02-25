@@ -38,12 +38,8 @@ data:
     HTTP_PORT=11626
     PUBLIC_HTTP_PORT=true
     PEER_PORT=11625
-    EXPERIMENTAL_BUCKETLIST_DB=true
     {{ if (.Values.sorobanRpc.coreConfig).bucketDirPath -}}
     BUCKET_DIR_PATH={{ .Values.sorobanRpc.coreConfig.bucketDirPath |quote -}}
-    {{ end -}}
-    {{ if (.Values.sorobanRpc.coreConfig).bucketlistDbIndexPageSizeExponent -}}
-    EXPERIMENTAL_BUCKETLIST_DB_INDEX_PAGE_SIZE_EXPONENT={{ (.Values.sorobanRpc.coreConfig).bucketlistDbIndexPageSizeExponent }}
     {{ end -}}
     {{ if (.Values.sorobanRpc.coreConfig).enableDiagnosticEvents -}}
     ENABLE_SOROBAN_DIAGNOSTIC_EVENTS={{ (.Values.sorobanRpc.coreConfig).enableDiagnosticEvents }}
