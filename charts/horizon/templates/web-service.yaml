@@ -13,7 +13,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - name: core
+    - name: horizon
       port: 80
       targetPort: 8000
   selector:
