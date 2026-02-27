@@ -24,7 +24,7 @@ helm install myhorizon stellar/horizon \
 
 Notes:
 - CloudNativePG operator and CRDs must already be installed in the cluster.
-- `cnpg.auth.password` is required for auto-generated `DATABASE_URL`.
+- `cnpg.auth.password` is required whenever `cnpg.enabled=true` (it is used to bootstrap the CNPG cluster user and to generate the `DATABASE_URL` secret when \`ingest.existingSecret\` / \`web.existingSecret\` are not set).
 - You can still use external DB credentials by setting `ingest.existingSecret` and/or `web.existingSecret`.
 
 Add SDF helm repo to your system:
