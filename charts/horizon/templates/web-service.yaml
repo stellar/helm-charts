@@ -13,8 +13,8 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - name: core
-      port: 80
+    - name: horizon
+      port: 8000
       targetPort: {{ .Values.web.horizonConfig.port }}
   selector:
     app: {{ include "common.fullname" . }}-web

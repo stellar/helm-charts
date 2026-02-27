@@ -12,6 +12,9 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
+  {{- if .Values.ingest.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.ingest.ingress.ingressClassName | quote }}
+  {{- end }}
   tls:
   - secretName: {{ include "common.fullname" . }}-ingest-cert
     hosts:
@@ -26,5 +29,5 @@ spec:
           service:
             name: {{ include "common.fullname" . }}-ingest
             port:
-              number: 80
+              number: 8000
 {{- end }}

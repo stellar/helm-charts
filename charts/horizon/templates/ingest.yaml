@@ -64,7 +64,7 @@ spec:
           name: core
         envFrom:
         - secretRef:
-            name: {{ .Values.ingest.existingSecret }}
+            name: {{ include "horizon.ingestDatabaseSecretName" . }}
         - configMapRef:
             name: {{ include "common.fullname" . }}-ingest-env
         readinessProbe:

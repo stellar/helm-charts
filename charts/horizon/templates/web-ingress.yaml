@@ -12,6 +12,9 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
+  {{- if .Values.web.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.web.ingress.ingressClassName | quote }}
+  {{- end }}
   tls:
   - secretName: {{ include "common.fullname" . }}-web-cert
     hosts:
@@ -26,5 +29,5 @@ spec:
           service:
             name: {{ include "common.fullname" . }}-web
             port:
-              number: 80
+              number: 8000
 {{- end }}

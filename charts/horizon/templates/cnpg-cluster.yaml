@@ -1,0 +1,28 @@
+{{- if .Values.cnpg.enabled }}
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "horizon.cnpgClusterName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    chart: {{ include "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  instances: {{ .Values.cnpg.cluster.instances }}
+  storage:
+    size: {{ .Values.cnpg.cluster.storage.size | quote }}
+    {{- if .Values.cnpg.cluster.storage.storageClass }}
+    storageClass: {{ .Values.cnpg.cluster.storage.storageClass | quote }}
+    {{- end }}
+  {{- if .Values.cnpg.cluster.imageName }}
+  imageName: {{ .Values.cnpg.cluster.imageName | quote }}
+  {{- end }}
+  bootstrap:
+    initdb:
+      database: {{ required "cnpg.auth.database is required when cnpg.enabled=true" .Values.cnpg.auth.database | quote }}
+      owner: {{ required "cnpg.auth.username is required when cnpg.enabled=true" .Values.cnpg.auth.username | quote }}
+      secret:
+        name: {{ include "horizon.cnpgAppSecretName" . }}
+{{- end }}
