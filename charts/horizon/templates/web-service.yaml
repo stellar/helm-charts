@@ -14,8 +14,8 @@ spec:
   type: ClusterIP
   ports:
     - name: horizon
-      port: 80
-      targetPort: 8000
+      port: 8000
+      targetPort: {{ .Values.web.horizonConfig.port }}
   selector:
     app: {{ include "common.fullname" . }}-web
 {{- end }}
