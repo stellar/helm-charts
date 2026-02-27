@@ -199,3 +199,30 @@ HOME_DOMAIN="testnet.stellar.org"
 NAME="sdf_testnet_3"
 PUBLIC_KEY="GC2V2EFSXN6SQTWVYA5EPJPBWWIMSD2XQNKUOHGEKB535AQE2I6IXV2Z"
 {{- end }}
+
+##############################################
+# Define default futurenet config
+{{- define "core.futurenetConfig" -}}
+PUBLIC_HTTP_PORT=true
+[[HOME_DOMAINS]]
+HOME_DOMAIN="futurenet.stellar.org"
+QUALITY="HIGH"
+[[VALIDATORS]]
+NAME="futurenet_1"
+HOME_DOMAIN="futurenet.stellar.org"
+PUBLIC_KEY="GBRIF2N52GVN3EXBBICD5F4L5VUFXK6S6VOUCF6T2DWPLOLGWEPPYZTF"
+ADDRESS="core-live-futurenet-a.stellar.org"
+HISTORY="curl -sf http://history.stellar.org/dev/core-futurenet/core_futurenet_001/{0} -o {1}"
+[[VALIDATORS]]
+NAME="futurenet_2"
+HOME_DOMAIN="futurenet.stellar.org"
+PUBLIC_KEY="GAQM2MF22BYOGIF47RZ2523YK7ZL7Z3CIIX6CCPZBWWLE6KJTXMD4SLO"
+ADDRESS="core-live-futurenet-b.stellar.org"
+HISTORY="curl -sf http://history.stellar.org/dev/core-futurenet/core_futurenet_002/{0} -o {1}"
+[[VALIDATORS]]
+NAME="futurenet_3"
+HOME_DOMAIN="futurenet.stellar.org"
+PUBLIC_KEY="GC2HLBHG4Z7KV73OPKZD6EWXIXM5QOIZVKN5OS4V2HISDOJC3TUORLY4"
+ADDRESS="core-live-futurenet-c.stellar.org"
+HISTORY="curl -sf http://history.stellar.org/dev/core-futurenet/core_futurenet_003/{0} -o {1}"
+{{- end }}

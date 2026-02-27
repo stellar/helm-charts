@@ -26,6 +26,8 @@
 {{- define "core.config" -}}
 {{- if eq .Values.global.network "testnet" -}}
 {{- include "core.testnetConfig" . }}
+{{- else if eq .Values.global.network "futurenet" -}}
+{{- include "core.futurenetConfig" . }}
 {{- else if eq .Values.global.network "pubnet" -}}
 {{- include "core.pubnetConfig" . }}
 {{- else -}}
@@ -36,6 +38,8 @@
 {{- define "horizon.historyArchiveUrls" -}}
 {{- if eq .Values.global.network "testnet" -}}
 https://history.stellar.org/prd/core-testnet/core_testnet_001,https://history.stellar.org/prd/core-testnet/core_testnet_002,https://history.stellar.org/prd/core-testnet/core_testnet_003
+{{- else if eq .Values.global.network "futurenet" -}}
+https://history.stellar.org/dev/core-futurenet/core_futurenet_001,https://history.stellar.org/dev/core-futurenet/core_futurenet_002,https://history.stellar.org/dev/core-futurenet/core_futurenet_003
 {{- else if eq .Values.global.network "pubnet" -}}
 https://history.stellar.org/prd/core-live/core_live_001,https://history.stellar.org/prd/core-live/core_live_002,https://history.stellar.org/prd/core-live/core_live_003
 {{- else  -}}
@@ -46,9 +50,58 @@ https://history.stellar.org/prd/core-live/core_live_001,https://history.stellar.
 {{- define "horizon.networkPassphrase" -}}
 {{- if eq .Values.global.network "testnet" -}}
 Test SDF Network ; September 2015
+{{- else if eq .Values.global.network "futurenet" -}}
+Test SDF Future Network ; October 2022
 {{- else if eq .Values.global.network "pubnet" -}}
 Public Global Stellar Network ; September 2015
 {{- else -}}
 {{- .Values.global.networkPassphrase }}
 {{- end -}}
+{{- end -}}
+
+{{- define "horizon.defaultDatabaseSecretName" -}}
+{{- printf "%s-db" (include "common.fullname" .) -}}
+{{- end -}}
+
+{{- define "horizon.ingestDatabaseSecretName" -}}
+{{- if .Values.ingest.existingSecret -}}
+{{- .Values.ingest.existingSecret -}}
+{{- else if .Values.cnpg.enabled -}}
+{{- include "horizon.defaultDatabaseSecretName" . -}}
+{{- else -}}
+{{- required "Set ingest.existingSecret or enable cnpg.enabled" .Values.ingest.existingSecret -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "horizon.webDatabaseSecretName" -}}
+{{- if .Values.web.existingSecret -}}
+{{- .Values.web.existingSecret -}}
+{{- else if .Values.cnpg.enabled -}}
+{{- include "horizon.defaultDatabaseSecretName" . -}}
+{{- else -}}
+{{- required "Set web.existingSecret or enable cnpg.enabled" .Values.web.existingSecret -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "horizon.cnpgClusterName" -}}
+{{- if .Values.cnpg.cluster.name -}}
+{{- .Values.cnpg.cluster.name -}}
+{{- else -}}
+{{- printf "%s-db" (include "common.fullname" .) -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "horizon.cnpgReadWriteHost" -}}
+{{- printf "%s-rw" (include "horizon.cnpgClusterName" .) -}}
+{{- end -}}
+
+{{- define "horizon.cnpgAppSecretName" -}}
+{{- printf "%s-app" (include "horizon.cnpgClusterName" .) -}}
+{{- end -}}
+
+{{- define "horizon.databaseUrl" -}}
+{{- $user := required "cnpg.auth.username is required when cnpg.enabled=true" .Values.cnpg.auth.username -}}
+{{- $password := required "cnpg.auth.password is required when cnpg.enabled=true and auto-generated DATABASE_URL is used" .Values.cnpg.auth.password -}}
+{{- $database := required "cnpg.auth.database is required when cnpg.enabled=true" .Values.cnpg.auth.database -}}
+{{- printf "postgres://%s:%s@%s:5432/%s?sslmode=disable" $user ($password | urlquery) (include "horizon.cnpgReadWriteHost" .) $database -}}
 {{- end -}}

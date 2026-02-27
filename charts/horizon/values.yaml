@@ -52,6 +52,25 @@ global:
       ##
       pullPolicy: Always
 
+## Optional CloudNativePG resources for in-cluster Horizon database
+##
+## When enabled, this chart can create a CNPG Cluster and a DATABASE_URL secret
+## for ingest/web unless ingest.existingSecret / web.existingSecret are set.
+cnpg:
+  enabled: false
+  cluster:
+    ## Optional cluster name override. Defaults to <release>-horizon-db
+    name: ""
+    instances: 1
+    imageName: ""
+    storage:
+      size: 50Gi
+      storageClass: ""
+  auth:
+    username: horizon
+    password: ""
+    database: horizon
+
 ingest:
   ## See global.image.horizon for image settings
 
@@ -59,14 +78,13 @@ ingest:
   enabled: true
 
   ## List of CLI arguments to provide to the stellar-horizon binary
-  cliArgs:
-  - "--apply-migrations"
+  # cliArgs: []
 
   ## Horizon config
   horizonConfig:
     adminPort: 6000
     allowEmptyLedgerDataResponses: true
-    applyMigrations: false
+    applyMigrations: true
     captiveCoreUseDb: false
     connectionTimeout: 10
     disablePathFinding: false
@@ -120,6 +138,7 @@ ingest:
   ingress:
     enabled: false
     host: horizon-ingest.example.com
+    ingressClassName: ""
     ## Extra annotations to add to the Ingress object
     annotations: {}
     #  kubernetes.io/ingress.class: "public"
@@ -214,6 +233,7 @@ web:
   ingress:
     enabled: false
     host: horizon-web.example.com
+    ingressClassName: ""
     ## Extra annotations to add to the Ingress object
     annotations: {}
     #  kubernetes.io/ingress.class: "public"

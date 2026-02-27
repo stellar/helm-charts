@@ -54,7 +54,7 @@ spec:
           name: metrics
         envFrom:
         - secretRef:
-            name: {{ .Values.web.existingSecret }}
+            name: {{ include "horizon.webDatabaseSecretName" . }}
         - configMapRef:
             name: {{ include "common.fullname" . }}-web-env
         readinessProbe:

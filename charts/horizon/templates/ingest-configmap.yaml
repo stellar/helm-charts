@@ -23,7 +23,6 @@ data:
   DISABLE_PATH_FINDING: {{ .Values.ingest.horizonConfig.disablePathFinding | quote}}
   ENABLE_ACCOUNTS_FOR_SIGNER: {{ .Values.ingest.horizonConfig.enableAccountsForSigner | quote}}
   ENABLE_ASSET_STATS: {{ .Values.ingest.horizonConfig.enableAssetStats | quote}}
-  ENABLE_CAPTIVE_CORE_INGESTION: "true"
   ENABLE_EXPERIMENTAL_INGESTION: "false"
   {{- if .Values.ingest.horizonConfig.friendbotUrl }}
   FRIENDBOT_URL: {{ .Values.ingest.horizonConfig.friendbotUrl | quote}}
