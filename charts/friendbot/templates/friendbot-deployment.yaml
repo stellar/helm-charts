@@ -14,7 +14,7 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  replicas: {{ .Values.friendbot.replicaCount }}
+  replicas: {{ .Values.friendbot.deployment.container.replicaCount }}
   selector:
     matchLabels:
       app: {{ template "common.fullname" . }}
