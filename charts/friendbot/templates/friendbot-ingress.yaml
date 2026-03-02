@@ -1,0 +1,30 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  {{- if (.Values.friendbot.ingress).annotations }}
+  annotations:
+    {{- range $key, $value := .Values.friendbot.ingress.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    {{- end }}
+spec:
+  tls:
+  - secretName: {{ template "common.fullname" . }}-cert
+    hosts:
+    - {{ .Values.friendbot.ingress.host }}
+  rules:
+  - host: {{ .Values.friendbot.ingress.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ template "common.fullname" . }}
+            port:
+              number: {{ .Values.friendbot.ingress.port | default 80 }}

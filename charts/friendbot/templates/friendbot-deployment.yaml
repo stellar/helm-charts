@@ -1,0 +1,67 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- else }}
+  namespace: default
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.friendbot.deployment.container.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "common.fullname" . }}
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ template "common.fullname" . }}
+        release: {{ .Release.Name }}
+      {{- if (.Values.friendbot.deployment).labels }}
+        {{- range $key, $value := .Values.friendbot.deployment.labels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
+      {{- if (.Values.friendbot.deployment).annotations }}
+      annotations:
+        {{- range $key, $value := .Values.friendbot.deployment.annotations }}
+          {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
+    spec:
+      {{- if (.Values.friendbot).serviceAccountName }}
+      serviceAccountName: {{ .Values.friendbot.serviceAccountName | default "default" }}
+      {{- end }}
+      containers:
+      - name: friendbot
+        image: {{ include "common.friendbotImage" . | quote }}
+        {{- if (.Values.friendbot.deployment.container).cliArgs }}
+        args:
+          {{- range $flag := .Values.friendbot.deployment.container.cliArgs }}
+          - {{ $flag | quote }}
+          {{- end }}
+        {{- end }}
+        imagePullPolicy: {{ .Values.global.image.friendbot.pullPolicy }}
+        startupProbe:
+          tcpSocket:
+            port: {{ .Values.friendbot.deployment.container.startupProbe.tcpSocketPort }}
+          initialDelaySeconds: {{ .Values.friendbot.deployment.container.startupProbe.initialDelaySeconds }}
+          failureThreshold: {{ .Values.friendbot.deployment.container.startupProbe.failureThreshold }}
+          periodSeconds: {{ .Values.friendbot.deployment.container.startupProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.friendbot.deployment.container.startupProbe.timeoutSeconds }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /config
+          readOnly: true
+      volumes:
+        - name: config-volume
+          secret:
+            secretName: {{ template "common.fullname" . }}-vol
