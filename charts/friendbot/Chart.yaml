@@ -3,7 +3,6 @@ name: friendbot
 description: This chart will deploy friendbot to your private network
 version: 0.0.3
 appVersion: "bbdf3132"
-description: Stellar Friendbot Helm Chart
 maintainers: 
   - name: Stellar Development Foundation
 sources:
