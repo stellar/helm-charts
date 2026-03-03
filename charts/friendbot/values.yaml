@@ -36,7 +36,7 @@ friendbot:
       - /secret/secret.conf
       replicaCount: 1
       startupProbe:
-        tcpSocketPort: 8004
+        tcpSocket: {}
         initialDelaySeconds: 60
         failureThreshold: 60
         periodSeconds: 10
@@ -48,14 +48,9 @@ friendbot:
     #   environment: "dev"
     #   mylabel1: "myvalue1"
 
-  service:
-    port: 80
-    targetport: 8004
-
   ingress:
     host: "friendbot.example.com"
     # ingressClassName: ""
-    # port: 80
     # annotations:
     #   cert-manager.io/cluster-issuer: "default"
 
@@ -72,7 +67,7 @@ friendbot:
     # existingSecret: ""
 
   configmap:
-    port: 8000 
+    port: 8000
     # friendbotAccountSeed: "XXXXXXX" # legacy fallback; prefer friendbot.secret.friendbotAccountSeed
     # otel_enabled: false
     # otel_endpoint: "http://otel-collector:4318"

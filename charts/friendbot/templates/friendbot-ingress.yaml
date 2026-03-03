@@ -30,4 +30,4 @@ spec:
           service:
             name: {{ template "common.fullname" . }}
             port:
-              number: {{ .Values.friendbot.ingress.port | default 80 }}
+              number: {{ .Values.friendbot.configmap.port | default 8000 }}

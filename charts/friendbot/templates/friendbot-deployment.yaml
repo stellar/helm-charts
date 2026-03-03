@@ -61,15 +61,16 @@ spec:
         {{- end }}
         imagePullPolicy: {{ .Values.global.image.friendbot.pullPolicy }}
         ports:
-        - containerPort: {{ .Values.friendbot.service.targetport | default 8004 }}
+        - containerPort: {{ .Values.friendbot.configmap.port | default 8000 }}
           protocol: TCP
+        {{- with .Values.friendbot.deployment.container.startupProbe }}
+        {{- $startupProbe := deepCopy . }}
+        {{- if and (hasKey $startupProbe "tcpSocket") (kindIs "map" $startupProbe.tcpSocket) (not (hasKey $startupProbe.tcpSocket "port")) }}
+        {{- $_ := set $startupProbe.tcpSocket "port" ($.Values.friendbot.configmap.port | default 8000) }}
+        {{- end }}
         startupProbe:
-          tcpSocket:
-            port: {{ .Values.friendbot.deployment.container.startupProbe.tcpSocketPort }}
-          initialDelaySeconds: {{ .Values.friendbot.deployment.container.startupProbe.initialDelaySeconds }}
-          failureThreshold: {{ .Values.friendbot.deployment.container.startupProbe.failureThreshold }}
-          periodSeconds: {{ .Values.friendbot.deployment.container.startupProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.friendbot.deployment.container.startupProbe.timeoutSeconds }}
+          {{- toYaml $startupProbe | nindent 10 }}
+        {{- end }}
         volumeMounts:
         - name: friendbot-secret
           mountPath: /secret

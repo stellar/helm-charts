@@ -24,7 +24,7 @@ data:
     {{- end }}
     starting_balance = {{ .Values.friendbot.configmap.starting_balance | default 10000 | quote }}
     num_minions = {{ .Values.friendbot.configmap.num_minions | default 1000 }}
-    base_fee = {{ .Values.friendbot.configmap.base_fee | default 100000 }}
+    base_fee = {{ .Values.friendbot.configmap.base_fee | default 100000 | int64 }}
     minion_batch_size = {{ .Values.friendbot.configmap.minion_batch_size | default 50 }}
     submit_tx_retries_allowed = {{ .Values.friendbot.configmap.submit_tx_retries_allowed | default .Values.friendbot.configmap.tx | default 5 }}
     {{- if hasKey $config "otel_enabled" }}
