@@ -1,7 +1,7 @@
 apiVersion: v2
 name: friendbot
 description: This chart will deploy friendbot to your private network
-version: 0.0.3
+version: 0.0.4
 appVersion: "bbdf3132"
 maintainers: 
   - name: Stellar Development Foundation

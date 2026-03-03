@@ -13,13 +13,23 @@ metadata:
     chart: {{ template "common.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+  {{- if (.Values.friendbot.deployment).deploymentAnnotations }}
+  annotations:
+    {{- range $key, $value := .Values.friendbot.deployment.deploymentAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
 spec:
   replicas: {{ .Values.friendbot.deployment.container.replicaCount }}
   selector:
     matchLabels:
       app: {{ template "common.fullname" . }}
   strategy:
+    {{- if .Values.friendbot.deployment.strategy }}
+    {{- toYaml .Values.friendbot.deployment.strategy | nindent 4 }}
+    {{- else }}
     type: RollingUpdate
+    {{- end }}
   template:
     metadata:
       labels:
@@ -50,6 +60,9 @@ spec:
           {{- end }}
         {{- end }}
         imagePullPolicy: {{ .Values.global.image.friendbot.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.friendbot.service.targetport | default 8004 }}
+          protocol: TCP
         startupProbe:
           tcpSocket:
             port: {{ .Values.friendbot.deployment.container.startupProbe.tcpSocketPort }}
@@ -58,10 +71,16 @@ spec:
           periodSeconds: {{ .Values.friendbot.deployment.container.startupProbe.periodSeconds }}
           timeoutSeconds: {{ .Values.friendbot.deployment.container.startupProbe.timeoutSeconds }}
         volumeMounts:
-        - name: config-volume
+        - name: friendbot-secret
+          mountPath: /secret
+          readOnly: true
+        - name: friendbot-conf
           mountPath: /config
           readOnly: true
       volumes:
-        - name: config-volume
+        - name: friendbot-secret
           secret:
-            secretName: {{ template "common.fullname" . }}-vol
+            secretName: {{ include "friendbot.secretName" . }}
+        - name: friendbot-conf
+          configMap:
+            name: {{ template "common.fullname" . }}-config

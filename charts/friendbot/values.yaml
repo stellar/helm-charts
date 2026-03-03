@@ -21,10 +21,19 @@ friendbot:
   # serviceAccountName: default
 
   deployment:
+    # deploymentAnnotations:
+    #   reloader.stakater.com/auto: "true"
+    strategy:
+      type: RollingUpdate
+      # rollingUpdate:
+      #   maxUnavailable: 0
+      #   maxSurge: 1
     container:
       cliArgs:
       - --conf
       - /config/friendbot.conf
+      - --secret
+      - /secret/secret.conf
       replicaCount: 1
       startupProbe:
         tcpSocketPort: 8004
@@ -44,18 +53,35 @@ friendbot:
     targetport: 8004
 
   ingress:
-    # port: 80
-    #annotations:
-    #  kubernetes.io/ingress.class: "public"
-    #  cert-manager.io/cluster-issuer: "default"
     host: "friendbot.example.com"
+    # ingressClassName: ""
+    # port: 80
+    # annotations:
+    #   cert-manager.io/cluster-issuer: "default"
+
+  secret:
+    ## Friendbot requires account seed to be configured. This can be provided using two mutually exclusive ways:
+    ## 1. Using the friendbotAccountSeed value. The chart will create secret with the required content
+    ##    If not set, chart falls back to legacy friendbot.configmap.friendbotAccountSeed
+    ## 2. Using the existingSecret value. The chart will mount the secret in the Deployment.
+    ##    Required format for existingSecret:
+    ##    - Secret must contain a key named `secret.conf`
+    ##    - That key is mounted as /secret/secret.conf (used by container args)
+    ##    - secret.conf content must use: friendbot_secret = "<stellar_secret_seed>"
+    # friendbotAccountSeed: "XXXXXXX"
+    # existingSecret: ""
 
   configmap:
     port: 8000 
-    # friendbotAccountSeed: "XXXXXXX" # this comes from stellar-network parent chart
+    # friendbotAccountSeed: "XXXXXXX" # legacy fallback; prefer friendbot.secret.friendbotAccountSeed
+    # otel_enabled: false
+    # otel_endpoint: "http://otel-collector:4318"
+    # rpc_url: "https://soroban-rpc.example.com"
+    # horizon_url: "https://horizon-testnet.stellar.org"
     # starting_balance: 10000
     # num_minions: 1000
     # base_fee: 10000
     # minion_batch_size: 50
     # submit_tx_retries_allowed: 5
+    # fund_contract_addresses: true
 

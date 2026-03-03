@@ -22,3 +22,12 @@
 {{- define "common.friendbotImage" -}}
 {{ .Values.global.image.friendbot.registry }}/{{ .Values.global.image.friendbot.repository }}:{{ .Values.global.image.friendbot.tag | default .Chart.AppVersion }}
 {{- end -}}
+
+{{- define "friendbot.secretName" -}}
+{{- $friendbotSecret := get .Values.friendbot "secret" | default dict -}}
+{{- if (get $friendbotSecret "existingSecret") -}}
+{{- get $friendbotSecret "existingSecret" -}}
+{{- else -}}
+{{- printf "%s-secret" (include "common.fullname" .) -}}
+{{- end -}}
+{{- end -}}
