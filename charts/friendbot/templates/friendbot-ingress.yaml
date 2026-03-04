@@ -13,6 +13,9 @@ metadata:
     {{- end }}
     {{- end }}
 spec:
+  {{- if .Values.friendbot.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.friendbot.ingress.ingressClassName }}
+  {{- end }}
   tls:
   - secretName: {{ template "common.fullname" . }}-cert
     hosts:
@@ -27,4 +30,4 @@ spec:
           service:
             name: {{ template "common.fullname" . }}
             port:
-              number: {{ .Values.friendbot.ingress.port | default 80 }}
+              number: {{ .Values.friendbot.configmap.port | default 8000 }}
