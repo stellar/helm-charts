@@ -62,10 +62,8 @@ spec:
         volumeMounts:
         - mountPath: /config
           name: core-config
-        {{- if .Values.core.persistence.enabled }}
         - mountPath: /var/lib/stellar
           name: {{ template "common.fullname" . }}-var-lib-stellar
-        {{- end }}
       containers:
       - name: core
         image: {{ include "common.coreImage" . | quote }}
@@ -90,10 +88,8 @@ spec:
         volumeMounts:
         - mountPath: /config
           name: core-config
-        {{- if .Values.core.persistence.enabled }}
         - mountPath: /var/lib/stellar
           name: {{ template "common.fullname" . }}-var-lib-stellar
-        {{- end }}
       {{- if (.Values.core.coreExporter).enabled }}
       - name: stellar-core-prometheus-exporter
         image: "{{ .Values.global.image.coreExporter.registry }}/{{ .Values.global.image.coreExporter.repository }}:{{ .Values.global.image.coreExporter.tag }}"
@@ -120,15 +116,17 @@ spec:
         volumeMounts:
         - mountPath: /etc/nginx/conf.d
           name: nginx-config
-        {{- if .Values.core.persistence.enabled }}
         - mountPath: /var/lib/stellar
           name: {{ template "common.fullname" . }}-var-lib-stellar
-        {{- end }}
       {{- end }}
       volumes:
       - name: core-config
         configMap:
           name: {{ template "common.fullname" . }}
+      {{- if not .Values.core.persistence.enabled }}
+      - name: {{ template "common.fullname" . }}-var-lib-stellar
+        emptyDir: {}
+      {{- end }}
       {{- if (.Values.core.historyProxy).enabled }}
       - name: nginx-config
         configMap:
