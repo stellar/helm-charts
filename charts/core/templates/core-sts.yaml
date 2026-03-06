@@ -52,9 +52,6 @@ spec:
           - /config/stellar-core.cfg
           - --console
         imagePullPolicy: {{ .Values.global.image.core.pullPolicy }}
-        ports:
-        - containerPort: 11626
-          name: core
         {{- if (.Values.core).resources }}
         resources:
 {{ toYaml .Values.core.resources | indent 10 }}
@@ -158,10 +155,16 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
   ports:
     - name: core
       port: 11626
       targetPort: 11626
+    {{- if (.Values.core.historyProxy).enabled }}
+    - name: http
+      port: 80
+      targetPort: 80
+    {{- end }}
   selector:
     app: {{ template "common.fullname" . }}

@@ -31,6 +31,91 @@ data:
     }
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "common.fullname" . }}-history-router-nginx
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}-history
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  default.conf: |
+    server {
+      listen 80;
+      server_name _;
+      resolver kube-dns.kube-system.svc.cluster.local valid=10s;
+      resolver_timeout 5s;
+
+      location ~ ^/([0-9]+)(/.*)?$ {
+        set $pod_index $1;
+        set $pod_path $2;
+
+        if ($pod_path = "") {
+          set $pod_path "/";
+        }
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+
+        proxy_pass http://{{ template "common.fullname" . }}-$pod_index.{{ template "common.fullname" . }}.{{ .Release.Namespace | default "default" }}.svc.cluster.local:80$pod_path;
+      }
+
+      location / {
+        return 404;
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "common.fullname" . }}-history
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}-history
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.core.historyProxy.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ template "common.fullname" . }}-history
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "common.fullname" . }}-history
+        release: {{ .Release.Name }}
+    spec:
+      {{- if (.Values.global).imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.global.imagePullSecrets | indent 8 }}
+      {{- end }}
+      containers:
+      - name: history-router
+        image: "{{ .Values.global.image.nginx.registry }}/{{ .Values.global.image.nginx.repository }}:{{ .Values.global.image.nginx.tag }}"
+        imagePullPolicy: {{ .Values.global.image.nginx.pullPolicy }}
+        ports:
+        - containerPort: 80
+          name: http
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d
+          name: nginx-router-config
+      volumes:
+      - name: nginx-router-config
+        configMap:
+          name: {{ template "common.fullname" . }}-history-router-nginx
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "common.fullname" . }}-history
@@ -49,7 +134,8 @@ spec:
       port: 80
       targetPort: 80
   selector:
-    app: {{ template "common.fullname" . }}
+    app: {{ template "common.fullname" . }}-history
+    release: {{ .Release.Name }}
 {{- if and (.Values.core.historyProxy.ingress.enabled) }}
 ---
 apiVersion: networking.k8s.io/v1
@@ -66,6 +152,9 @@ metadata:
     {{- end }}
     {{- end }}
 spec:
+  {{- if (.Values.core.historyProxy.ingress).ingressClassName }}
+  ingressClassName: {{ .Values.core.historyProxy.ingress.ingressClassName }}
+  {{- end }}
   tls:
   - secretName: {{ template "common.fullname" . }}-history-cert
     hosts:

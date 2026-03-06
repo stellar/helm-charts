@@ -95,6 +95,7 @@ core:
   # will make the chart deplo reverse proxy nginx container
   historyProxy:
     enabled: false
+    replicaCount: 1
 
     ## Path to serve over http
     # localPath: /var/lib/stellar/local_archive
@@ -110,9 +111,9 @@ core:
     ingress:
       enabled: false
       host: history-proxy.example.com
+      # ingressClassName: nginx
       ## Extra annotations to add to the Ingress object
       #annotations:
-      #  kubernetes.io/ingress.class: "public"
       #  cert-manager.io/cluster-issuer: "default"
       ## Extra labels to add to the Ingress object
       #labels:
