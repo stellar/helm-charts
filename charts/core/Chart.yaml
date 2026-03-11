@@ -1,7 +1,7 @@
 apiVersion: v1
 name: core
 description: This chart will deploy Stellar Core node
-version: 0.5.0
+version: 0.6.0
 appVersion: "25.2.0-3058.bb195c49d.jammy"
 maintainers:
   - name: Stellar Development Foundation
