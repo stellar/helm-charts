@@ -62,6 +62,20 @@ global:
 core:
   ## See global.image.core for image settings
 
+  ## Init script executed before core starts.
+  initScript: |
+    #!/bin/bash
+    set -ex
+
+    # Try to run upgrade-db to install latest schema. If schema is not present yet
+    # the command will fail. In such case we run new-db to create schema from scratch.
+    stellar-core upgrade-db --conf /config/stellar-core.cfg --console || \
+    stellar-core new-db --conf /config/stellar-core.cfg --console
+
+    ## Below can be used to initialize history archive in an idempotent way
+    # ls -l /var/lib/stellar/local_archive/.well-known/stellar-history.json || \
+    # stellar-core new-hist local --conf /config/stellar-core.cfg --console
+
   ## List of extra CLI arguments to provide to the stellar-core binary
   extraCliArgs: []
 
