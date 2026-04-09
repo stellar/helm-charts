@@ -36,6 +36,9 @@ sorobanRpc:
   ## marking pods as Ready
   requireFullRetentionWindow: false
 
+  ## For production use cases we recommend at least 2 replicas
+  replicaCount: 2
+
   ## Soroban-rpc config variables
   sorobanRpcConfig:
     friendbotUrl: "https://friendbot-futurenet.stellar.org/"
