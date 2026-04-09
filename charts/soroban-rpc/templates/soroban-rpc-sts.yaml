@@ -18,7 +18,7 @@ spec:
   # Having two replicas also ensures zero downtime during upgrades as at least one replica is 
   # gauranteed to be running while the other one is upgraded and catching backup to network 
   # after restart
-  replicas: 2
+  replicas: {{ .Values.sorobanRpc.replicaCount | default 2 | int }}
   podManagementPolicy: {{ .Values.sorobanRpc.podManagementPolicy }}
   serviceName: {{ template "common.fullname" . }}
   selector:
