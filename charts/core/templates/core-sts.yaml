@@ -74,8 +74,10 @@ spec:
         {{- end }}
         imagePullPolicy: {{ .Values.global.image.core.pullPolicy }}
         ports:
-        - containerPort: 11626
+        - containerPort: {{ int (.Values.core.config).httpPort | default 11626 }}
           name: core
+        - containerPort: {{ int (.Values.core.config).peerPort | default 11625 }}
+          name: core-peer
         {{- if (.Values.core).resources }}
         resources:
 {{ toYaml .Values.core.resources | indent 10 }}
@@ -161,8 +163,11 @@ spec:
   publishNotReadyAddresses: true
   ports:
     - name: core
-      port: 11626
-      targetPort: 11626
+      port: {{ int (.Values.core.config).httpPort | default 11626 }}
+      targetPort: {{ int (.Values.core.config).httpPort | default 11626 }}
+    - name: core-peer
+      port: {{ int (.Values.core.config).peerPort | default 11625 }}
+      targetPort: {{ int (.Values.core.config).peerPort | default 11625 }}
     {{- if (.Values.core.historyProxy).enabled }}
     - name: http
       port: 80

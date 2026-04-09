@@ -116,7 +116,7 @@ data:
     AUTOMATIC_MAINTENANCE_COUNT={{ .Values.core.config.automaticMaintenanceCount }}
     {{ end -}}
     {{ if (.Values.core.config).runStandalone -}}
-    RUN_STANDALONE={{ .Values.core.config.runStandalone | quote }}
+    RUN_STANDALONE={{ .Values.core.config.runStandalone }}
     {{ end -}}
     {{ if (.Values.core.config).invariantChecks  -}}
     INVARIANT_CHECKS=["{{- join "\",\"" .Values.core.config.invariantChecks }}"]
