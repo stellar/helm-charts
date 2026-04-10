@@ -92,6 +92,23 @@ core:
   ## Uncomment to use custom service account
   # serviceAccountName: default
 
+  ## Mount a pre-existing Kubernetes secret into the core containers.
+  ## Useful for providing sensitive config such as validator seed.
+  # existingSecret:
+  #   name: my-core-secret
+  #   mountPath: /secret
+
+  ## Extra volumes to add to the pod.
+  # extraVolumes:
+  #   - name: my-extra-volume
+  #     emptyDir: {}
+
+  ## Extra volume mounts for the init and core containers only.
+  ## Not mounted in the prometheus exporter or history proxy containers.
+  # extraVolumeMounts:
+  #   - name: my-extra-volume
+  #     mountPath: /extra
+
   ## Additional annotations or labels to add the Deployment template
   # annotations:
   #   prometheus.io/scrape: "true"
