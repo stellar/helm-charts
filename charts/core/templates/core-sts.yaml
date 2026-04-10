@@ -15,7 +15,7 @@ spec:
   replicas: {{ .Values.core.replicaCount }}
   podManagementPolicy: {{ .Values.core.podManagementPolicy }}
   serviceName: {{ template "common.fullname" . }}
-  {{- if .Values.core.persistence.persistentVolumeClaimRetentionPolicy }}
+  {{- if and .Values.core.persistence.enabled .Values.core.persistence.persistentVolumeClaimRetentionPolicy }}
   persistentVolumeClaimRetentionPolicy:
     {{- toYaml .Values.core.persistence.persistentVolumeClaimRetentionPolicy | nindent 4 }}
   {{- end }}
