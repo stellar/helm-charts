@@ -21,6 +21,10 @@ spec:
   replicas: {{ .Values.sorobanRpc.replicaCount | default 2 | int }}
   podManagementPolicy: {{ .Values.sorobanRpc.podManagementPolicy }}
   serviceName: {{ template "common.fullname" . }}
+  {{- if and .Values.sorobanRpc.persistence.enabled .Values.sorobanRpc.persistence.persistentVolumeClaimRetentionPolicy }}
+  persistentVolumeClaimRetentionPolicy:
+    {{- toYaml .Values.sorobanRpc.persistence.persistentVolumeClaimRetentionPolicy | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
       app: {{ template "common.fullname" . }}

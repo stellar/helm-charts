@@ -95,6 +95,11 @@ sorobanRpc:
     enabled: false
     storageClass: default
     size: 100G
+    ## Persistent volume claim retention policy for the StatefulSet.
+    ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention
+    # persistentVolumeClaimRetentionPolicy:
+    #   whenDeleted: Retain
+    #   whenScaled: Retain
 
   ## Soroban RPC pods do not need to be initialized in a specific order
   podManagementPolicy: Parallel
