@@ -63,8 +63,8 @@ spec:
           name: {{ template "common.fullname" . }}-var-lib-stellar
         - mountPath: /init-scripts
           name: init-scripts
-        {{- if (.Values.core).existingSecret }}
-        - mountPath: {{ .Values.core.existingSecret.mountPath | default "/secret" }}
+        {{- if (.Values.core).existingSecretName }}
+        - mountPath: /secret
           name: existing-secret
           readOnly: true
         {{- end }}
@@ -99,8 +99,8 @@ spec:
           name: core-config
         - mountPath: /var/lib/stellar
           name: {{ template "common.fullname" . }}-var-lib-stellar
-        {{- if (.Values.core).existingSecret }}
-        - mountPath: {{ .Values.core.existingSecret.mountPath | default "/secret" }}
+        {{- if (.Values.core).existingSecretName }}
+        - mountPath: /secret
           name: existing-secret
           readOnly: true
         {{- end }}
@@ -153,10 +153,10 @@ spec:
         configMap:
           name: {{ template "common.fullname" . }}-nginx
       {{- end }}
-      {{- if (.Values.core).existingSecret }}
+      {{- if (.Values.core).existingSecretName }}
       - name: existing-secret
         secret:
-          secretName: {{ .Values.core.existingSecret.name }}
+          secretName: {{ .Values.core.existingSecretName }}
       {{- end }}
       {{- if (.Values.core).extraVolumes }}
 {{ toYaml .Values.core.extraVolumes | indent 6 }}

@@ -92,11 +92,10 @@ core:
   ## Uncomment to use custom service account
   # serviceAccountName: default
 
-  ## Mount a pre-existing Kubernetes secret into the core containers.
-  ## Useful for providing sensitive config such as validator seed.
-  # existingSecret:
-  #   name: my-core-secret
-  #   mountPath: /secret
+  ## Name of a pre-existing Kubernetes secret that will be mounted.
+  ## Useful for providing sensitive config such as validator seed or
+  ## database URL
+  # existingSecretName: my-core-secret
 
   ## Extra volumes to add to the pod.
   # extraVolumes:
