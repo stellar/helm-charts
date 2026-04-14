@@ -76,7 +76,16 @@ core:
     # ls -l /var/lib/stellar/local_archive/.well-known/stellar-history.json || \
     # stellar-core new-hist local --conf /config/stellar-core.cfg --console
 
-  ## List of extra CLI arguments to provide to the stellar-core binary
+  ## Override the container args. When set, replaces the default args entirely.
+  ## Default args are: ["run", "--conf", "/config/stellar-core.cfg", "--console"]
+  # args:
+  #   - run
+  #   - --conf
+  #   - /config/stellar-core.cfg
+  #   - --console
+
+  ## List of extra CLI arguments to append to the default args.
+  ## Ignored when args is overridden above.
   extraCliArgs: []
 
   ## Required when global.network is set to non-standard value

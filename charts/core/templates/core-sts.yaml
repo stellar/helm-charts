@@ -74,6 +74,10 @@ spec:
       containers:
       - name: core
         image: {{ include "common.coreImage" . | quote }}
+        {{- if (.Values.core).args }}
+        args:
+          {{- toYaml .Values.core.args | nindent 10 }}
+        {{- else }}
         args:
           - run
           - --conf
@@ -83,6 +87,7 @@ spec:
           {{- range $flag := .Values.core.extraCliArgs }}
           - {{ $flag | quote }}
           {{- end }}
+        {{- end }}
         {{- end }}
         imagePullPolicy: {{ .Values.global.image.core.pullPolicy }}
         ports:
