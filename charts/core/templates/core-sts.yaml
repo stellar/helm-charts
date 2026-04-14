@@ -63,6 +63,14 @@ spec:
           name: {{ template "common.fullname" . }}-var-lib-stellar
         - mountPath: /init-scripts
           name: init-scripts
+        {{- if (.Values.core).existingSecretName }}
+        - mountPath: /secret
+          name: existing-secret
+          readOnly: true
+        {{- end }}
+        {{- if (.Values.core).extraVolumeMounts }}
+{{ toYaml .Values.core.extraVolumeMounts | indent 8 }}
+        {{- end }}
       containers:
       - name: core
         image: {{ include "common.coreImage" . | quote }}
@@ -91,6 +99,14 @@ spec:
           name: core-config
         - mountPath: /var/lib/stellar
           name: {{ template "common.fullname" . }}-var-lib-stellar
+        {{- if (.Values.core).existingSecretName }}
+        - mountPath: /secret
+          name: existing-secret
+          readOnly: true
+        {{- end }}
+        {{- if (.Values.core).extraVolumeMounts }}
+{{ toYaml .Values.core.extraVolumeMounts | indent 8 }}
+        {{- end }}
       {{- if (.Values.core.coreExporter).enabled }}
       - name: stellar-core-prometheus-exporter
         image: "{{ .Values.global.image.coreExporter.registry }}/{{ .Values.global.image.coreExporter.repository }}:{{ .Values.global.image.coreExporter.tag }}"
@@ -136,6 +152,14 @@ spec:
       - name: nginx-config
         configMap:
           name: {{ template "common.fullname" . }}-nginx
+      {{- end }}
+      {{- if (.Values.core).existingSecretName }}
+      - name: existing-secret
+        secret:
+          secretName: {{ .Values.core.existingSecretName }}
+      {{- end }}
+      {{- if (.Values.core).extraVolumes }}
+{{ toYaml .Values.core.extraVolumes | indent 6 }}
       {{- end }}
       affinity: {{- toYaml .Values.core.affinity | nindent 8 }}
   {{- if .Values.core.persistence.enabled }}
