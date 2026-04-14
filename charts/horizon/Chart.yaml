@@ -1,7 +1,7 @@
 apiVersion: v2
 name: horizon
-version: 0.3.0
-appVersion: "25.0.1"
+version: 0.4.0
+appVersion: "26.0.0"
 description: Stellar Horizon Helm Chart. This chart will deploy Stellar Horizon API server
 maintainers: 
   - name: Stellar Development Foundation
