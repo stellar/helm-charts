@@ -19,6 +19,9 @@ metadata:
   {{- end }}
 spec:
   parentRefs:
+    {{- if .Values.ingest.httpRoute.gateway.enabled }}
+    - name: {{ .Values.ingest.httpRoute.gateway.name | default (printf "%s-ingest-gateway" (include "common.fullname" .)) }}
+    {{- else }}
     {{- range .Values.ingest.httpRoute.parentRefs }}
     - name: {{ .name }}
       {{- if .namespace }}
@@ -27,6 +30,7 @@ spec:
       {{- if .sectionName }}
       sectionName: {{ .sectionName }}
       {{- end }}
+    {{- end }}
     {{- end }}
   {{- if .Values.ingest.httpRoute.hostnames }}
   hostnames:
