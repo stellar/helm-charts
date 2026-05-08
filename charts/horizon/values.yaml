@@ -179,7 +179,8 @@ ingest:
   ## Controls whether ingesting instances are exposed via Gateway API HTTPRoute
   httpRoute:
     enabled: false
-    ## Reference to an existing Gateway (or the one created by this chart)
+    ## Reference to an existing external Gateway. Only used when gateway.enabled=false.
+    ## When gateway.enabled=true, parentRefs are auto-computed from the created Gateway.
     parentRefs:
       - name: horizon-gateway
         namespace: ""  # defaults to release namespace
@@ -292,7 +293,8 @@ web:
   ## Controls whether web instances are exposed via Gateway API HTTPRoute
   httpRoute:
     enabled: false
-    ## Reference to an existing Gateway (or the one created by this chart)
+    ## Reference to an existing external Gateway. Only used when gateway.enabled=false.
+    ## When gateway.enabled=true, parentRefs are auto-computed from the created Gateway.
     parentRefs:
       - name: horizon-gateway
         namespace: ""  # defaults to release namespace
