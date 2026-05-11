@@ -1,0 +1,78 @@
+{{- if and .Values.ingest.enabled .Values.ingest.httpRoute.enabled .Values.ingest.httpRoute.gateway.enabled }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ .Values.ingest.httpRoute.gateway.name | default (printf "%s-ingest-gateway" (include "common.fullname" .)) }}
+  namespace: {{ .Release.Namespace }}
+  {{- if .Values.ingest.httpRoute.gateway.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.ingest.httpRoute.gateway.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+  {{- if .Values.ingest.httpRoute.gateway.labels }}
+  labels:
+    {{- range $key, $value := .Values.ingest.httpRoute.gateway.labels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  gatewayClassName: {{ required "ingest.httpRoute.gateway.gatewayClassName is required when gateway is enabled" .Values.ingest.httpRoute.gateway.gatewayClassName }}
+  listeners:
+    {{- range .Values.ingest.httpRoute.gateway.listeners }}
+    - name: {{ .name }}
+      protocol: {{ .protocol }}
+      port: {{ .port }}
+      {{- if .hostname }}
+      hostname: {{ .hostname | quote }}
+      {{- end }}
+      {{- if .allowedRoutes }}
+      allowedRoutes:
+        {{- toYaml .allowedRoutes | nindent 8 }}
+      {{- end }}
+      {{- if .tls }}
+      tls:
+        {{- toYaml .tls | nindent 8 }}
+      {{- end }}
+    {{- end }}
+{{- end }}
+{{- if and .Values.web.enabled .Values.web.httpRoute.enabled .Values.web.httpRoute.gateway.enabled }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ .Values.web.httpRoute.gateway.name | default (printf "%s-web-gateway" (include "common.fullname" .)) }}
+  namespace: {{ .Release.Namespace }}
+  {{- if .Values.web.httpRoute.gateway.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.web.httpRoute.gateway.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+  {{- if .Values.web.httpRoute.gateway.labels }}
+  labels:
+    {{- range $key, $value := .Values.web.httpRoute.gateway.labels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  gatewayClassName: {{ required "web.httpRoute.gateway.gatewayClassName is required when gateway is enabled" .Values.web.httpRoute.gateway.gatewayClassName }}
+  listeners:
+    {{- range .Values.web.httpRoute.gateway.listeners }}
+    - name: {{ .name }}
+      protocol: {{ .protocol }}
+      port: {{ .port }}
+      {{- if .hostname }}
+      hostname: {{ .hostname | quote }}
+      {{- end }}
+      {{- if .allowedRoutes }}
+      allowedRoutes:
+        {{- toYaml .allowedRoutes | nindent 8 }}
+      {{- end }}
+      {{- if .tls }}
+      tls:
+        {{- toYaml .tls | nindent 8 }}
+      {{- end }}
+    {{- end }}
+{{- end }}

@@ -176,6 +176,44 @@ ingest:
   #       topologyKey: kubernetes.io/hostname
   affinity: {}
 
+  ## Controls whether ingesting instances are exposed via Gateway API HTTPRoute
+  httpRoute:
+    enabled: false
+    ## Reference to an existing external Gateway. Only used when gateway.enabled=false.
+    ## When gateway.enabled=true, parentRefs are auto-computed from the created Gateway.
+    parentRefs:
+      - name: horizon-gateway
+        namespace: ""  # defaults to release namespace
+        sectionName: ""
+    hostnames:
+      - horizon-ingest.example.com
+    ## Extra annotations to add to the HTTPRoute object
+    annotations: {}
+    ## Extra labels to add to the HTTPRoute object
+    labels: {}
+    ## Optional Gateway resource created in the same namespace
+    gateway:
+      enabled: false
+      ## Gateway class name (e.g. "istio", "traefik")
+      gatewayClassName: ""
+      ## Gateway name override. Defaults to <fullname>-ingest-gateway
+      name: ""
+      listeners:
+        - name: http
+          protocol: HTTP
+          port: 80
+        # - name: https
+        #   protocol: HTTPS
+        #   port: 443
+        #   tls:
+        #     mode: Terminate
+        #     certificateRefs:
+        #       - name: horizon-tls-cert
+      ## Extra annotations to add to the Gateway object
+      annotations: {}
+      ## Extra labels to add to the Gateway object
+      labels: {}
+
   ## Example podDisruptionBudget
   # podDisruptionBudget:
   #   minAvailable: 1
@@ -251,6 +289,44 @@ web:
   #           app: stellar-horizon-web
   #       topologyKey: kubernetes.io/hostname
   affinity: {}
+
+  ## Controls whether web instances are exposed via Gateway API HTTPRoute
+  httpRoute:
+    enabled: false
+    ## Reference to an existing external Gateway. Only used when gateway.enabled=false.
+    ## When gateway.enabled=true, parentRefs are auto-computed from the created Gateway.
+    parentRefs:
+      - name: horizon-gateway
+        namespace: ""  # defaults to release namespace
+        sectionName: ""
+    hostnames:
+      - horizon-web.example.com
+    ## Extra annotations to add to the HTTPRoute object
+    annotations: {}
+    ## Extra labels to add to the HTTPRoute object
+    labels: {}
+    ## Optional Gateway resource created in the same namespace
+    gateway:
+      enabled: false
+      ## Gateway class name (e.g. "istio", "traefik")
+      gatewayClassName: ""
+      ## Gateway name override. Defaults to <fullname>-web-gateway
+      name: ""
+      listeners:
+        - name: http
+          protocol: HTTP
+          port: 80
+        # - name: https
+        #   protocol: HTTPS
+        #   port: 443
+        #   tls:
+        #     mode: Terminate
+        #     certificateRefs:
+        #       - name: horizon-tls-cert
+      ## Extra annotations to add to the Gateway object
+      annotations: {}
+      ## Extra labels to add to the Gateway object
+      labels: {}
 
   ## Example podDisruptionBudget
   # podDisruptionBudget:

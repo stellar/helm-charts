@@ -1,0 +1,45 @@
+{{- if and .Values.ingest.enabled .Values.ingest.httpRoute.enabled }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "common.fullname" . }}-ingest
+  namespace: {{ .Release.Namespace }}
+  {{- if .Values.ingest.httpRoute.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.ingest.httpRoute.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+  {{- if .Values.ingest.httpRoute.labels }}
+  labels:
+    {{- range $key, $value := .Values.ingest.httpRoute.labels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  parentRefs:
+    {{- if .Values.ingest.httpRoute.gateway.enabled }}
+    - name: {{ .Values.ingest.httpRoute.gateway.name | default (printf "%s-ingest-gateway" (include "common.fullname" .)) }}
+    {{- else }}
+    {{- range .Values.ingest.httpRoute.parentRefs }}
+    - name: {{ .name }}
+      {{- if .namespace }}
+      namespace: {{ .namespace }}
+      {{- end }}
+      {{- if .sectionName }}
+      sectionName: {{ .sectionName }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
+  {{- if .Values.ingest.httpRoute.hostnames }}
+  hostnames:
+    {{- range .Values.ingest.httpRoute.hostnames }}
+    - {{ . | quote }}
+    {{- end }}
+  {{- end }}
+  rules:
+    - backendRefs:
+        - name: {{ include "common.fullname" . }}-ingest
+          port: 8000
+{{- end }}
