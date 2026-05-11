@@ -1,0 +1,45 @@
+{{- if and (.Values.core.historyProxy.enabled) (.Values.core.historyProxy.httpRoute.enabled) }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "common.fullname" . }}-history
+  namespace: {{ .Release.Namespace }}
+  {{- if .Values.core.historyProxy.httpRoute.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.core.historyProxy.httpRoute.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+  {{- if .Values.core.historyProxy.httpRoute.labels }}
+  labels:
+    {{- range $key, $value := .Values.core.historyProxy.httpRoute.labels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  parentRefs:
+    {{- if .Values.core.historyProxy.httpRoute.gateway.enabled }}
+    - name: {{ .Values.core.historyProxy.httpRoute.gateway.name | default (printf "%s-history-gateway" (include "common.fullname" .)) }}
+    {{- else }}
+    {{- range .Values.core.historyProxy.httpRoute.parentRefs }}
+    - name: {{ .name }}
+      {{- if .namespace }}
+      namespace: {{ .namespace }}
+      {{- end }}
+      {{- if .sectionName }}
+      sectionName: {{ .sectionName }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
+  {{- if .Values.core.historyProxy.httpRoute.hostnames }}
+  hostnames:
+    {{- range .Values.core.historyProxy.httpRoute.hostnames }}
+    - {{ . | quote }}
+    {{- end }}
+  {{- end }}
+  rules:
+    - backendRefs:
+        - name: {{ include "common.fullname" . }}-history
+          port: 80
+{{- end }}
