@@ -173,7 +173,7 @@ core:
           namespace: ""  # defaults to release namespace
           sectionName: ""
       hostnames:
-        - history.example.com
+        - history-proxy.example.com
       ## Extra annotations to add to the HTTPRoute object
       annotations: {}
       ## Extra labels to add to the HTTPRoute object
