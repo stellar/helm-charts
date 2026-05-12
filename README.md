@@ -15,3 +15,7 @@ See https://github.com/stellar/helm-charts/tree/main/charts/horizon
 # Stellar Disbursement Platform
 
 See https://github.com/stellar/helm-charts/tree/main/charts/stellar-disbursement-platform
+
+# Anchor Platform
+
+The Anchor Platform Helm chart is now maintained in the [anchor-platform](https://github.com/stellar/anchor-platform/tree/develop/helm-charts) repo.
