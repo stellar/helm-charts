@@ -368,7 +368,7 @@ sdp:
   ## @param sdp.httpRoute.parentRefs[0].name Name of the parent Gateway resource.
   ## @param sdp.httpRoute.parentRefs[0].namespace Namespace of the parent Gateway. Empty string defaults to the release namespace.
   ## @param sdp.httpRoute.parentRefs[0].sectionName Listener name within the Gateway to attach to. Empty string attaches to all listeners.
-  ## @param sdp.httpRoute.hostnames Optional list of hostnames for the HTTPRoute. When empty, defaults to sdp.route.domain and sdp.route.mtnDomain. Strings are passed through `tpl`, so Helm expressions like '{{ include "sdp.domain" . }}' work.
+  ## @param sdp.httpRoute.hostnames Optional list of hostnames for the HTTPRoute. When empty, defaults to sdp.route.domain and sdp.route.mtnDomain. Each entry must be a DNS hostname (no scheme, no port). Strings are passed through `tpl`, so Helm expressions like '{{ .Values.sdp.route.domain }}' work.
   ## @param sdp.httpRoute.annotations Extra annotations added to the HTTPRoute object.
   ## @param sdp.httpRoute.labels Extra labels added to the HTTPRoute object.
   ## @extra sdp.httpRoute.gateway Optional in-chart Gateway resource. Most users will set sdp.httpRoute.parentRefs instead and let a platform-owned Gateway handle traffic.
@@ -616,7 +616,7 @@ dashboard:
   ## @param dashboard.httpRoute.parentRefs[0].name Name of the parent Gateway resource.
   ## @param dashboard.httpRoute.parentRefs[0].namespace Namespace of the parent Gateway. Empty string defaults to the release namespace.
   ## @param dashboard.httpRoute.parentRefs[0].sectionName Listener name within the Gateway to attach to. Empty string attaches to all listeners.
-  ## @param dashboard.httpRoute.hostnames Optional list of hostnames for the HTTPRoute. When empty, defaults to dashboard.route.domain and dashboard.route.mtnDomain. Strings are passed through `tpl`, so Helm expressions like '{{ include "sdp.dashboard.domain" . }}' work.
+  ## @param dashboard.httpRoute.hostnames Optional list of hostnames for the HTTPRoute. When empty, defaults to dashboard.route.domain and dashboard.route.mtnDomain. Each entry must be a DNS hostname (no scheme, no port). Strings are passed through `tpl`, so Helm expressions like '{{ .Values.dashboard.route.domain }}' work.
   ## @param dashboard.httpRoute.annotations Extra annotations added to the HTTPRoute object.
   ## @param dashboard.httpRoute.labels Extra labels added to the HTTPRoute object.
   ## @extra dashboard.httpRoute.gateway Optional in-chart Gateway resource. Most users will set dashboard.httpRoute.parentRefs instead and let a platform-owned Gateway handle traffic.
