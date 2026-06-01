@@ -139,6 +139,16 @@ data:
     {{ if (.Values.core.config).nodeHomeDomain -}}
     NODE_HOME_DOMAIN={{ .Values.core.config.nodeHomeDomain | quote }}
     {{ end -}}
+
+    {{ if (.Values.core.config).historyArchives -}}
+    {{ range $key, $value := .Values.core.config.historyArchives -}}
+    [HISTORY.{{ $key }}]
+    get={{ get $value "get" | quote }}
+    put={{ get $value "put" | quote }}
+    mkdir={{ get $value "mkdir" | quote }}
+    {{ end -}}
+    {{ end -}}
+
     {{ if (.Values.core.config).homeDomains -}}
     {{- range $homeDomain := .Values.core.config.homeDomains }}
     [[HOME_DOMAINS]]
@@ -146,6 +156,7 @@ data:
     QUALITY={{ get $homeDomain "quality" | quote}}
     {{- end }}
     {{ end -}}
+
     {{ if (.Values.core.config).validators -}}
     {{ range $validator := .Values.core.config.validators -}}
     [[VALIDATORS]]
@@ -159,13 +170,5 @@ data:
     {{ if get $validator "history" -}}
     HISTORY={{ get $validator "history" | quote }}
     {{ end -}}
-    {{ end -}}
-    {{ end -}}
-    {{ if (.Values.core.config).historyArchives -}}
-    {{ range $key, $value := .Values.core.config.historyArchives -}}
-    [HISTORY.{{ $key }}]
-    get={{ get $value "get" | quote }}
-    put={{ get $value "put" | quote }}
-    mkdir={{ get $value "mkdir" | quote }}
     {{ end -}}
     {{ end -}}
