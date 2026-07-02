@@ -139,6 +139,9 @@ data:
     {{ if (.Values.core.config).nodeHomeDomain -}}
     NODE_HOME_DOMAIN={{ .Values.core.config.nodeHomeDomain | quote }}
     {{ end -}}
+    {{ if (.Values.core.config).experimentalParallelTxSetDownload -}}
+    EXPERIMENTAL_PARALLEL_TX_SET_DOWNLOAD={{ .Values.core.config.experimentalParallelTxSetDownload }}
+    {{ end -}}
 
     {{ if (.Values.core.config).historyArchives -}}
     {{ range $key, $value := .Values.core.config.historyArchives -}}
