@@ -33,11 +33,13 @@ spec:
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       {{- end }}
-      {{- if (.Values.core).annotations }}
       annotations:
+        checksum/core-cm: {{ include (print $.Template.BasePath "/core-cm.yaml") . | sha256sum }}
+        checksum/core-init-scripts-cm: {{ include (print $.Template.BasePath "/core-init-scripts-cm.yaml") . | sha256sum }}
+      {{- if (.Values.core).annotations }}
         {{- range $key, $value := .Values.core.annotations }}
-          {{ $key }}: {{ $value | quote }}
-          {{- end }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
       {{- end }}
     spec:
       {{- if (.Values.core).serviceAccountName }}
