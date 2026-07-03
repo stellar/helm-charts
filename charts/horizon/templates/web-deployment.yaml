@@ -26,12 +26,15 @@ spec:
         {{ $key }}: {{ $value | quote }}
         {{- end }}
         {{- end }}
-      {{- if .Values.web.annotations }}
       annotations:
+        checksum/configmap: {{ include (print $.Template.BasePath "/web-configmap.yaml") . | sha256sum }}
+        checksum/database-secret: {{ include (print $.Template.BasePath "/database-secret.yaml") . | sha256sum }}
+        checksum/cnpg-app-secret: {{ include (print $.Template.BasePath "/cnpg-app-secret.yaml") . | sha256sum }}
+        {{- if .Values.web.annotations }}
         {{- range $key, $value := .Values.web.annotations }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
-      {{- end }}
+        {{- end }}
     spec:
       serviceAccountName: {{ .Values.web.serviceAccountName }}
       {{- if .Values.global.imagePullSecrets }}

@@ -34,12 +34,16 @@ spec:
         {{ $key }}: {{ $value | quote }}
         {{- end }}
         {{- end }}
-      {{- if .Values.ingest.annotations }}
       annotations:
+        checksum/configmap: {{ include (print $.Template.BasePath "/ingest-configmap.yaml") . | sha256sum }}
+        checksum/core-configmap: {{ include (print $.Template.BasePath "/core-configmap.yaml") . | sha256sum }}
+        checksum/database-secret: {{ include (print $.Template.BasePath "/database-secret.yaml") . | sha256sum }}
+        checksum/cnpg-app-secret: {{ include (print $.Template.BasePath "/cnpg-app-secret.yaml") . | sha256sum }}
+        {{- if .Values.ingest.annotations }}
         {{- range $key, $value := .Values.ingest.annotations }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
-      {{- end }}
+        {{- end }}
     spec:
       serviceAccountName: {{ .Values.ingest.serviceAccountName }}
       {{- if .Values.global.imagePullSecrets }}
