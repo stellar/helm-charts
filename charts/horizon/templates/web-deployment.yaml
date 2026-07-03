@@ -28,8 +28,9 @@ spec:
         {{- end }}
       annotations:
         checksum/configmap: {{ include (print $.Template.BasePath "/web-configmap.yaml") . | sha256sum }}
+        {{- if not .Values.web.existingSecret }}
         checksum/database-secret: {{ include (print $.Template.BasePath "/database-secret.yaml") . | sha256sum }}
-        checksum/cnpg-app-secret: {{ include (print $.Template.BasePath "/cnpg-app-secret.yaml") . | sha256sum }}
+        {{- end }}
         {{- if .Values.web.annotations }}
         {{- range $key, $value := .Values.web.annotations }}
         {{ $key }}: {{ $value | quote }}

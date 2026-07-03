@@ -37,8 +37,9 @@ spec:
       annotations:
         checksum/configmap: {{ include (print $.Template.BasePath "/ingest-configmap.yaml") . | sha256sum }}
         checksum/core-configmap: {{ include (print $.Template.BasePath "/core-configmap.yaml") . | sha256sum }}
+        {{- if not .Values.ingest.existingSecret }}
         checksum/database-secret: {{ include (print $.Template.BasePath "/database-secret.yaml") . | sha256sum }}
-        checksum/cnpg-app-secret: {{ include (print $.Template.BasePath "/cnpg-app-secret.yaml") . | sha256sum }}
+        {{- end }}
         {{- if .Values.ingest.annotations }}
         {{- range $key, $value := .Values.ingest.annotations }}
         {{ $key }}: {{ $value | quote }}
