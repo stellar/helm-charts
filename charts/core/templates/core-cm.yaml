@@ -142,6 +142,9 @@ data:
     {{ if (.Values.core.config).experimentalParallelTxSetDownload -}}
     EXPERIMENTAL_PARALLEL_TX_SET_DOWNLOAD={{ .Values.core.config.experimentalParallelTxSetDownload }}
     {{ end -}}
+    {{ if (.Values.core.config).testingNominateRandomValues -}}
+    TESTING_NOMINATE_RANDOM_VALUES={{ .Values.core.config.testingNominateRandomValues }}
+    {{ end -}}
 
     {{ if (.Values.core.config).historyArchives -}}
     {{ range $key, $value := .Values.core.config.historyArchives -}}
