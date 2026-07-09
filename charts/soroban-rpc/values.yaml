@@ -74,6 +74,10 @@ sorobanRpc:
         history: "curl -sf http://history.stellar.org/dev/core-futurenet/core_futurenet_003/{0} -o {1}"
 
   ingress:
+    ## Whether to render a k8s Ingress. Set to false when exposing soroban-rpc
+    ## via Gateway API HTTPRoute instead (see sorobanRpc.httpRoute).
+    enabled: true
+
     host: example.com
 
     ## Optional TLS secret to use. If not set ingress will default to $releasename-cert
@@ -85,6 +89,45 @@ sorobanRpc:
     ## Additional annotations to add the Ingress template
     #annotations:
     #  cert-manager.io/cluster-issuer: "default"
+
+  ## Controls whether soroban-rpc is exposed via Gateway API HTTPRoute
+  httpRoute:
+    enabled: false
+    ## Reference to an existing external Gateway. Only used when gateway.enabled=false.
+    ## When gateway.enabled=true, parentRefs are auto-computed from the created Gateway.
+    parentRefs:
+      - name: soroban-rpc-gateway
+        namespace: ""  # defaults to release namespace
+        sectionName: ""
+    hostnames:
+      - soroban-rpc.example.com
+    ## Extra annotations to add to the HTTPRoute object
+    annotations: {}
+    ## Extra labels to add to the HTTPRoute object
+    labels: {}
+    ## Optional Gateway resource created in the same namespace
+    gateway:
+      enabled: false
+      ## Gateway class name (e.g. "istio", "traefik")
+      gatewayClassName: ""
+      ## Gateway name override. Defaults to <fullname>-gateway
+      name: ""
+      listeners:
+        - name: http
+          protocol: HTTP
+          port: 80
+        # - name: https
+        #   protocol: HTTPS
+        #   port: 443
+        #   hostname: soroban-rpc.example.com
+        #   tls:
+        #     mode: Terminate
+        #     certificateRefs:
+        #       - name: soroban-rpc-tls-cert
+      ## Extra annotations to add to the Gateway object
+      annotations: {}
+      ## Extra labels to add to the Gateway object
+      labels: {}
 
   ## Whether to provision persistent volume(PV). Recommended for production use cases and any deployment that is
   ## configured to be on the pubnet network. On pubnet network, disk requirements start at 30GB minimum,
