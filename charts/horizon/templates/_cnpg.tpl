@@ -16,9 +16,8 @@
          - storage.storageClass
     3. .Values.cnpg.cluster.spec (wins on conflict).
 
-  `bootstrap` is always injected from .Values.cnpg.auth and the chart-
-  managed app secret; it can still be overridden via
-  .Values.cnpg.cluster.spec.bootstrap.
+  `bootstrap` is injected from .Values.cnpg.auth and the chart-managed app
+  secret only when .Values.cnpg.cluster.spec.bootstrap is not provided.
 
   Returns the spec as YAML (without indentation); callers should pipe it
   through `nindent` at the desired indent level.
@@ -28,6 +27,7 @@
       {{- include "horizon.cnpgClusterSpec" . | nindent 2 }}
 */}}
 {{- define "horizon.cnpgClusterSpec" -}}
+{{- $extra := default (dict) .Values.cnpg.cluster.spec -}}
 {{- /* Built-in defaults (lowest priority; overridable by legacy shortcuts or by cnpg.cluster.spec) */ -}}
 {{- $shortcuts := dict
     "instances" 1
@@ -47,12 +47,13 @@
 {{- if $legacyStorage.storageClass -}}
   {{- $_ := set (index $shortcuts "storage") "storageClass" $legacyStorage.storageClass -}}
 {{- end -}}
-{{- /* Always-injected bootstrap (still overridable via cnpg.cluster.spec.bootstrap) */ -}}
-{{- $_ := set $shortcuts "bootstrap" (dict "initdb" (dict
-    "database" (required "cnpg.auth.database is required when cnpg.enabled=true" .Values.cnpg.auth.database)
-    "owner"    (required "cnpg.auth.username is required when cnpg.enabled=true" .Values.cnpg.auth.username)
-    "secret"   (dict "name" (include "horizon.cnpgAppSecretName" .)))) -}}
-{{- $extra := default (dict) .Values.cnpg.cluster.spec -}}
+{{- /* Inject bootstrap defaults only when caller did not provide cluster.spec.bootstrap */ -}}
+{{- if not (hasKey $extra "bootstrap") -}}
+  {{- $_ := set $shortcuts "bootstrap" (dict "initdb" (dict
+      "database" (required "cnpg.auth.database is required when cnpg.enabled=true" .Values.cnpg.auth.database)
+  "owner"    (default "horizon" .Values.cnpg.auth.username)
+      "secret"   (dict "name" (include "horizon.cnpgAppSecretName" .)))) -}}
+{{- end -}}
 {{- $spec := mergeOverwrite $shortcuts (deepCopy $extra) -}}
 {{- toYaml $spec }}
 {{- end -}}
