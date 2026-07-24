@@ -59,7 +59,14 @@ global:
 cnpg:
   enabled: false
   auth:
-    username: horizon
+    ## Optional. Defaults to "horizon" for chart-managed credentials.
+    ## Must be empty when cnpg.cluster.spec.bootstrap.initdb.secret.name is set.
+    username: ""
+    ## Required when the chart should auto-manage CNPG bootstrap credentials
+    ## and/or auto-generate DATABASE_URL.
+    ## Optional when you provide cnpg.cluster.spec.bootstrap (for example
+    ## bootstrap.initdb.secret.name) and set ingest.existingSecret / web.existingSecret.
+    ## Must be empty when cnpg.cluster.spec.bootstrap.initdb.secret.name is set.
     password: ""
     database: horizon
   cluster:
@@ -87,9 +94,13 @@ cnpg:
     ## Notes:
     ## - Fields are passed through unchanged; validation is done by the CNPG
     ##   webhook, not by this chart.
-    ## - `bootstrap` is auto-populated from `cnpg.auth.*` and the chart-
-    ##   managed app secret. Override it only if you also set
-    ##   ingest.existingSecret / web.existingSecret to bring your own DB URL.
+    ## - If `bootstrap` is omitted, it is auto-populated from `cnpg.auth.*`
+    ##   and the chart-managed app secret.
+    ## - If `bootstrap` is provided (for example with
+    ##   `bootstrap.initdb.secret.name`), chart-managed bootstrap credentials
+    ##   are not rendered.
+    ## - Auto-generated DATABASE_URL requires `cnpg.auth.password`; when it is
+    ##   empty, set `ingest.existingSecret` / `web.existingSecret`.
     ## - Built-in defaults are `instances: 1` and `storage.size: 50Gi`;
     ##   anything set here (or via the legacy `cnpg.cluster.storage.*` /
     ##   `cnpg.cluster.instances` / `cnpg.cluster.imageName` shortcuts)

@@ -1,4 +1,5 @@
 {{- if .Values.cnpg.enabled }}
+{{- include "horizon.validateCnpgAuthBootstrapConfig" . }}
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster

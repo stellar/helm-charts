@@ -67,7 +67,11 @@ Public Global Stellar Network ; September 2015
 {{- if .Values.ingest.existingSecret -}}
 {{- .Values.ingest.existingSecret -}}
 {{- else if .Values.cnpg.enabled -}}
+{{- if .Values.cnpg.auth.password -}}
 {{- include "horizon.defaultDatabaseSecretName" . -}}
+{{- else -}}
+{{- required "Set ingest.existingSecret when cnpg.auth.password is empty (for example when using cnpg.cluster.spec.bootstrap.initdb.secret.name)" .Values.ingest.existingSecret -}}
+{{- end -}}
 {{- else -}}
 {{- required "Set ingest.existingSecret or enable cnpg.enabled" .Values.ingest.existingSecret -}}
 {{- end -}}
@@ -77,7 +81,11 @@ Public Global Stellar Network ; September 2015
 {{- if .Values.web.existingSecret -}}
 {{- .Values.web.existingSecret -}}
 {{- else if .Values.cnpg.enabled -}}
+{{- if .Values.cnpg.auth.password -}}
 {{- include "horizon.defaultDatabaseSecretName" . -}}
+{{- else -}}
+{{- required "Set web.existingSecret when cnpg.auth.password is empty (for example when using cnpg.cluster.spec.bootstrap.initdb.secret.name)" .Values.web.existingSecret -}}
+{{- end -}}
 {{- else -}}
 {{- required "Set web.existingSecret or enable cnpg.enabled" .Values.web.existingSecret -}}
 {{- end -}}
@@ -99,8 +107,21 @@ Public Global Stellar Network ; September 2015
 {{- printf "%s-app" (include "horizon.cnpgClusterName" .) -}}
 {{- end -}}
 
+{{- define "horizon.validateCnpgAuthBootstrapConfig" -}}
+{{- if .Values.cnpg.enabled -}}
+{{- $clusterSpec := default (dict) .Values.cnpg.cluster.spec -}}
+{{- $bootstrap := default (dict) (get $clusterSpec "bootstrap") -}}
+{{- $initdb := default (dict) (get $bootstrap "initdb") -}}
+{{- $secret := default (dict) (get $initdb "secret") -}}
+{{- $bootstrapSecretName := default "" (get $secret "name") -}}
+{{- if and $bootstrapSecretName (or .Values.cnpg.auth.username .Values.cnpg.auth.password) -}}
+{{- fail "cnpg.auth.username and cnpg.auth.password are mutually exclusive with cnpg.cluster.spec.bootstrap.initdb.secret.name" -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "horizon.databaseUrl" -}}
-{{- $user := required "cnpg.auth.username is required when cnpg.enabled=true" .Values.cnpg.auth.username -}}
+{{- $user := default "horizon" .Values.cnpg.auth.username -}}
 {{- $password := required "cnpg.auth.password is required when cnpg.enabled=true and auto-generated DATABASE_URL is used" .Values.cnpg.auth.password -}}
 {{- $database := required "cnpg.auth.database is required when cnpg.enabled=true" .Values.cnpg.auth.database -}}
 {{- printf "postgres://%s:%s@%s:5432/%s?sslmode=disable" $user ($password | urlquery) (include "horizon.cnpgReadWriteHost" .) $database -}}
