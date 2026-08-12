@@ -155,6 +155,11 @@ ingest:
     enabled: false
     storageClass: default
     size: 100G
+    ## Persistent volume claim retention policy for the StatefulSet.
+    ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention
+    # persistentVolumeClaimRetentionPolicy:
+    #   whenDeleted: Retain
+    #   whenScaled: Retain
 
   resources: {}
   #  limits:
