@@ -44,6 +44,9 @@ data:
     {{ if (.Values.sorobanRpc.coreConfig).enableDiagnosticEvents -}}
     ENABLE_SOROBAN_DIAGNOSTIC_EVENTS={{ (.Values.sorobanRpc.coreConfig).enableDiagnosticEvents }}
     {{ end -}}
+    {{ if (.Values.sorobanRpc.coreConfig).enableDiagnosticsForTxSubmission -}}
+    ENABLE_DIAGNOSTICS_FOR_TX_SUBMISSION={{ (.Values.sorobanRpc.coreConfig).enableDiagnosticsForTxSubmission }}
+    {{ end -}}
     {{ if (.Values.sorobanRpc.coreConfig).httpMaxClient -}}
     HTTP_MAX_CLIENT={{ .Values.sorobanRpc.coreConfig.httpMaxClient }}
     {{ end -}}
