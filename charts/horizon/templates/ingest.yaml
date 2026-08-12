@@ -19,6 +19,10 @@ spec:
   {{- if not (.Values.useDeployment) }}
   podManagementPolicy: {{ .Values.ingest.podManagementPolicy }}
   serviceName: {{ include "common.fullname" . }}-ingest
+  {{- if and .Values.ingest.persistence.enabled .Values.ingest.persistence.persistentVolumeClaimRetentionPolicy }}
+  persistentVolumeClaimRetentionPolicy:
+    {{- toYaml .Values.ingest.persistence.persistentVolumeClaimRetentionPolicy | nindent 4 }}
+  {{- end }}
   {{- end }}
   selector:
     matchLabels:
