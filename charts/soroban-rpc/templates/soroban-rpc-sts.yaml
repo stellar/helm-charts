@@ -38,11 +38,12 @@ spec:
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       {{- end }}
-      {{- if (.Values.sorobanRpc).annotations }}
       annotations:
+        checksum/configmap: {{ include (print $.Template.BasePath "/soroban-rpc-cm.yaml") . | sha256sum }}
+      {{- if (.Values.sorobanRpc).annotations }}
         {{- range $key, $value := .Values.sorobanRpc.annotations }}
-          {{ $key }}: {{ $value | quote }}
-          {{- end }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
       {{- end }}
     spec:
       {{- if (.Values.sorobanRpc).serviceAccountName }}
