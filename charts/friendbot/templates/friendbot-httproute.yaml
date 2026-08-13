@@ -1,0 +1,49 @@
+{{- if .Values.friendbot.httpRoute.enabled }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ template "common.fullname" . }}
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  {{- if .Values.friendbot.httpRoute.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.friendbot.httpRoute.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+  labels:
+    app: {{ template "common.fullname" . }}
+    chart: {{ template "common.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    {{- range $key, $value := .Values.friendbot.httpRoute.labels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  parentRefs:
+    {{- if .Values.friendbot.httpRoute.gateway.enabled }}
+    - name: {{ .Values.friendbot.httpRoute.gateway.name | default (printf "%s-gateway" (include "common.fullname" .)) }}
+    {{- else }}
+    {{- range .Values.friendbot.httpRoute.parentRefs }}
+    - name: {{ .name }}
+      {{- if .namespace }}
+      namespace: {{ .namespace }}
+      {{- end }}
+      {{- if .sectionName }}
+      sectionName: {{ .sectionName }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
+  {{- if .Values.friendbot.httpRoute.hostnames }}
+  hostnames:
+    {{- range .Values.friendbot.httpRoute.hostnames }}
+    - {{ . | quote }}
+    {{- end }}
+  {{- end }}
+  rules:
+    - backendRefs:
+        - name: {{ template "common.fullname" . }}
+          port: {{ .Values.friendbot.configmap.port | default 8000 }}
+{{- end }}
