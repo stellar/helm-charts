@@ -1,4 +1,4 @@
-{{- if (.Values.friendbot.ingress).enabled }}
+{{- if dig "ingress" "enabled" true .Values.friendbot }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
