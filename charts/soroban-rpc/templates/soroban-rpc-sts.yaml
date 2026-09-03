@@ -11,6 +11,12 @@ metadata:
     chart: {{ template "common.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+  {{- if (.Values.sorobanRpc).statefulsetAnnotations }}
+  annotations:
+    {{- range $key, $value := .Values.sorobanRpc.statefulsetAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
 spec:
   # Currently Soroban RPC doesn't support HA deployments over a single shared data store
   # but, each replica pod in a statefulset will have it's own data store on it's PVC.
@@ -88,11 +94,14 @@ spec:
                   {{- else }}
                   }' | jq -es 'if (. | length) == 0 then null else .[0] end | .result | .status == "healthy"' > /dev/null;
                   {{- end }}
-          failureThreshold: 2
-          periodSeconds: 10
-          successThreshold: 2
-          timeoutSeconds: 5         
-        {{- if (.Values.sorobanRpc).resources}}
+          failureThreshold: {{ (.Values.sorobanRpc.readinessProbe).failureThreshold | default 2 }}
+          periodSeconds: {{ (.Values.sorobanRpc.readinessProbe).periodSeconds | default 10 }}
+          successThreshold: {{ (.Values.sorobanRpc.readinessProbe).successThreshold | default 2 }}
+          timeoutSeconds: {{ (.Values.sorobanRpc.readinessProbe).timeoutSeconds | default 5 }}
+          {{- with (.Values.sorobanRpc.readinessProbe).initialDelaySeconds }}
+          initialDelaySeconds: {{ . }}
+          {{- end }}
+        {{- if (.Values.sorobanRpc).resources }}
         resources:
 {{ toYaml .Values.sorobanRpc.resources | indent 10 }}
         {{- end }}

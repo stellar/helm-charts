@@ -25,6 +25,9 @@ spec:
   parentRefs:
     {{- if .Values.sorobanRpc.httpRoute.gateway.enabled }}
     - name: {{ .Values.sorobanRpc.httpRoute.gateway.name | default (printf "%s-gateway" (include "common.fullname" .)) }}
+      {{- with .Values.sorobanRpc.httpRoute.sectionName }}
+      sectionName: {{ . }}
+      {{- end }}
     {{- else }}
     {{- range .Values.sorobanRpc.httpRoute.parentRefs }}
     - name: {{ .name }}
