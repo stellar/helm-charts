@@ -177,6 +177,13 @@ sorobanRpc:
   #       topologyKey: kubernetes.io/hostname
   affinity: {}
 
+  ## Node selector to determine which nodes should run the pods
+  ## Example nodeSelector
+  # nodeSelector:
+  #   kubernetes.io/os: linux
+  #   node-type: soroban-rpc
+  nodeSelector: {}
+
   ## Example podDisruptionBudget
   # podDisruptionBudget:
   #   minAvailable: 1
