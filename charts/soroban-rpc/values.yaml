@@ -36,6 +36,15 @@ sorobanRpc:
   ## marking pods as Ready
   requireFullRetentionWindow: false
 
+  ## Readiness probe timings. The probe itself is a getHealth JSON-RPC call and is not
+  ## configurable; only these thresholds are. Defaults are shown.
+  # readinessProbe:
+  #   failureThreshold: 2
+  #   periodSeconds: 10
+  #   successThreshold: 2
+  #   timeoutSeconds: 5
+  #   initialDelaySeconds: 30   # omitted entirely when unset
+
   ## For production use cases we recommend at least 2 replicas
   replicaCount: 2
 
@@ -99,6 +108,10 @@ sorobanRpc:
       - name: soroban-rpc-gateway
         namespace: ""  # defaults to release namespace
         sectionName: ""
+
+    ## Listener to attach to on the Gateway created by gateway.enabled=true.
+    # sectionName: https
+
     hostnames:
       - soroban-rpc.example.com
     ## Extra annotations to add to the HTTPRoute object
@@ -150,13 +163,19 @@ sorobanRpc:
   ## Uncomment to use custom service account
   # serviceAccountName: default
 
-  ## Additional annotations or labels to add the StatefulSet template
+  ## Additional annotations or labels to add to the pod template. Note these land on the
+  ## pods, not on the StatefulSet object -- use statefulsetAnnotations for that.
   # annotations:
   #   prometheus.io/scrape: "true"
   #   prometheus.io/port: "6061"
   # labels:
   #   environment: "dev"
   #   mylabel1: "dev-value"
+
+  ## Annotations to add to the StatefulSet object itself, for controllers that watch the
+  ## workload rather than its pods.
+  # statefulsetAnnotations:
+  #   reloader.stakater.com/auto: "true"
 
   ## Uncomment to set resource limits
   # resources:
