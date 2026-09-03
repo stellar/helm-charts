@@ -101,6 +101,10 @@ spec:
         configMap:
           name: {{ template "common.fullname" . }}
       affinity: {{- toYaml .Values.sorobanRpc.affinity | nindent 8 }}
+      {{- with (.Values.sorobanRpc).nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
   {{- if (.Values.sorobanRpc.persistence).enabled }}
   volumeClaimTemplates:
   - metadata:
