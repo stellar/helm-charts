@@ -123,6 +123,35 @@ sorobanRpc:
     annotations: {}
     ## Extra labels to add to the HTTPRoute object
     labels: {}
+
+    ## Optional companion HTTPRoute that answers plain HTTP with a redirect to HTTPS.
+    ## Rendered as <fullname>-http-redirect, and only when httpRoute.enabled is also true.
+    httpsRedirect:
+      enabled: false
+
+      ## Reference to an existing external Gateway to attach the redirect to.
+      ## Leave empty to attach to the Gateway created by gateway.enabled=true instead.
+      ## Required when gateway.enabled=false.
+      parentRefs: []
+      # parentRefs:
+      #   - name: my-shared-gateway
+      #     namespace: gateway-system
+      #     sectionName: web
+
+      ## Listener on the Gateway created by gateway.enabled=true to attach the redirect to.
+      ## Only used when parentRefs above is empty.
+      # sectionName: web
+
+      ## Hostnames to redirect. Defaults to httpRoute.hostnames when unset.
+      # hostnames:
+      #   - soroban-rpc.example.com
+      ## Redirect status code. 301 permanent, 302 temporary.
+      statusCode: 301
+      ## Extra annotations to add to the redirect HTTPRoute object
+      annotations: {}
+      ## Extra labels to add to the redirect HTTPRoute object
+      labels: {}
+
     ## Optional Gateway resource created in the same namespace
     gateway:
       enabled: false
