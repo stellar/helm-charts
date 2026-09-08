@@ -38,6 +38,9 @@ data:
     HTTP_PORT=11626
     PUBLIC_HTTP_PORT=true
     PEER_PORT=11625
+    {{ if not (kindIs "invalid" (.Values.sorobanRpc.coreConfig).logFilePath) -}}
+    LOG_FILE_PATH={{ .Values.sorobanRpc.coreConfig.logFilePath | quote }}
+    {{ end -}}
     {{ if (.Values.sorobanRpc.coreConfig).bucketDirPath -}}
     BUCKET_DIR_PATH={{ .Values.sorobanRpc.coreConfig.bucketDirPath |quote -}}
     {{ end -}}

@@ -62,6 +62,11 @@ sorobanRpc:
     unsafeQuorum: true
     enableDiagnosticEvents: true
 
+    ## Where captive core writes its log file. Omit entirely to leave LOG_FILE_PATH out of the
+    ## config and let stellar-core apply its own default. Set to "" to disable file logging and
+    ## send logs to the container's stdout/stderr.
+    # logFilePath: "/var/log/stellar/stellar-core.log"
+
     homeDomains:
     - homeDomain: "futurenet.stellar.org"
       quality: "MEDIUM"
