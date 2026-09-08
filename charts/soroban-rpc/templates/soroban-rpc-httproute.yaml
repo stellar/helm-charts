@@ -74,7 +74,9 @@ metadata:
     {{- end }}
 spec:
   parentRefs:
-    {{- range .Values.sorobanRpc.httpRoute.httpsRedirect.parentRefs }}
+    {{- $redirect := .Values.sorobanRpc.httpRoute.httpsRedirect }}
+    {{- if $redirect.parentRefs }}
+    {{- range $redirect.parentRefs }}
     - name: {{ .name }}
       {{- if .namespace }}
       namespace: {{ .namespace }}
@@ -82,6 +84,26 @@ spec:
       {{- if .sectionName }}
       sectionName: {{ .sectionName }}
       {{- end }}
+    {{- end }}
+    {{- else if .Values.sorobanRpc.httpRoute.gateway.enabled }}
+    {{- /* Attach to the Gateway this chart creates, mirroring the main HTTPRoute. */}}
+    {{- if not $redirect.sectionName }}
+    {{- $tlsListeners := list }}
+    {{- range .Values.sorobanRpc.httpRoute.gateway.listeners }}
+    {{- if or .tls (eq (.protocol | toString | upper) "HTTPS") }}
+    {{- $tlsListeners = append $tlsListeners .name }}
+    {{- end }}
+    {{- end }}
+    {{- if $tlsListeners }}
+    {{- fail (printf "sorobanRpc.httpRoute.httpsRedirect.sectionName is required: the Gateway created by this chart has TLS listener(s) %v, and a redirect route with no sectionName would attach to them too, redirecting HTTPS traffic back to itself. Set it to the name of the plain HTTP listener." $tlsListeners) }}
+    {{- end }}
+    {{- end }}
+    - name: {{ .Values.sorobanRpc.httpRoute.gateway.name | default (printf "%s-gateway" (include "common.fullname" .)) }}
+      {{- with $redirect.sectionName }}
+      sectionName: {{ . }}
+      {{- end }}
+    {{- else }}
+    {{- fail "sorobanRpc.httpRoute.httpsRedirect.parentRefs must be set when httpRoute.gateway.enabled is false, so the redirect route knows which Gateway listener to attach to." }}
     {{- end }}
   {{- $redirectHostnames := .Values.sorobanRpc.httpRoute.httpsRedirect.hostnames | default .Values.sorobanRpc.httpRoute.hostnames }}
   {{- if $redirectHostnames }}

@@ -128,14 +128,20 @@ sorobanRpc:
     ## Rendered as <fullname>-http-redirect, and only when httpRoute.enabled is also true.
     httpsRedirect:
       enabled: false
-      ## Gateway listener to attach the redirect to. This is normally a shared HTTP
-      ## listener rather than the Gateway created by gateway.enabled, so it usually
-      ## needs an explicit namespace. That listener must allow routes from this
-      ## namespace, otherwise a ReferenceGrant is required.
-      parentRefs:
-        - name: soroban-rpc-gateway
-          namespace: ""  # defaults to release namespace
-          sectionName: ""
+
+      ## Reference to an existing external Gateway to attach the redirect to.
+      ## Leave empty to attach to the Gateway created by gateway.enabled=true instead.
+      ## Required when gateway.enabled=false.
+      parentRefs: []
+      # parentRefs:
+      #   - name: my-shared-gateway
+      #     namespace: gateway-system
+      #     sectionName: web
+
+      ## Listener on the Gateway created by gateway.enabled=true to attach the redirect to.
+      ## Only used when parentRefs above is empty.
+      # sectionName: web
+
       ## Hostnames to redirect. Defaults to httpRoute.hostnames when unset.
       # hostnames:
       #   - soroban-rpc.example.com
