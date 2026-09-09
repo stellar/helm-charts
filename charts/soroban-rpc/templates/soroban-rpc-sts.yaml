@@ -62,7 +62,9 @@ spec:
       containers:
       - name: soroban-rpc
         image: {{ include "common.sorobanRpcImage" . | quote }}
-        args: ["--config-path", "/config/{{ include "common.rpcConfigFileName" . }}"]
+        args:
+        - "--config-path"
+        - {{ printf "/config/%s" (include "common.rpcConfigFileName" .) | quote }}
         imagePullPolicy: {{ .Values.global.image.sorobanRpc.pullPolicy }}
         volumeMounts:
         - name: config-volume
