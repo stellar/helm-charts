@@ -24,7 +24,7 @@ spec:
   # Having two replicas also ensures zero downtime during upgrades as at least one replica is 
   # gauranteed to be running while the other one is upgraded and catching backup to network 
   # after restart
-  replicas: {{ .Values.sorobanRpc.replicaCount | default 2 | int }}
+  replicas: {{ if kindIs "invalid" .Values.sorobanRpc.replicaCount }}2{{ else }}{{ .Values.sorobanRpc.replicaCount | int }}{{ end }}
   podManagementPolicy: {{ .Values.sorobanRpc.podManagementPolicy }}
   serviceName: {{ template "common.fullname" . }}
   {{- if and .Values.sorobanRpc.persistence.enabled .Values.sorobanRpc.persistence.persistentVolumeClaimRetentionPolicy }}
@@ -62,7 +62,7 @@ spec:
       containers:
       - name: soroban-rpc
         image: {{ include "common.sorobanRpcImage" . | quote }}
-        args: ["--config-path", "/config/soroban-rpc.cfg"]
+        args: ["--config-path", "/config/{{ include "common.rpcConfigFileName" . }}"]
         imagePullPolicy: {{ .Values.global.image.sorobanRpc.pullPolicy }}
         volumeMounts:
         - name: config-volume
@@ -73,23 +73,29 @@ spec:
           mountPath: /var/lib/stellar
         {{- end }}
         ports:
-        - containerPort: 8000
+        - containerPort: {{ include "common.rpcPort" . }}
           name: soroban-rpc
         - containerPort: 6061
           name: admin-port
+        {{- $minLedgers := (.Values.sorobanRpc.readinessProbe).minLedgers }}
+        {{- if and (not (kindIs "invalid" $minLedgers)) .Values.sorobanRpc.requireFullRetentionWindow }}
+        {{- fail "sorobanRpc.readinessProbe.minLedgers and sorobanRpc.requireFullRetentionWindow both gate readiness on ledger count and cannot be combined. Set only one." }}
+        {{- end }}
         readinessProbe:
           exec:
             command:
               - /bin/sh
               - -c
               - |
-                curl -s --location --request POST 'http://127.0.0.1:8000/' \
+                curl -s --location --request POST 'http://127.0.0.1:{{ include "common.rpcPort" . }}/' \
                   --header 'Content-Type: application/json' \
                   --data-raw '{
                     "jsonrpc": "2.0",
                     "id": 10235,
                     "method": "getHealth"
-                  {{- if .Values.sorobanRpc.requireFullRetentionWindow }}
+                  {{- if not (kindIs "invalid" $minLedgers) }}
+                  }' | jq -es 'if (. | length) == 0 then null else .[0] end | .result | .status == "healthy" and (.latestLedger - .oldestLedger >= {{ $minLedgers }})' > /dev/null;
+                  {{- else if .Values.sorobanRpc.requireFullRetentionWindow }}
                   }' | jq -es 'if (. | length) == 0 then null else .[0] end | .result | .status == "healthy" and (.latestLedger - .oldestLedger >= (.ledgerRetentionWindow - 10))' > /dev/null;
                   {{- else }}
                   }' | jq -es 'if (. | length) == 0 then null else .[0] end | .result | .status == "healthy"' > /dev/null;

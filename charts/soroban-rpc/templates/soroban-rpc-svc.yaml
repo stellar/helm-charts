@@ -15,7 +15,7 @@ spec:
   type: ClusterIP
   ports:
     - name: soroban-rpc
-      port: 8000
-      targetPort: 8000
+      port: {{ include "common.rpcPort" . }}
+      targetPort: {{ include "common.rpcPort" . }}
   selector:
     app: {{ template "common.fullname" . }}
