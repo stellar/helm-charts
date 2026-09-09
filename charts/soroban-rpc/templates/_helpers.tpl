@@ -43,5 +43,9 @@ the container port and the readiness probe so they cannot drift apart.
 File name of the generated RPC config. Used as the ConfigMap key and in --config-path.
 */}}
 {{- define "common.rpcConfigFileName" -}}
-{{- .Values.sorobanRpc.configFileName | default "soroban-rpc.cfg" -}}
+{{- $name := .Values.sorobanRpc.configFileName | default "soroban-rpc.cfg" -}}
+{{- if eq $name "stellar-captive-core.cfg" -}}
+{{- fail "sorobanRpc.configFileName must not be stellar-captive-core.cfg because that key is reserved for the captive-core config" -}}
+{{- end -}}
+{{- $name -}}
 {{- end -}}
