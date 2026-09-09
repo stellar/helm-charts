@@ -48,7 +48,7 @@ spec:
   rules:
     - backendRefs:
         - name: {{ template "common.fullname" . }}
-          port: 8000
+          port: {{ include "common.rpcPort" . }}
 {{- if (.Values.sorobanRpc.httpRoute.httpsRedirect).enabled }}
 ---
 apiVersion: gateway.networking.k8s.io/v1

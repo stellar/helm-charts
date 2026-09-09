@@ -31,5 +31,5 @@ spec:
           service:
             name: {{ template "common.fullname" . }}
             port:
-              number: 8000
+              number: {{ include "common.rpcPort" . }}
 {{- end }}
