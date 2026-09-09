@@ -32,8 +32,17 @@ global:
 sorobanRpc:
   ## See global.image.sorobanRpc for image settings
 
+  ## Port the RPC JSON-RPC endpoint listens on.
+  port: 8000
+
+  ## File name of the generated RPC config.
+  configFileName: soroban-rpc.cfg
+
+  ## Path to the RPC sqlite database inside the container.
+  dbPath: /var/lib/stellar/soroban-rpc-db.sqlite
+
   ## Controls whether readiness probe will require retention window to be full before
-  ## marking pods as Ready
+  ## marking pods as Ready. Mutually exclusive with readinessProbe.minLedgers.
   requireFullRetentionWindow: false
 
   ## Readiness probe timings. The probe itself is a getHealth JSON-RPC call and is not
@@ -44,6 +53,9 @@ sorobanRpc:
   #   successThreshold: 2
   #   timeoutSeconds: 5
   #   initialDelaySeconds: 30   # omitted entirely when unset
+  #   ## Require at least this many ledgers of history before marking pods Ready.
+  #   ## A fixed alternative to requireFullRetentionWindow; setting both fails.
+  #   minLedgers: 5
 
   ## For production use cases we recommend at least 2 replicas
   replicaCount: 2
@@ -54,6 +66,9 @@ sorobanRpc:
     networkPassphrase: "Test SDF Future Network ; October 2022"
     historyArchiveUrls: "http://history.stellar.org/dev/core-futurenet/core_futurenet_001,http://history.stellar.org/dev/core-futurenet/core_futurenet_002,http://history.stellar.org/dev/core-futurenet/core_futurenet_003"
     checkpointFrequence: 64
+    ## Ledgers of history the RPC retains. Omit to leave HISTORY_RETENTION_WINDOW out of
+    ## the config and let stellar-rpc apply its own default.
+    # historyRetentionWindow: 17280
 
   coreConfig:
     networkPassphrase: "Test SDF Future Network ; October 2022"

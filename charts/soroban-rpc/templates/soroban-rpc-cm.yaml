@@ -12,14 +12,14 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
-  soroban-rpc.cfg: |
+  {{ include "common.rpcConfigFileName" . }}: |
     CAPTIVE_CORE_CONFIG_PATH="/config/stellar-captive-core.cfg"
     CAPTIVE_CORE_STORAGE_PATH="/var/lib/stellar/captive-core"
     CAPTIVE_CORE_USE_DB=true
     STELLAR_CORE_BINARY_PATH="/usr/bin/stellar-core"
-    ENDPOINT="0.0.0.0:8000"
+    ENDPOINT="0.0.0.0:{{ include "common.rpcPort" . }}"
     ADMIN_ENDPOINT="0.0.0.0:6061"
-    DB_PATH="/var/lib/stellar/soroban-rpc-db.sqlite"
+    DB_PATH={{ .Values.sorobanRpc.dbPath | default "/var/lib/stellar/soroban-rpc-db.sqlite" | quote }}
     STELLAR_CAPTIVE_CORE_HTTP_PORT=11626
     {{ if (.Values.sorobanRpc.sorobanRpcConfig).friendbotUrl -}}
     FRIENDBOT_URL={{ .Values.sorobanRpc.sorobanRpcConfig.friendbotUrl | quote }}
@@ -29,6 +29,9 @@ data:
     {{ end -}}
     {{ if (.Values.sorobanRpc.sorobanRpcConfig).historyArchiveUrls -}}
     HISTORY_ARCHIVE_URLS={{ .Values.sorobanRpc.sorobanRpcConfig.historyArchiveUrls | quote }}
+    {{ end -}}
+    {{ if not (kindIs "invalid" (.Values.sorobanRpc.sorobanRpcConfig).historyRetentionWindow) -}}
+    HISTORY_RETENTION_WINDOW={{ .Values.sorobanRpc.sorobanRpcConfig.historyRetentionWindow }}
     {{ end -}}
     {{ if not (kindIs "invalid" (.Values.sorobanRpc.sorobanRpcConfig).checkpointFrequence) -}}
     CHECKPOINT_FREQUENCY={{ .Values.sorobanRpc.sorobanRpcConfig.checkpointFrequence }}

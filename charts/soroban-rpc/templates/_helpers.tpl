@@ -30,3 +30,22 @@
 {{ template "common.fullname" . }}-cert
 {{- end -}}
 {{- end -}}
+
+{{/*
+Port the RPC JSON-RPC endpoint listens on. Shared by the config file, the Service,
+the container port and the readiness probe so they cannot drift apart.
+*/}}
+{{- define "common.rpcPort" -}}
+{{- .Values.sorobanRpc.port | default 8000 -}}
+{{- end -}}
+
+{{/*
+File name of the generated RPC config. Used as the ConfigMap key and in --config-path.
+*/}}
+{{- define "common.rpcConfigFileName" -}}
+{{- $name := .Values.sorobanRpc.configFileName | default "soroban-rpc.cfg" -}}
+{{- if eq $name "stellar-captive-core.cfg" -}}
+{{- fail "sorobanRpc.configFileName must not be stellar-captive-core.cfg because that key is reserved for the captive-core config" -}}
+{{- end -}}
+{{- $name -}}
+{{- end -}}
