@@ -1,0 +1,18 @@
+---
+## Lint scenario: history proxy exposed through the Gateway API.
+##
+## Mutually exclusive with the Ingress scenario, hence a separate file: this is
+## the only path that renders the HTTPRoute and Gateway resources, whose
+## schemas come from CRDs rather than the built-in Kubernetes API.
+core:
+  historyProxy:
+    enabled: true
+    ingress:
+      enabled: false
+    httpRoute:
+      enabled: true
+      hostnames:
+        - history-proxy.example.com
+      gateway:
+        enabled: true
+        gatewayClassName: istio
