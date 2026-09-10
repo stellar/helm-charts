@@ -70,6 +70,11 @@ sorobanRpc:
     ## the config and let stellar-rpc apply its own default.
     # historyRetentionWindow: 17280
 
+    ## Cap on how long a single getLedgers request may run, as a Go duration string
+    ## ("30s", "1m"). Omit to leave MAX_GET_LEDGERS_EXECUTION_DURATION out of the config
+    ## and let stellar-rpc apply its own default.
+    # maxGetLedgersExecutionDuration: "30s"
+
   coreConfig:
     networkPassphrase: "Test SDF Future Network ; October 2022"
     bucketlistDbIndexPageSizeExponent: 12
