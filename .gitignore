@@ -1,0 +1,4 @@
+# Vendored subchart dependencies and the lockfile that pins them. These are
+# build artifacts produced by `helm dependency build`.
+charts/*/charts/
+charts/*/Chart.lock

@@ -1,0 +1,56 @@
+---
+name: Lint charts
+
+on:
+  pull_request:
+    paths:
+      - 'charts/**'
+      - '.github/workflows/lint.yaml'
+  push:
+    branches: [main]
+    paths:
+      - 'charts/**'
+      - '.github/workflows/lint.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  helm-lint:
+    name: helm lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.18.4
+
+      - name: Lint charts
+        run: |
+          set -uo pipefail
+          failed=()
+          for chart in charts/*/; do
+            name="$(basename "$chart")"
+            echo "::Linting chart: $name::"
+
+            if grep -q '^dependencies:' "${chart}Chart.yaml"; then
+              helm dependency build "$chart" || failed+=("$name (dependency build)")
+            fi
+
+            helm lint --strict "$chart" || failed+=("$name")
+
+            echo "::Finished Linting $name::"
+          done
+
+          if [[ ${#failed[@]} -gt 0 ]]; then
+            echo "::error::helm lint failed for: ${failed[*]}"
+            exit 1
+          fi
+          echo "All charts linted successfully."

@@ -1,9 +1,8 @@
-apiVersion: v1
+apiVersion: v2
 name: stellar-network
 description: This chart will deploy a Stellar network to Kubernetes
-version: 0.0.1
-description: Stellar Network Helm Chart
-maintainers: 
+version: 0.0.2
+maintainers:
   - name: Stellar Development Foundation
 sources:
   - https://github.com/stellar/helm-charts
