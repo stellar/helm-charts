@@ -1,0 +1,21 @@
+---
+## Lint scenario: history proxy exposed through a k8s Ingress.
+##
+## The history proxy is disabled by default, so without this its Deployment,
+## Service and Ingress are never rendered and never validated. Persistence and
+## a PodDisruptionBudget are enabled here too, since both add resources or
+## fields that stock defaults leave out.
+core:
+  persistence:
+    enabled: true
+
+  ## Rendered whenever this map is non-empty.
+  podDisruptionBudget:
+    minAvailable: 1
+
+  historyProxy:
+    enabled: true
+    ingress:
+      enabled: true
+      host: history-proxy.example.com
+      ingressClassName: nginx
