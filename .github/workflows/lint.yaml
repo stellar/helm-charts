@@ -117,7 +117,7 @@ jobs:
           validate defaults
           validate futurenet -f charts/core/futurenet-values.yaml
 
-          # Values files in in charts/<name>/ci/ contain more scenarios to make sure the
+          # Values files in charts/<name>/ci/ contain more scenarios to make sure the
           # full range of resources are templated and linted. 
           for values in charts/core/ci/*-values.yaml; do
             scenario="$(basename "$values" -values.yaml)"
