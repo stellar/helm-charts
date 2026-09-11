@@ -1,0 +1,8 @@
+---
+## Lint scenario: stock defaults.
+##
+## friendbot's templates intentionally fail without an account seed, so the
+## chart cannot be rendered at all without this.
+friendbot:
+  secret:
+    friendbotAccountSeed: "SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"

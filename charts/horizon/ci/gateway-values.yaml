@@ -1,0 +1,28 @@
+---
+## Lint scenario: both components exposed through the Gateway API rather than
+## Ingresses. Renders the HTTPRoute and Gateway resources, whose schemas come
+## from CRDs.
+ingest:
+  enabled: true
+  existingSecret: "horizon-db"
+  ingress:
+    enabled: false
+  httpRoute:
+    enabled: true
+    hostnames:
+      - horizon-ingest.example.com
+    gateway:
+      enabled: true
+      gatewayClassName: istio
+web:
+  enabled: true
+  existingSecret: "horizon-db"
+  ingress:
+    enabled: false
+  httpRoute:
+    enabled: true
+    hostnames:
+      - horizon.example.com
+    gateway:
+      enabled: true
+      gatewayClassName: istio

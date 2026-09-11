@@ -1,0 +1,30 @@
+---
+## Lint scenario: exposed through the Gateway API, with the HTTP->HTTPS
+## redirect route and a PodDisruptionBudget. Renders the HTTPRoute and Gateway
+## resources, whose schemas come from CRDs.
+sorobanRpc:
+  podDisruptionBudget:
+    enabled: true
+  ingress:
+    enabled: false
+  httpRoute:
+    enabled: true
+    hostnames:
+      - rpc.example.com
+    httpRedirect:
+      enabled: true
+    gateway:
+      enabled: true
+      gatewayClassName: istio
+      listeners:
+        - name: http
+          protocol: HTTP
+          port: 80
+        - name: https
+          protocol: HTTPS
+          port: 443
+          hostname: rpc.example.com
+          tls:
+            mode: Terminate
+            certificateRefs:
+              - name: rpc-tls-cert

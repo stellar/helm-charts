@@ -1,0 +1,29 @@
+---
+## Lint scenario: self-contained setup -- ephemeral database and generated
+## secrets, so nothing external is required to render.
+global:
+  ephemeralDatabase: true
+  autoGenerateSecrets: true
+  singleTenantMode: true
+  rpc:
+    url: "https://soroban-testnet.stellar.org"
+sdp:
+  route:
+    schema: "http"
+    domain: "sdp.local"
+    adminDomain: "admin.local"
+  ingress:
+    tls: []
+  kubeSecrets:
+    secretName: sdp
+    create: true
+tss:
+  kubeSecrets:
+    secretName: sdp-tss
+    create: true
+dashboard:
+  route:
+    schema: "http"
+    domain: "dashboard.local"
+  ingress:
+    tls: []

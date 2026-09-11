@@ -1,0 +1,5 @@
+# Patterns to ignore when packaging the chart.
+
+# Lint scenarios used by .github/workflows/lint.yaml to render this chart's
+# templates. CI fixtures, not chart content.
+ci/

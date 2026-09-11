@@ -1,0 +1,47 @@
+---
+## Lint scenario: the optional resources -- Gateway API routes, autoscaling and
+## the Prometheus Operator ServiceMonitor. HTTPRoute, Gateway and ServiceMonitor
+## schemas all come from CRDs.
+global:
+  ephemeralDatabase: true
+  autoGenerateSecrets: true
+  rpc:
+    url: "https://soroban-testnet.stellar.org"
+  autoscaling:
+    enabled: true
+  serviceAccount:
+    create: true
+sdp:
+  route:
+    schema: "https"
+    domain: "sdp.example.com"
+    adminDomain: "admin.example.com"
+  ingress:
+    enabled: false
+  httpRoute:
+    enabled: true
+    gateway:
+      enabled: true
+      gatewayClassName: istio
+  kubeSecrets:
+    secretName: sdp
+    create: true
+tss:
+  kubeSecrets:
+    secretName: sdp-tss
+    create: true
+dashboard:
+  route:
+    schema: "https"
+    domain: "dashboard.example.com"
+  ingress:
+    enabled: false
+  httpRoute:
+    enabled: true
+serviceMonitor:
+  enabled: true
+
+## Off in the stock defaults, so without these the autoscaling, service account
+## and Grafana dashboard templates are never rendered.
+grafanaDashboards:
+  enabled: true

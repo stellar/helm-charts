@@ -1,0 +1,8 @@
+---
+## Lint scenario: CloudNativePG path. The chart renders its own Cluster and
+## DATABASE_URL secret rather than consuming an existing one. The Cluster
+## schema comes from a CRD.
+cnpg:
+  enabled: true
+  auth:
+    password: "not-a-real-password"
