@@ -11,8 +11,9 @@ sorobanRpc:
     enabled: true
     hostnames:
       - rpc.example.com
-    httpRedirect:
+    httpsRedirect:
       enabled: true
+      sectionName: http
     gateway:
       enabled: true
       gatewayClassName: istio
