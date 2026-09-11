@@ -21,3 +21,7 @@
 .idea/
 *.tmproj
 .vscode/
+
+# Lint scenarios used by .github/workflows/lint.yaml to render this chart's
+# templates. CI fixtures, not chart content.
+ci/

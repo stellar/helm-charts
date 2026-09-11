@@ -1,0 +1,15 @@
+---
+## Lint scenario: exposed through the Gateway API rather than an Ingress.
+## Renders the HTTPRoute and Gateway, whose schemas come from CRDs.
+friendbot:
+  secret:
+    friendbotAccountSeed: "SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  ingress:
+    enabled: false
+  httpRoute:
+    enabled: true
+    hostnames:
+      - friendbot.example.com
+    gateway:
+      enabled: true
+      gatewayClassName: istio

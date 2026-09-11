@@ -1,0 +1,27 @@
+---
+## Lint scenario: both components enabled, behind Ingresses, with a
+## PodDisruptionBudget each, backed by an existing DB secret.
+##
+## horizon's templates intentionally fail without a database secret, so the
+## chart cannot render at all without one. The web component, the Ingresses and
+## the PDBs are all off in the stock defaults, so they are turned on here --
+## otherwise those templates are never rendered and never validated.
+ingest:
+  enabled: true
+  existingSecret: "horizon-db"
+  ingress:
+    enabled: true
+    host: horizon-ingest.example.com
+    ingressClassName: nginx
+  ## Rendered whenever this map is non-empty.
+  podDisruptionBudget:
+    minAvailable: 1
+web:
+  enabled: true
+  existingSecret: "horizon-db"
+  ingress:
+    enabled: true
+    host: horizon-web.example.com
+    ingressClassName: nginx
+  podDisruptionBudget:
+    minAvailable: 1
