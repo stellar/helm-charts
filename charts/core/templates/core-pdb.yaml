@@ -17,6 +17,9 @@ spec:
   {{- if .Values.core.podDisruptionBudget.maxUnavailable }}
   maxUnavailable: {{ .Values.core.podDisruptionBudget.maxUnavailable }}
   {{- end }}
+  {{- if .Values.core.podDisruptionBudget.unhealthyPodEvictionPolicy }}
+  unhealthyPodEvictionPolicy: {{ .Values.core.podDisruptionBudget.unhealthyPodEvictionPolicy }}
+  {{- end }}
   selector:
     matchLabels:
       app: {{ template "common.fullname" . }}

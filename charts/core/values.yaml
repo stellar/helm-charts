@@ -254,4 +254,6 @@ core:
   ## Example podDisruptionBudget
   # podDisruptionBudget:
   #   minAvailable: 1
+  #   # IfHealthyBudget (k8s default) or AlwaysAllow
+  #   unhealthyPodEvictionPolicy: AlwaysAllow
   podDisruptionBudget: {}
