@@ -1,0 +1,65 @@
+name: Publish charts
+
+# Pushes to main package every chart into the helm-charts-archive bucket,
+# rebuild the index for https://helm.stellar.org/charts/, and build the nginx
+# image that serves it as prd/helm-charts:<short sha>. ArgoCD Image Updater
+# deploys new images in that repo automatically.
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-charts
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Package charts
+        run: |
+          set -eu
+          mkdir scratchdir
+          for dir in ./charts/*/; do
+            (cd "${dir}" && helm dependency build && rm -f requirements.lock)
+            helm package "${dir}" --destination ./scratchdir/
+          done
+
+      - name: AWS credentials for the chart archive
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: arn:aws:iam::746476062914:role/github-actions-helm-charts
+          aws-region: us-east-1
+
+      - name: Upload charts and build the index
+        run: |
+          set -eu
+          aws s3 cp ./scratchdir/ s3://helm-charts-archive/ --recursive
+          aws s3 cp s3://helm-charts-archive/ ./scratchdir/ --recursive
+          helm repo index ./scratchdir/ --url https://helm.stellar.org/charts/
+
+      - name: ECR login
+        id: ecr-login
+        uses: stellar/actions/sdf-ecr-login@main
+
+      - name: Build and push the chart server image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.ecr-registry }}
+        run: |
+          set -eu
+          TAG="${ECR_REGISTRY}/prd/helm-charts:$(git rev-parse --short HEAD)"
+          docker build --no-cache -t "${TAG}" -f docker/Dockerfile .
+          ecr-push "${TAG}"
