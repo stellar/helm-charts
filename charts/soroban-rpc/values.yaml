@@ -75,6 +75,17 @@ sorobanRpc:
     ## and let stellar-rpc apply its own default.
     # maxGetLedgersExecutionDuration: "30s"
 
+    ## Read ledgers from a galexie data lake: serves getLedgers beyond the retention
+    ## window, and with backfill, loads HISTORY_RETENTION_WINDOW ledgers on startup
+    ## before serving. Backfill requires serveLedgersFromDatastore.
+    # serveLedgersFromDatastore: true
+    # backfill: true
+    # datastore:
+    #   type: S3
+    #   params:
+    #     destination_bucket_path: "aws-public-blockchain/v1.1/stellar/ledgers/pubnet"
+    #     region: us-east-2
+
   coreConfig:
     networkPassphrase: "Test SDF Future Network ; October 2022"
     bucketlistDbIndexPageSizeExponent: 12
