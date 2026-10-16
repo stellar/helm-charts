@@ -36,8 +36,23 @@ data:
     {{ if (.Values.sorobanRpc.sorobanRpcConfig).maxGetLedgersExecutionDuration -}}
     MAX_GET_LEDGERS_EXECUTION_DURATION={{ .Values.sorobanRpc.sorobanRpcConfig.maxGetLedgersExecutionDuration | quote }}
     {{ end -}}
+    {{ if (.Values.sorobanRpc.sorobanRpcConfig).serveLedgersFromDatastore -}}
+    SERVE_LEDGERS_FROM_DATASTORE=true
+    {{ end -}}
+    {{ if (.Values.sorobanRpc.sorobanRpcConfig).backfill -}}
+    BACKFILL=true
+    {{ end -}}
     {{ if not (kindIs "invalid" (.Values.sorobanRpc.sorobanRpcConfig).checkpointFrequence) -}}
     CHECKPOINT_FREQUENCY={{ .Values.sorobanRpc.sorobanRpcConfig.checkpointFrequence }}
+    {{- end }}
+    {{- /* TOML tables must come after every top-level key; keep this block last. */}}
+    {{- with (.Values.sorobanRpc.sorobanRpcConfig).datastore }}
+    [datastore_config]
+    type={{ .type | quote }}
+    [datastore_config.params]
+    {{- range $k, $v := .params }}
+    {{ $k }}={{ $v | quote }}
+    {{- end }}
     {{- end }}
   stellar-captive-core.cfg: |
     DATABASE="sqlite3:///var/lib/stellar/stellar-captive-core.db"
