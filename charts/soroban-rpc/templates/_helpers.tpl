@@ -71,10 +71,6 @@ that cannot start. Called once at the top of the StatefulSet template.
 {{- if not (and $endpoint (hasSuffix $port (toString $endpoint))) -}}
 {{- fail (printf "sorobanRpc.rpcv2Config.service.endpoint must be set and end with %q so the Service and the readiness probe reach the daemon, got %q" $port (toString $endpoint)) -}}
 {{- end -}}
-{{- $admin := ((.Values.sorobanRpc.rpcv2Config).service).admin_endpoint -}}
-{{- if and $admin (not (hasSuffix ":6061" (toString $admin))) -}}
-{{- fail (printf "sorobanRpc.rpcv2Config.service.admin_endpoint must end with \":6061\", the admin container port, got %q" (toString $admin)) -}}
-{{- end -}}
 {{- end -}}
 {{- $t := (.Values.sorobanRpc.persistence).type | default "pvc" -}}
 {{- if not (or (eq $t "pvc") (eq $t "emptyDir")) -}}
@@ -91,29 +87,29 @@ Running it twice is harmless.
 */}}
 {{- define "common.intifyWholeFloats" -}}
 {{- range $k, $v := . -}}
-{{- if kindIs "map" $v -}}
-{{- include "common.intifyWholeFloats" $v -}}
-{{- else if kindIs "slice" $v -}}
-{{- $out := list -}}
-{{- range $v -}}
-{{- if and (kindIs "float64" .) (eq (float64 (int64 .)) .) -}}
-{{- $out = append $out (int64 .) -}}
-{{- else -}}
-{{- $out = append $out . -}}
-{{- end -}}
-{{- end -}}
-{{- $_ := set $ $k $out -}}
-{{- else if and (kindIs "float64" $v) (eq (float64 (int64 $v)) $v) -}}
-{{- $_ := set $ $k (int64 $v) -}}
-{{- end -}}
+  {{- if kindIs "map" $v -}}
+    {{- include "common.intifyWholeFloats" $v -}}
+  {{- else if kindIs "slice" $v -}}
+    {{- $out := list -}}
+    {{- range $v -}}
+      {{- if and (kindIs "float64" .) (eq (float64 (int64 .)) .) -}}
+        {{- $out = append $out (int64 .) -}}
+      {{- else -}}
+        {{- $out = append $out . -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $_ := set $ $k $out -}}
+  {{- else if and (kindIs "float64" $v) (eq (float64 (int64 $v)) $v) -}}
+    {{- $_ := set $ $k (int64 $v) -}}
+  {{- end -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
 True when the StatefulSet has at least one volumeClaimTemplate: the /var/lib/stellar
-PVC, or any entry in extraVolumeClaimTemplates.
+PVC, or the cold-storage PVC.
 */}}
 {{- define "common.hasVolumeClaimTemplates" -}}
 {{- $p := .Values.sorobanRpc.persistence -}}
-{{- if or (and $p.enabled (eq ($p.type | default "pvc") "pvc")) (.Values.sorobanRpc).extraVolumeClaimTemplates -}}true{{- end -}}
+{{- if or (and $p.enabled (eq ($p.type | default "pvc") "pvc")) ($p.coldStorage).enabled -}}true{{- end -}}
 {{- end -}}

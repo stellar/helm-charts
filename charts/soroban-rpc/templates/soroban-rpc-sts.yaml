@@ -78,8 +78,9 @@ spec:
         - name: {{ template "common.fullname" . }}-var-lib-stellar
           mountPath: /var/lib/stellar
         {{- end }}
-        {{- with (.Values.sorobanRpc).extraVolumeMounts }}
-        {{- toYaml . | nindent 8 }}
+        {{- if (.Values.sorobanRpc.persistence.coldStorage).enabled }}
+        - name: {{ template "common.fullname" . }}-cold-storage
+          mountPath: /var/lib/stellar-cold-storage
         {{- end }}
         ports:
         - containerPort: {{ include "common.rpcPort" . }}
@@ -154,7 +155,14 @@ spec:
         requests:
           storage: {{ .Values.sorobanRpc.persistence.size | quote }}
   {{- end }}
-  {{- with (.Values.sorobanRpc).extraVolumeClaimTemplates }}
-  {{- toYaml . | nindent 2 }}
+  {{- if (.Values.sorobanRpc.persistence.coldStorage).enabled }}
+  - metadata:
+      name: {{ template "common.fullname" . }}-cold-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: {{ .Values.sorobanRpc.persistence.coldStorage.storageClass }}
+      resources:
+        requests:
+          storage: {{ .Values.sorobanRpc.persistence.coldStorage.size | quote }}
   {{- end }}
   {{- end }}
