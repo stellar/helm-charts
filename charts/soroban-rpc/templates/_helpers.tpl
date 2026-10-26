@@ -63,13 +63,13 @@ that cannot start. Called once at the top of the StatefulSet template.
 {{- if not .Values.sorobanRpc.rpcv2Config -}}
 {{- fail "sorobanRpc.rpcVersion is v2 but sorobanRpc.rpcv2Config is empty" -}}
 {{- end -}}
-{{- if not ((.Values.global).image).sorobanRpc.tag -}}
+{{- if not (((.Values.global).image).sorobanRpc).tag -}}
 {{- fail "sorobanRpc.rpcVersion is v2 but global.image.sorobanRpc.tag is not set. The default image refuses --enable-rpcv2; set the tag of an image built with rpcv2 enabled" -}}
 {{- end -}}
 {{- $endpoint := ((.Values.sorobanRpc.rpcv2Config).service).endpoint -}}
 {{- $port := printf ":%s" (include "common.rpcPort" .) -}}
 {{- if not (and $endpoint (hasSuffix $port (toString $endpoint))) -}}
-{{- fail (printf "sorobanRpc.rpcv2Config.service.endpoint must be set and end with %q so the Service and the readiness probe reach the daemon, got %q" $port (toString $endpoint)) -}}
+{{- fail (printf "sorobanRpc.rpcv2Config.service.endpoint must be set and end with %q so the Service and the readiness probe reach the daemon, got %q" $port (toString ($endpoint | default ""))) -}}
 {{- end -}}
 {{- end -}}
 {{- $t := (.Values.sorobanRpc.persistence).type | default "pvc" -}}
@@ -83,7 +83,7 @@ Helm reads every YAML number as a float, and toToml writes a float as "15.0".
 rpcv2 refuses a float where it expects an integer ("Can't convert 15(float64) to
 uint32"). This walks a map and turns every float with no fraction back into an
 integer, in place, so toToml writes "15". A real fraction such as 1.5 is kept.
-Running it twice is harmless.
+Maps inside lists (TOML arrays of tables) are walked too. Running it twice is harmless.
 */}}
 {{- define "common.intifyWholeFloats" -}}
 {{- range $k, $v := . -}}
@@ -92,7 +92,10 @@ Running it twice is harmless.
   {{- else if kindIs "slice" $v -}}
     {{- $out := list -}}
     {{- range $v -}}
-      {{- if and (kindIs "float64" .) (eq (float64 (int64 .)) .) -}}
+      {{- if kindIs "map" . -}}
+        {{- include "common.intifyWholeFloats" . -}}
+        {{- $out = append $out . -}}
+      {{- else if and (kindIs "float64" .) (eq (float64 (int64 .)) .) -}}
         {{- $out = append $out (int64 .) -}}
       {{- else -}}
         {{- $out = append $out . -}}

@@ -78,8 +78,7 @@ sorobanRpc:
   ##   - service.endpoint ends with ":<sorobanRpc.port>", so the Service and the readiness
   ##     probe reach the daemon. Set service.admin_endpoint to "0.0.0.0:6061" for metrics;
   ##     that is the admin container port.
-  ## In v2, requireFullRetentionWindow keeps the pod not Ready until backfill has filled
-  ## retention.retention_chunks chunks.
+  ## requireFullRetentionWindow works in v2; getHealth reports ledgerRetentionWindow.
   rpcv2Config: {}
   # rpcv2Config:
   #   storage:
