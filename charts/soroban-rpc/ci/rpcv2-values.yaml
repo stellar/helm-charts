@@ -4,7 +4,8 @@
 global:
   image:
     sorobanRpc:
-      tag: 30.0.0-rpcv2
+      ## Placeholder for the lint scenario. v2 requires a tag; no image is pulled here.
+      tag: rpcv2-placeholder
 sorobanRpc:
   rpcVersion: v2
   configFileName: rpc-v2.toml
