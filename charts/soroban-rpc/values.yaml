@@ -265,9 +265,10 @@ sorobanRpc:
     emptyDir:
       sizeLimit: 100Gi
     ## A second, large PVC for rpcv2 full-history nodes, mounted at
-    ## /var/lib/stellar-cold-storage. The live database stays on /var/lib/stellar (NVMe);
-    ## the cold ledgers and events go here. Point rpcv2Config.storage.ledgers and
-    ## rpcv2Config.storage.events under this path.
+    ## /var/lib/stellar-cold-storage. The hot tier and the catalog stay on /var/lib/stellar
+    ## (NVMe). The packed stores go here: set rpcv2Config.storage.ledgers, events,
+    ## events_index, txhash_raw and txhash_index to paths under this mount.
+    ## See ci/rpcv2-archive-values.yaml for the full layout.
     coldStorage:
       enabled: false
       storageClass: default

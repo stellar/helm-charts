@@ -29,10 +29,18 @@ sorobanRpc:
       storageClass: default
       size: 10Ti
   rpcv2Config:
+    ## All seven rpcv2 stores, split across the two disks. The hot tier (live RocksDB for
+    ## chunks not yet packed) and the catalog (which chunks the node holds) stay on NVMe.
+    ## Every packed, immutable store and its indexes go to the cold-storage PVC.
     storage:
       default_data_dir: /var/lib/stellar/rpc-v2
+      hot: /var/lib/stellar/rpc-v2/hot
+      catalog: /var/lib/stellar/rpc-v2/catalog/rocksdb
       ledgers: /var/lib/stellar-cold-storage/ledgers
       events: /var/lib/stellar-cold-storage/events
+      events_index: /var/lib/stellar-cold-storage/events_index
+      txhash_raw: /var/lib/stellar-cold-storage/txhash_raw
+      txhash_index: /var/lib/stellar-cold-storage/txhash_index
     retention:
       earliest_ledger: "genesis"
       retention_chunks: 0
