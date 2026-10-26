@@ -1,6 +1,6 @@
 ---
-## Lint scenario: rpcv2 with short retention. The live data lives in an emptyDir on
-## a tainted NVMe node pool. The TOML is rendered from rpcv2Config as-is.
+## Lint scenario: rpcv2, short retention (earliest_ledger "now", 15 chunks). The live
+## data lives in an emptyDir on a tainted NVMe node pool. The TOML is rpcv2Config as-is.
 global:
   image:
     sorobanRpc:
