@@ -13,6 +13,10 @@ metadata:
     heritage: {{ .Release.Service }}
 data:
   {{ include "common.rpcConfigFileName" . }}: |
+  {{- if eq (.Values.sorobanRpc.rpcVersion | default "v1") "v2" }}
+    {{- include "common.intifyWholeFloats" .Values.sorobanRpc.rpcv2Config }}
+    {{- toToml .Values.sorobanRpc.rpcv2Config | nindent 4 }}
+  {{- else }}
     CAPTIVE_CORE_CONFIG_PATH="/config/stellar-captive-core.cfg"
     CAPTIVE_CORE_STORAGE_PATH="/var/lib/stellar/captive-core"
     CAPTIVE_CORE_USE_DB=true
@@ -54,6 +58,7 @@ data:
     {{ $k }}={{ $v | quote }}
     {{- end }}
     {{- end }}
+  {{- end }}
   stellar-captive-core.cfg: |
     DATABASE="sqlite3:///var/lib/stellar/stellar-captive-core.db"
     HTTP_PORT=11626

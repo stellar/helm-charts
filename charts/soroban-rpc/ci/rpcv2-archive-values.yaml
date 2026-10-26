@@ -1,0 +1,61 @@
+---
+## Lint scenario: rpcv2 with full history. Same NVMe emptyDir for the live data, plus
+## one extra PVC that holds the cold ledgers and events, mounted through
+## extraVolumeMounts and pointed at from rpcv2Config.storage.
+global:
+  image:
+    sorobanRpc:
+      tag: 30.0.0-rpcv2
+sorobanRpc:
+  rpcVersion: v2
+  configFileName: rpc-v2.toml
+  tolerations:
+    - key: dedicated
+      operator: Equal
+      value: rpc-v2
+      effect: NoSchedule
+  nodeSelector:
+    dedicated: rpc-v2
+  persistence:
+    enabled: true
+    type: emptyDir
+    emptyDir:
+      sizeLimit: 400Gi
+    persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Retain
+      whenScaled: Retain
+  extraVolumeClaimTemplates:
+    - metadata:
+        name: cold
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: default
+        resources:
+          requests:
+            storage: 10Ti
+  extraVolumeMounts:
+    - name: cold
+      mountPath: /var/lib/stellar-cold
+  rpcv2Config:
+    storage:
+      default_data_dir: /var/lib/stellar/rpc-v2
+      ledgers: /var/lib/stellar-cold/ledgers
+      events: /var/lib/stellar-cold/events
+    retention:
+      earliest_ledger: "genesis"
+      retention_chunks: 0
+    service:
+      endpoint: "0.0.0.0:8000"
+      admin_endpoint: "0.0.0.0:6061"
+    backfill:
+      datastore:
+        type: S3
+        params:
+          destination_bucket_path: "aws-public-blockchain/v1.1/stellar/ledgers/pubnet"
+          region: us-east-2
+    ingestion:
+      captive_core_config: /config/stellar-captive-core.cfg
+      history_archive_urls:
+        - https://history.stellar.org/prd/core-live/core_live_001
+  ingress:
+    enabled: false
