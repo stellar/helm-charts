@@ -60,7 +60,41 @@ sorobanRpc:
   ## For production use cases we recommend at least 2 replicas
   replicaCount: 2
 
-  ## Soroban-rpc config variables
+  ## Which stellar-rpc the pod runs.
+  ##   "v1"  the released stellar-rpc. The config file is built from sorobanRpcConfig as
+  ##         KEY=VALUE lines. Args: --config-path.
+  ##   "v2"  rpcv2, the full-history stellar-rpc (not GA). The config file is rpcv2Config
+  ##         rendered as TOML. Args: --enable-rpcv2 --config-path.
+  ## v2 needs an image built with rpcv2 enabled. Every published stellar/stellar-rpc tag
+  ## refuses --enable-rpcv2, so v2 requires global.image.sorobanRpc.tag to be set.
+  ## sorobanRpcConfig is ignored in v2, rpcv2Config is ignored in v1. coreConfig renders
+  ## the captive-core file in both modes.
+  rpcVersion: v1
+
+  ## Free-form rpcv2 configuration, rendered as TOML with toToml. Only used when rpcVersion
+  ## is v2. Every key in stellar-rpc's rpc-v2-sample-config.toml is valid here and nothing
+  ## else is needed: backfill, retention and storage paths are ordinary keys in this map.
+  ## The chart adds no key of its own. It only checks that:
+  ##   - service.endpoint ends with ":<sorobanRpc.port>", so the Service and the readiness
+  ##     probe reach the daemon. Set service.admin_endpoint to "0.0.0.0:6061" for metrics;
+  ##     that is the admin container port.
+  ## requireFullRetentionWindow works in v2; getHealth reports ledgerRetentionWindow.
+  rpcv2Config: {}
+  # rpcv2Config:
+  #   storage:
+  #     default_data_dir: /var/lib/stellar/rpc-v2
+  #   retention:
+  #     earliest_ledger: "now"
+  #     retention_chunks: 15
+  #   service:
+  #     endpoint: "0.0.0.0:8000"
+  #     admin_endpoint: "0.0.0.0:6061"
+  #   ingestion:
+  #     captive_core_config: /config/stellar-captive-core.cfg
+  #     history_archive_urls:
+  #       - https://history.stellar.org/prd/core-live/core_live_001
+
+  ## Soroban-rpc config variables (rpcVersion v1 only)
   sorobanRpcConfig:
     friendbotUrl: "https://friendbot-futurenet.stellar.org/"
     networkPassphrase: "Test SDF Future Network ; October 2022"
@@ -214,9 +248,32 @@ sorobanRpc:
   ## performant read/write throughput, we recommend at least 3k IOPS, 5MB/sec.
   persistence:
     enabled: false
+    ## Where /var/lib/stellar lives when enabled:
+    ##   "pvc"       a PersistentVolumeClaim per pod (an EBS volume). The data survives a
+    ##               pod restart or a move to another node. This is the default.
+    ##   "emptyDir"  a directory on the node's own disk. Faster (NVMe on instance-store
+    ##               nodes) but deleted when the pod leaves the node.
+    type: pvc
+    ## Only used when type is pvc.
     storageClass: default
     size: 100G
-    ## Persistent volume claim retention policy for the StatefulSet.
+    ## Only used when type is emptyDir. sizeLimit is a ceiling, not a reservation: when the
+    ## pod writes more than this, Kubernetes evicts the pod and the directory is deleted.
+    ## Leave it empty for no ceiling. To make the scheduler pick a node with enough local
+    ## disk, set resources.requests.ephemeral-storage below; sizeLimit does not do that.
+    emptyDir:
+      sizeLimit: 100Gi
+    ## A second, large PVC for rpcv2 full-history nodes, mounted at
+    ## /var/lib/stellar-cold-storage. The hot tier and the catalog stay on /var/lib/stellar
+    ## (NVMe). The packed stores go here: set rpcv2Config.storage.ledgers, events,
+    ## events_index, txhash_raw and txhash_index to paths under this mount.
+    ## See ci/rpcv2-archive-values.yaml for the full layout.
+    coldStorage:
+      enabled: false
+      storageClass: default
+      size: 10Ti
+    ## Persistent volume claim retention policy for the StatefulSet. Applies to the pvc above
+    ## and to the coldStorage pvc.
     ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention
     # persistentVolumeClaimRetentionPolicy:
     #   whenDeleted: Retain
@@ -267,6 +324,14 @@ sorobanRpc:
   #   kubernetes.io/os: linux
   #   node-type: soroban-rpc
   nodeSelector: {}
+
+  ## Pod tolerations, rendered as-is. Needed to schedule on a tainted node pool.
+  tolerations: []
+  # tolerations:
+  #   - key: dedicated
+  #     operator: Equal
+  #     value: rpc-v2
+  #     effect: NoSchedule
 
   ## Example podDisruptionBudget
   # podDisruptionBudget:

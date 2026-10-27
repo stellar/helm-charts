@@ -1,3 +1,4 @@
+{{- include "common.validate" . -}}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -27,7 +28,7 @@ spec:
   replicas: {{ if kindIs "invalid" .Values.sorobanRpc.replicaCount }}2{{ else }}{{ .Values.sorobanRpc.replicaCount | int }}{{ end }}
   podManagementPolicy: {{ .Values.sorobanRpc.podManagementPolicy }}
   serviceName: {{ template "common.fullname" . }}
-  {{- if and .Values.sorobanRpc.persistence.enabled .Values.sorobanRpc.persistence.persistentVolumeClaimRetentionPolicy }}
+  {{- if and (include "common.hasVolumeClaimTemplates" .) .Values.sorobanRpc.persistence.persistentVolumeClaimRetentionPolicy }}
   persistentVolumeClaimRetentionPolicy:
     {{- toYaml .Values.sorobanRpc.persistence.persistentVolumeClaimRetentionPolicy | nindent 4 }}
   {{- end }}
@@ -63,6 +64,9 @@ spec:
       - name: soroban-rpc
         image: {{ include "common.sorobanRpcImage" . | quote }}
         args:
+        {{- if eq (.Values.sorobanRpc.rpcVersion | default "v1") "v2" }}
+        - "--enable-rpcv2"
+        {{- end }}
         - "--config-path"
         - {{ printf "/config/%s" (include "common.rpcConfigFileName" .) | quote }}
         imagePullPolicy: {{ .Values.global.image.sorobanRpc.pullPolicy }}
@@ -73,6 +77,10 @@ spec:
         {{- if (.Values.sorobanRpc.persistence).enabled }}
         - name: {{ template "common.fullname" . }}-var-lib-stellar
           mountPath: /var/lib/stellar
+        {{- end }}
+        {{- if (.Values.sorobanRpc.persistence.coldStorage).enabled }}
+        - name: {{ template "common.fullname" . }}-cold-storage
+          mountPath: /var/lib/stellar-cold-storage
         {{- end }}
         ports:
         - containerPort: {{ include "common.rpcPort" . }}
@@ -117,13 +125,27 @@ spec:
       - name: config-volume
         configMap:
           name: {{ template "common.fullname" . }}
+      {{- if and (.Values.sorobanRpc.persistence).enabled (eq (.Values.sorobanRpc.persistence.type | default "pvc") "emptyDir") }}
+      - name: {{ template "common.fullname" . }}-var-lib-stellar
+        emptyDir:
+          {{- with (.Values.sorobanRpc.persistence.emptyDir).sizeLimit }}
+          sizeLimit: {{ . | quote }}
+          {{- else }}
+          {}
+          {{- end }}
+      {{- end }}
       affinity: {{- toYaml .Values.sorobanRpc.affinity | nindent 8 }}
       {{- with (.Values.sorobanRpc).nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-  {{- if (.Values.sorobanRpc.persistence).enabled }}
+      {{- with (.Values.sorobanRpc).tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- if include "common.hasVolumeClaimTemplates" . }}
   volumeClaimTemplates:
+  {{- if and (.Values.sorobanRpc.persistence).enabled (eq (.Values.sorobanRpc.persistence.type | default "pvc") "pvc") }}
   - metadata:
       name: {{ template "common.fullname" . }}-var-lib-stellar
     spec:
@@ -132,4 +154,15 @@ spec:
       resources:
         requests:
           storage: {{ .Values.sorobanRpc.persistence.size | quote }}
+  {{- end }}
+  {{- if (.Values.sorobanRpc.persistence.coldStorage).enabled }}
+  - metadata:
+      name: {{ template "common.fullname" . }}-cold-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: {{ .Values.sorobanRpc.persistence.coldStorage.storageClass }}
+      resources:
+        requests:
+          storage: {{ .Values.sorobanRpc.persistence.coldStorage.size | quote }}
+  {{- end }}
   {{- end }}
