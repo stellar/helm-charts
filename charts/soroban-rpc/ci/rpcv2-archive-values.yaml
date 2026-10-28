@@ -1,5 +1,5 @@
 ---
-## Lint scenario: rpcv2 with full history. Same NVMe emptyDir for the live data, plus
+## Lint scenario: rpcv2 with full history. Same NVMe hostPath for the live data, plus
 ## the cold-storage PVC for the ledgers and events, pointed at from rpcv2Config.storage.
 global:
   image:
@@ -18,9 +18,9 @@ sorobanRpc:
     dedicated: rpc-v2
   persistence:
     enabled: true
-    type: emptyDir
-    emptyDir:
-      sizeLimit: 400Gi
+    type: hostPath
+    hostPath:
+      path: /mnt/k8s-disks/0/rpc-v2
     persistentVolumeClaimRetentionPolicy:
       whenDeleted: Retain
       whenScaled: Retain

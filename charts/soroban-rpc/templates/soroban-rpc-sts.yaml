@@ -70,6 +70,13 @@ spec:
         - "--config-path"
         - {{ printf "/config/%s" (include "common.rpcConfigFileName" .) | quote }}
         imagePullPolicy: {{ .Values.global.image.sorobanRpc.pullPolicy }}
+        {{- if and (.Values.sorobanRpc.persistence).enabled (eq (.Values.sorobanRpc.persistence.type | default "pvc") "hostPath") }}
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        {{- end }}
         volumeMounts:
         - name: config-volume
           mountPath: /config
@@ -77,6 +84,9 @@ spec:
         {{- if (.Values.sorobanRpc.persistence).enabled }}
         - name: {{ template "common.fullname" . }}-var-lib-stellar
           mountPath: /var/lib/stellar
+          {{- if eq (.Values.sorobanRpc.persistence.type | default "pvc") "hostPath" }}
+          subPathExpr: $(POD_NAME)
+          {{- end }}
         {{- end }}
         {{- if (.Values.sorobanRpc.persistence.coldStorage).enabled }}
         - name: {{ template "common.fullname" . }}-cold-storage
@@ -133,6 +143,12 @@ spec:
           {{- else }}
           {}
           {{- end }}
+      {{- end }}
+      {{- if and (.Values.sorobanRpc.persistence).enabled (eq (.Values.sorobanRpc.persistence.type | default "pvc") "hostPath") }}
+      - name: {{ template "common.fullname" . }}-var-lib-stellar
+        hostPath:
+          path: {{ .Values.sorobanRpc.persistence.hostPath.path | quote }}
+          type: DirectoryOrCreate
       {{- end }}
       affinity: {{- toYaml .Values.sorobanRpc.affinity | nindent 8 }}
       {{- with (.Values.sorobanRpc).nodeSelector }}

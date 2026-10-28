@@ -73,8 +73,14 @@ that cannot start. Called once at the top of the StatefulSet template.
 {{- end -}}
 {{- end -}}
 {{- $t := (.Values.sorobanRpc.persistence).type | default "pvc" -}}
-{{- if not (or (eq $t "pvc") (eq $t "emptyDir")) -}}
-{{- fail (printf "sorobanRpc.persistence.type must be pvc or emptyDir, got %q" $t) -}}
+{{- if not (or (eq $t "pvc") (eq $t "emptyDir") (eq $t "hostPath")) -}}
+{{- fail (printf "sorobanRpc.persistence.type must be pvc, emptyDir or hostPath, got %q" $t) -}}
+{{- end -}}
+{{- if and (eq $t "hostPath") (.Values.sorobanRpc.persistence).enabled -}}
+{{- $hp := ((.Values.sorobanRpc.persistence).hostPath).path | default "" -}}
+{{- if not (hasPrefix "/" $hp) -}}
+{{- fail (printf "sorobanRpc.persistence.type is hostPath but sorobanRpc.persistence.hostPath.path is not an absolute path, got %q" $hp) -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 

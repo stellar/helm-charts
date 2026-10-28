@@ -253,6 +253,10 @@ sorobanRpc:
     ##               pod restart or a move to another node. This is the default.
     ##   "emptyDir"  a directory on the node's own disk. Faster (NVMe on instance-store
     ##               nodes) but deleted when the pod leaves the node.
+    ##   "hostPath"  a fixed directory on the node's own disk, mounted straight into the
+    ##               pod. Survives pod restarts and image upgrades; lost when the node is
+    ##               terminated, and the pod then starts empty on the new node. Needs the
+    ##               namespace at Pod Security level privileged (baseline forbids hostPath).
     type: pvc
     ## Only used when type is pvc.
     storageClass: default
@@ -263,6 +267,11 @@ sorobanRpc:
     ## disk, set resources.requests.ephemeral-storage below; sizeLimit does not do that.
     emptyDir:
       sizeLimit: 100Gi
+    ## Only used when type is hostPath. Each pod mounts <path>/<pod name>, so pods of one
+    ## release and of different releases never share a directory. Created on first use.
+    ## Use nodeSelector and tolerations below to keep the pod on nodes that have the disk.
+    hostPath:
+      path: ""
     ## A second, large PVC for rpcv2 full-history nodes, mounted at
     ## /var/lib/stellar-cold-storage. The hot tier and the catalog stay on /var/lib/stellar
     ## (NVMe). The packed stores go here: set rpcv2Config.storage.ledgers, events,
