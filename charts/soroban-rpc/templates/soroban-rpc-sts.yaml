@@ -72,6 +72,10 @@ spec:
         imagePullPolicy: {{ .Values.global.image.sorobanRpc.pullPolicy }}
         {{- if and (.Values.sorobanRpc.persistence).enabled (eq (.Values.sorobanRpc.persistence.type | default "pvc") "hostPath") }}
         env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         - name: POD_NAME
           valueFrom:
             fieldRef:
@@ -85,7 +89,7 @@ spec:
         - name: {{ template "common.fullname" . }}-var-lib-stellar
           mountPath: /var/lib/stellar
           {{- if eq (.Values.sorobanRpc.persistence.type | default "pvc") "hostPath" }}
-          subPathExpr: $(POD_NAME)
+          subPathExpr: $(POD_NAMESPACE)/$(POD_NAME)
           {{- end }}
         {{- end }}
         {{- if (.Values.sorobanRpc.persistence.coldStorage).enabled }}

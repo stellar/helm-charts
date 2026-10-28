@@ -267,8 +267,9 @@ sorobanRpc:
     ## disk, set resources.requests.ephemeral-storage below; sizeLimit does not do that.
     emptyDir:
       sizeLimit: 100Gi
-    ## Only used when type is hostPath. Each pod mounts <path>/<pod name>, so pods of one
-    ## release and of different releases never share a directory. Created on first use.
+    ## Only used when type is hostPath. Each pod mounts <path>/<namespace>/<pod name>, so
+    ## no two pods on a node ever share a directory, whatever their release names.
+    ## Created on first use.
     ## Use nodeSelector and tolerations below to keep the pod on nodes that have the disk.
     hostPath:
       path: ""
