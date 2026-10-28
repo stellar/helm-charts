@@ -340,7 +340,7 @@ sorobanRpc:
   # tolerations:
   #   - key: dedicated
   #     operator: Equal
-  #     value: rpc-v2
+  #     value: rpc-nvme
   #     effect: NoSchedule
 
   ## Example podDisruptionBudget

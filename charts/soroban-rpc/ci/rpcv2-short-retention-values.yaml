@@ -12,15 +12,15 @@ sorobanRpc:
   tolerations:
     - key: dedicated
       operator: Equal
-      value: rpc-v2
+      value: rpc-nvme
       effect: NoSchedule
   nodeSelector:
-    dedicated: rpc-v2
+    dedicated: rpc-nvme
   persistence:
     enabled: true
     type: hostPath
     hostPath:
-      path: /mnt/k8s-disks/0/rpc-v2
+      path: /mnt/k8s-disks/0/stellar-rpc
   rpcv2Config:
     storage:
       default_data_dir: /var/lib/stellar/rpc-v2
