@@ -1,6 +1,6 @@
 ---
 ## Lint scenario: rpcv2, short retention (earliest_ledger "now", 15 chunks). The live
-## data lives in an emptyDir on a tainted NVMe node pool. The TOML is rpcv2Config as-is.
+## data lives in a hostPath directory on a tainted NVMe node pool. The TOML is rpcv2Config as-is.
 global:
   image:
     sorobanRpc:
@@ -12,15 +12,15 @@ sorobanRpc:
   tolerations:
     - key: dedicated
       operator: Equal
-      value: rpc-v2
+      value: rpc-nvme
       effect: NoSchedule
   nodeSelector:
-    dedicated: rpc-v2
+    dedicated: rpc-nvme
   persistence:
     enabled: true
-    type: emptyDir
-    emptyDir:
-      sizeLimit: 400Gi
+    type: hostPath
+    hostPath:
+      path: /mnt/k8s-disks/0/stellar-rpc
   rpcv2Config:
     storage:
       default_data_dir: /var/lib/stellar/rpc-v2
