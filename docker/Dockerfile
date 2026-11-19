@@ -1,4 +1,4 @@
-FROM nginx:1.17
+FROM nginx:1.30.7
 
 LABEL maintainer="SDF Ops Team <ops@stellar.org>"
 
